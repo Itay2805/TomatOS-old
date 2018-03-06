@@ -1,10 +1,10 @@
 # some values
+PREFIX="/usr/local/i386elfgcc"
 export PATH="$PREFIX/bin:$PATH"
 export C_INCLUDE_PATH=./kernel/api/include/:./kernel/libc/
 #export CFLAGS="-g -ffreestanding -Wall -Wextra -fno-exceptions -m32"
 #export C_SOURCES=
 
-PREFIX="/usr/local/i386elfgcc"
 TARGET=i386
 CCFLAGS="-Wall -Wextra -std=gnu99 -nostdinc -fno-builtin -fno-stack-protector -march=$TARGET -m32"
 #CCFLAGS="-O3 -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wconversion -Wstrict-prototypes -Wunsafe-loop-optimizations -std=gnu99 -nostdinc -fno-builtin -fno-stack-protector -march=$TARGET -m32"
