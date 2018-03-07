@@ -1,7 +1,7 @@
 # some values
 PREFIX="/usr/local/i386elfgcc"
 export PATH="$PREFIX/bin:$PATH"
-export C_INCLUDE_PATH=./kernel/api/include/:./kernel/libc/
+export C_INCLUDE_PATH=./src/api/include/:./src/libc/
 #export CFLAGS="-g -ffreestanding -Wall -Wextra -fno-exceptions -m32"
 #export C_SOURCES=
 
@@ -21,8 +21,8 @@ mkdir build
 objectFiles=""
 
 # get all the c files in the kernel
-echo "Compiling kernel: "
-for d in $(find kernel/ -type d)
+echo "Compiling os: "
+for d in $(find src/ -type d)
 do
     mkdir "build/$d"
     for f in $(find $d/*.c)

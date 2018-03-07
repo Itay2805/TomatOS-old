@@ -37,59 +37,83 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="build.sh" />
+    <None Include="src\kernel\interrupt.asm">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="kernel\drivers\ports.h">
+    <ClInclude Include="src\api\include\api\color.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="kernel\libc\memory.h">
+    <ClInclude Include="src\api\include\api\os.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="kernel\libc\stdbool.h">
+    <ClInclude Include="src\api\include\api\term.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="kernel\libc\stddef.h">
+    <ClInclude Include="src\api\include\api\window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="kernel\libc\stdint.h">
+    <ClInclude Include="src\drivers\ports.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="kernel\libc\string.h">
+    <ClInclude Include="src\libc\memory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="kernel\api\include\api\color.h">
+    <ClInclude Include="src\libc\stdarg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="kernel\api\include\api\term.h">
+    <ClInclude Include="src\libc\stdbool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="kernel\libc\stdarg.h">
+    <ClInclude Include="src\libc\stddef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="kernel\api\include\api\window.h">
+    <ClInclude Include="src\libc\stdint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\libc\string.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kernel\idt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kernel\isr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kernel\kernel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="kernel\api\native_term.c">
+    <ClCompile Include="src\api\native_term.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="kernel\api\term.c">
+    <ClCompile Include="src\api\os.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="kernel\drivers\ports.c">
+    <ClCompile Include="src\api\term.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="kernel\libc\memory.c">
+    <ClCompile Include="src\api\window.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="kernel\libc\string.c">
+    <ClCompile Include="src\drivers\ports.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="kernel\kernel.c">
+    <ClCompile Include="src\libc\memory.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="kernel\api\window.c">
+    <ClCompile Include="src\libc\string.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kernel\idt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kernel\isr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kernel\kernel.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

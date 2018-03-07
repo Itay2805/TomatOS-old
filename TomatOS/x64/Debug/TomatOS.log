@@ -1,0 +1,64 @@
+﻿  string.c
+d:\itay\documents\coding\tomatos\tomatos\src\libc\stdint.h(15): error C2371: 'size_t': redefinition; different basic types
+  d:\itay\documents\coding\tomatos\tomatos\src\libc\string.c: note: see declaration of 'size_t'
+  memory.c
+d:\itay\documents\coding\tomatos\tomatos\src\libc\stdint.h(15): error C2371: 'size_t': redefinition; different basic types
+  d:\itay\documents\coding\tomatos\tomatos\src\libc\memory.c: note: see declaration of 'size_t'
+  kernel.c
+d:\itay\documents\coding\tomatos\tomatos\src\libc\stdint.h(15): error C2371: 'size_t': redefinition; different basic types
+  d:\itay\documents\coding\tomatos\tomatos\src\kernel\kernel.c: note: see declaration of 'size_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\kernel.c(53): warning C4090: 'function': different 'const' qualifiers
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\kernel.c(60): warning C4013: 'drawMenu' undefined; assuming extern returning int
+  isr.c
+d:\itay\documents\coding\tomatos\tomatos\src\libc\stdint.h(15): error C2371: 'size_t': redefinition; different basic types
+  d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c: note: see declaration of 'size_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(10): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(11): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(12): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(13): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(14): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(15): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(16): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(17): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(18): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(19): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(20): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(21): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(22): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(23): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(24): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(25): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(26): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(27): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(28): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(29): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(30): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(31): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(32): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(33): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(34): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(35): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(36): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(37): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(38): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(39): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(40): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+d:\itay\documents\coding\tomatos\tomatos\src\kernel\isr.c(41): warning C4311: 'type cast': pointer truncation from 'void (__cdecl *)()' to 'uint32_t'
+  idt.c
+d:\itay\documents\coding\tomatos\tomatos\src\libc\stdint.h(15): error C2371: 'size_t': redefinition; different basic types
+  d:\itay\documents\coding\tomatos\tomatos\src\kernel\idt.c: note: see declaration of 'size_t'
+  ports.c
+  window.c
+d:\itay\documents\coding\tomatos\tomatos\src\libc\stdint.h(15): error C2371: 'size_t': redefinition; different basic types
+  d:\itay\documents\coding\tomatos\tomatos\src\api\window.c: note: see declaration of 'size_t'
+  term.c
+d:\itay\documents\coding\tomatos\tomatos\src\libc\stdint.h(15): error C2371: 'size_t': redefinition; different basic types
+  d:\itay\documents\coding\tomatos\tomatos\src\api\term.c: note: see declaration of 'size_t'
+  os.c
+d:\itay\documents\coding\tomatos\tomatos\src\libc\stdint.h(15): error C2371: 'size_t': redefinition; different basic types
+  d:\itay\documents\coding\tomatos\tomatos\src\api\os.c: note: see declaration of 'size_t'
+d:\itay\documents\coding\tomatos\tomatos\src\api\os.c(19): warning C4013: '__asm__' undefined; assuming extern returning int
+  native_term.c
+d:\itay\documents\coding\tomatos\tomatos\src\libc\stdint.h(15): error C2371: 'size_t': redefinition; different basic types
+  d:\itay\documents\coding\tomatos\tomatos\src\api\native_term.c: note: see declaration of 'size_t'
+  Generating Code...

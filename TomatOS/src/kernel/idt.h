@@ -24,7 +24,7 @@ idt_gate_t;
 
 typedef struct {
 	uint16_t limit;
-	uint32_t base;
+	uintptr_t base;
 }
 #ifndef VISUAL_STUDIO
 // visual studio doesn't like this
@@ -35,7 +35,7 @@ idt_register_t;
 idt_gate_t idt[KERNEL_IDT_ENTRIES];
 idt_register_t idt_reg;
 
-void kernel_set_idt_gate(int n, uint32_t handler);
+void kernel_set_idt_gate(int n, uintptr_t handler);
 void kernel_set_idt();
 
 #endif

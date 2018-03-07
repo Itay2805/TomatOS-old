@@ -81,7 +81,7 @@ event_t os_pull_event(uint32_t filter) {
 		term_clear();
 		term_set_text_color(COLOR_WHITE);
 		exception_t* exception = (exception_t*)&event;
-		term_write(exception->msg);
+		term_write((char*)exception->msg);
 	}
 	return event;
 }
