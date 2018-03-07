@@ -26,6 +26,7 @@ typedef struct __memory_block_t {
 __memory_block_t* __get_block(uintptr_t ptr, bool* valid);
 __memory_block_t* __get_next_block(__memory_block_t* from, bool* valid);
 __memory_block_t* __get_next_free_block(__memory_block_t* from, bool* valid);
+__memory_block_t* __merge_empty_blocks(__memory_block_t* from);
 
 __memory_block_t* __get_block(uintptr_t ptr, bool* valid) {
 	__memory_block_t* header = (__memory_block_t*)(ptr - sizeof(__memory_block_t));
@@ -51,6 +52,27 @@ __memory_block_t* __get_next_free_block(__memory_block_t* from, bool* valid) {
 	return from;
 }
 
+__memory_block_t* __merge_empty_blocks(__memory_block_t* from) {
+	bool valid;
+	
+	// get next block
+	__memory_block_t* next = __get_next_block(from, &valid);
+	
+	// if the block is valid and is not allocated, let's merge with it
+	if (valid && !next->allocated) {
+		from->size = sizeof(__memory_block_t) + next->size;
+		// invalidate block, just incase
+		next->size = 0;
+		next->magic = 0;
+	}
+	
+	// is the block before empty and valid? if so lets attempt to merge with it
+	if (from->before != nullptr && from->before->magic == LIBC_MEMORY_MAGIC && !from->before->allocated) {
+		return __merge_empty_blocks(from->before);
+	}
+	return from;
+}
+
 //////////////////////////////////////////////////////////////
 /// needed variables
 //////////////////////////////////////////////////////////////
@@ -62,7 +84,7 @@ __memory_block_t* first_free_block;
 /// the implementation
 //////////////////////////////////////////////////////////////
 
-void kernel_memory_init() {
+void kernel_memory_init(void) {
 	// setup our heap's start address
 	heap_start_address = (uintptr_t)0x10000;
 
@@ -97,9 +119,9 @@ void* malloc(size_t size) {
 				block->size = size;
 
 				// set the previous block of the next block, only if valid
-				bool valid;
-				__memory_block_t* next = __get_next_block(newblock, &valid);
-				if (valid) {
+				bool nextBlockValid;
+				__memory_block_t* next = __get_next_block(newblock, &nextBlockValid);
+				if (nextBlockValid) {
 					next->before = newblock;
 				}
 
@@ -131,7 +153,8 @@ bool free(void* ptr) {
 
 	block->allocated = false;
 
-	// TODO: merge empty blocks, to save space
+	// merge empty blocks, to save on space
+	block = __merge_empty_blocks(block);
 
 	// is this before the current first fre block
 	if (block < first_free_block) {
@@ -147,7 +170,7 @@ void* realloc(void* ptr, size_t newsize) {
 	if (ptr == nullptr) return malloc(newsize);
 
 	bool valid;
-	__memory_block_t* oldBlock = __get_block(ptr, &valid);
+	__get_block(ptr, &valid);
 	if (!valid) {
 		return nullptr;
 	}

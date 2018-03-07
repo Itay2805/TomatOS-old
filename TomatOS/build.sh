@@ -6,9 +6,11 @@ export C_INCLUDE_PATH=./kernel/api/include/:./kernel/libc/
 #export C_SOURCES=
 
 TARGET=i386
+
 CCFLAGS="-Wall -Wextra -std=gnu99 -nostdinc -fno-builtin -fno-stack-protector -march=$TARGET -m32"
-#CCFLAGS="-O3 -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wconversion -Wstrict-prototypes -Wunsafe-loop-optimizations -std=gnu99 -nostdinc -fno-builtin -fno-stack-protector -march=$TARGET -m32"
-# -Wmissing-prototypes -Wmissing-declarations 
+
+# this is kept for debugging, so it will give me all the warnings possible
+#CCFLAGS="-O3 -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wconversion -Wstrict-prototypes -Wunsafe-loop-optimizations -std=gnu99 -nostdinc -fno-builtin -fno-stack-protector -Wmissing-prototypes -Wmissing-declarations -march=$TARGET -m32"
 
 # cleanup
 echo "Removing old build folder"

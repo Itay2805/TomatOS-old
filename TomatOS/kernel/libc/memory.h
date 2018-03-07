@@ -6,7 +6,7 @@
 
 #define nullptr ((void*)0)
 
-void kernel_memory_init();
+void kernel_memory_init(void);
 
 void* malloc(size_t size);
 void* realloc(void* ptr, size_t newsize);

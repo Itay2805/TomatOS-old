@@ -4,7 +4,7 @@
 #include "stdint.h"
 #include "stdbool.h"
 
-char* itoa(int32_t n, char* str, int8_t radix);
+char* itoa(int32_t n, char* str, uint8_t radix);
 
 char* strrev(char *str);
 int strcmp(const char* src, const char* dst);

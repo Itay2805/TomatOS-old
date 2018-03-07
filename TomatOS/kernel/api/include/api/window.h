@@ -20,7 +20,7 @@ typedef struct {
 void kernel_init_window(void);
 
 window_t window_create(term_t* parentTerm, uint16_t x, uint16_t y, uint16_t width, uint16_t height, bool visible);
-window_t window_destroy(window_t* window);
+void window_destroy(window_t* window);
 
 void window_write(window_t* window, char* text);
 void window_clear(window_t* window);
@@ -40,8 +40,8 @@ void window_set_visible(window_t* window, bool vis);
 void window_redraw(window_t* window);
 uint16_t window_get_x(window_t* window);
 uint16_t window_get_y(window_t* window);
-void window_restore_cursor();
-void window_reposition(uint16_t x, uint16_t y, uint16_t width, uint16_t height);
+void window_restore_cursor(window_t* window);
+void window_reposition(window_t* window, uint16_t x, uint16_t y, uint16_t width, uint16_t height);
 
 term_t* window_as_term(window_t* window);
 

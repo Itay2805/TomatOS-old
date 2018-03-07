@@ -5,6 +5,8 @@
 
 #include <api/color.h>
 
+#define MIN(a, b) ((a) > (b)) ? (b) : (a)
+
 ///////////////////////////////////////////////////////
 /// Terminal Window setup
 ///////////////////////////////////////////////////////
@@ -66,7 +68,7 @@ window_t window_create(term_t* parentTerm, uint16_t x, uint16_t y, uint16_t widt
 }
 
 
-window_t window_destroy(window_t* window) {
+void window_destroy(window_t* window) {
 	free(window->__screenBuffer);
 	window->__screenBuffer = nullptr;
 }
@@ -80,14 +82,14 @@ void window_write(window_t* window, char* text) {
 		}
 		else if (c == '\t') {
 			window->__screenBuffer[2 * (window->__cursor_x + window->__cursor_y * window->__width) + 0] = 0;
-			window->__screenBuffer[2 * (window->__cursor_x + window->__cursor_y * window->__width) + 1] = window->__bg_color << 4 | window->__fg_color;
+			window->__screenBuffer[2 * (window->__cursor_x + window->__cursor_y * window->__width) + 1] = (uint8_t)(window->__bg_color << 4 | window->__fg_color);
 			window->__screenBuffer[2 * (window->__cursor_x + 1 + window->__cursor_y * window->__width) + 0] = 0;
-			window->__screenBuffer[2 * (window->__cursor_x + 1 + window->__cursor_y * window->__width) + 1] = window->__bg_color << 4 | window->__fg_color;
+			window->__screenBuffer[2 * (window->__cursor_x + 1 + window->__cursor_y * window->__width) + 1] = (uint8_t)(window->__bg_color << 4 | window->__fg_color);
 			window->__cursor_x += 2;
 		}
 		else {
 			window->__screenBuffer[2 * (window->__cursor_x + window->__cursor_y * window->__width) + 0] = c;
-			window->__screenBuffer[2 * (window->__cursor_x + window->__cursor_y * window->__width) + 1] = window->__bg_color << 4 | window->__fg_color;
+			window->__screenBuffer[2 * (window->__cursor_x + window->__cursor_y * window->__width) + 1] = (uint8_t)(window->__bg_color << 4 | window->__fg_color);
 			window->__cursor_x++;
 		}
 		text++;
@@ -104,12 +106,18 @@ void window_write(window_t* window, char* text) {
 			window_scroll(window, 1);
 		}
 	}
+	if (window->__visible) {
+		window_redraw(window);
+	}
 }
 
 void window_clear(window_t* window) {
-	for (size_t i = 0; i < window->__height * window->__width * 2; i += 2) {
+	for (int32_t i = 0; i < window->__height * window->__width * 2; i += 2) {
 		window->__screenBuffer[i + 0] = 0;
-		window->__screenBuffer[i + 1] = window->__bg_color << 4 | window->__fg_color;
+		window->__screenBuffer[i + 1] = (uint8_t)(window->__bg_color << 4 | window->__fg_color);
+	}
+	if (window->__visible) {
+		window_redraw(window);
 	}
 }
 
@@ -151,40 +159,94 @@ uint16_t window_get_height(window_t* window) {
 }
 
 void window_scroll(window_t* window, uint16_t n) {
-	size_t length_copy = ((window->__height - n) * window->__width) * 2;
-	size_t length_remove = (n * window->__width) * 2;
-	for (size_t i = 0; i < length_copy; i++) {
+	int32_t length_copy = ((window->__height - n) * window->__width) * 2;
+	int32_t length_remove = (n * window->__width) * 2;
+	for (int32_t i = 0; i < length_copy; i++) {
 		window->__screenBuffer[i] = window->__screenBuffer[i + (n * window->__width) * 2];
 		window->__screenBuffer[i + 1] = window->__screenBuffer[1 + i + (n * window->__width) * 2];
 	}
-	for (size_t i = 0; i < length_remove; i++) {
+	for (int32_t i = 0; i < length_remove; i++) {
 		window->__screenBuffer[i + length_copy] = 0;
-		window->__screenBuffer[i + 1 + length_copy] = window->__bg_color << 4 | window->__fg_color;
+		window->__screenBuffer[i + 1 + length_copy] = (uint8_t)(window->__bg_color << 4 | window->__fg_color);
+	}
+	if (window->__visible) {
+		window_redraw(window);
 	}
 }
 
 void window_clear_line(window_t* window, uint16_t n) {
-	size_t offset = (n * window->__width) * 2;
-	for (size_t i = offset; i < window->__width * 2 + offset; i += 2) {
+	int32_t offset = (n * window->__width) * 2;
+	for (int32_t i = offset; i < window->__width * 2 + offset; i += 2) {
 		window->__screenBuffer[i + 0] = 0;
-		window->__screenBuffer[i + 1] = window->__bg_color << 4 | window->__fg_color;
+		window->__screenBuffer[i + 1] = (uint8_t)(window->__bg_color << 4 | window->__fg_color);
+	}
+	if (window->__visible) {
+		window_redraw(window);
 	}
 }
 
 term_t* window_as_term(window_t* window) {
-	// because we have all the bindings in the start we can just cast  its
+	// because we have all the bindings in the start we can just cast it
 	return (term_t*)window;
 }
 
-#define MIN(a, b) ((a) > (b)) ? (b) : (a)
+void window_set_visible(window_t* window, bool vis) {
+	window->__visible = vis;
+	if (vis) {
+		window_redraw(window);
+	}
+}
 
+void window_restore_cursor(window_t* window) {
+	uint16_t newX = MIN(window->__x + window->__cursor_x, window->__parent->get_width() - 1);
+	uint16_t newY = MIN(window->__y + window->__cursor_y, window->__parent->get_height() - 1);
+	window->__parent->set_cursor_pos(newX, newY);
+}
+
+uint16_t window_get_x(window_t* window) {
+	return window->__x;
+}
+
+uint16_t window_get_y(window_t* window) {
+	return window->__y;
+}
+
+void window_reposition(window_t* window, uint16_t x, uint16_t y, uint16_t width, uint16_t height) {
+	// allocate new buffer
+	uint8_t* newScreenBuffer = malloc(width * height * 2);
+	
+	uint16_t copyWidth = MIN(width, window->__width);
+	uint16_t copyHeight = MIN(height, window->__height);
+
+	for (uint16_t cy = 0; cy < copyHeight; cy++) {
+		for (uint16_t cx = 0; cx < copyWidth; cx++) {
+			newScreenBuffer[(cx + cy * width) * 2] = window->__screenBuffer[(cx + cy * window->__width) * 2];
+			newScreenBuffer[(cx + cy * width) * 2 + 1] = window->__screenBuffer[(cx + cy * window->__width) * 2 + 1];
+		}
+	}
+
+	free(window->__screenBuffer);
+	
+	window->__screenBuffer = newScreenBuffer;
+	window->__width = width;
+	window->__height = height;
+	window->__x = x;
+	window->__y = y;
+
+	if (window->__visible) {
+		window_redraw(window);
+	}
+}
+
+// do this in a more efficient way
+// maybe some kind of a blit function?
 void window_redraw(window_t* window) {
-	char str[20];
+	if (!window->__visible) return;
 
 	term_t* parent = window->__parent;
 	
-	uint16_t savedX = parent->get_cursor_x();
-	uint16_t savedY = parent->get_cursor_y();
+	//uint16_t savedX = parent->get_cursor_x();
+	//uint16_t savedY = parent->get_cursor_y();
 	uint8_t savedTextColor = parent->get_text_color();
 	uint8_t savedBackgroundColor = parent->get_background_color();
 
@@ -197,9 +259,9 @@ void window_redraw(window_t* window) {
 	for (uint16_t y = 0; y < height; y++) {
 
 		// prepare the next row
-		parent->set_cursor_pos(window->__x, window->__y + y);
+		parent->set_cursor_pos(window->__x, (uint16_t)(window->__y + y));
 		for (uint16_t x = 0; x < width; x++) {
-			char c = window->__screenBuffer[(x + y * window->__width) * 2];
+			char c = (char)window->__screenBuffer[(x + y * window->__width) * 2];
 			if (c == 0) c = ' ';
 			buff[0] = c;
 			uint8_t color = window->__screenBuffer[(x + y * window->__width) * 2 + 1];
@@ -211,9 +273,8 @@ void window_redraw(window_t* window) {
 			parent->write(buff);
 		}
 	}
-
-	// Do we want this?
-	parent->set_cursor_pos(savedX, savedY);
+	window_restore_cursor(window);
+	// parent->set_cursor_pos(savedX, savedY);
 	parent->set_text_color(savedTextColor);
 	parent->set_background_color(savedBackgroundColor);
 }

@@ -11,10 +11,10 @@ char* strrev(char *str) {
 	return str;
 }
 
-char* itoa(int32_t v, char* buff, int8_t radix_base) {
+char* itoa(int32_t v, char* buff, uint8_t radix_base) {
 	static char table[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 	char *p = buff;
-	unsigned int n = (v < 0 && radix_base == 10) ? -v : (unsigned int)v;
+	uint32_t n = (v < 0 && radix_base == 10) ? (uint32_t)(-v) : (uint32_t)v;
 	while (n >= radix_base) {
 		*p++ = table[n%radix_base];
 		n /= radix_base;
@@ -26,7 +26,7 @@ char* itoa(int32_t v, char* buff, int8_t radix_base) {
 }
 
 int strcmp(const char* vl, const char* vr) {
-	long ret = 0;
+	int32_t ret = 0;
 	const uint8_t* p1 = (const uint8_t*)vl;
 	const uint8_t* p2 = (const uint8_t*)vr;
 	while (!(ret == *p1 - *p2) && *p2) {

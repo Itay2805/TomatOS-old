@@ -8,7 +8,7 @@
 #define COLOR_RED 0x4
 #define COLOR_MAGENTA 0x5
 #define COLOR_BROWN 0x6
-#define COLOR_LIGHT_GRAY 0x7
+#define COLOR_GRAY 0x7
 #define COLOR_DARK_GRAY 0x8
 #define COLOR_LIGHT_BLUE 0x9
 #define COLOR_LIGHT_GREEN 0xa
