@@ -78,10 +78,22 @@
     <ClInclude Include="src\kernel\idt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\kernel\isr.h">
+    <ClInclude Include="src\kernel\kernel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\kernel\kernel.h">
+    <ClInclude Include="src\drivers\isr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\drivers\timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\drivers\keyboard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\drivers\drivers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\api\include\api\keys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -110,10 +122,13 @@
     <ClCompile Include="src\kernel\idt.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\kernel\isr.c">
+    <ClCompile Include="src\kernel\kernel.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\kernel\kernel.c">
+    <ClCompile Include="src\drivers\isr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\drivers\keyboard.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

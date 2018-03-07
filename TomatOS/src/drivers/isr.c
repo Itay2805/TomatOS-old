@@ -1,12 +1,12 @@
 #include "isr.h"
-#include "idt.h"
+#include "../kernel/idt.h"
 
 #include <api/term.h>
 #include <api/os.h>
 
 #include <memory.h>
 
-#include "../drivers/ports.h"
+#include "ports.h"
 
 char *exception_messages[32];
 
@@ -126,7 +126,12 @@ void kernel_irq_handler(registers_t r) {
 	port_byte_out(0x20, 0x20);
 
 	if (__interrupt_handlers[r.int_no] != nullptr) {
+		term_write("calling\n");
 		isr_handle_t handler = __interrupt_handlers[r.int_no];
 		handler(r);
 	}
+}
+
+void register_interrupt_handler(uint8_t n, isr_handle_t handler) {
+	__interrupt_handlers[n] = handler;
 }

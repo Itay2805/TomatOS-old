@@ -1,0 +1,7 @@
+#ifndef DRIVERS_H
+#define DRIVERS_H
+
+#define DRIVERS_TIMER_IRQ		IRQ0
+#define DRIVERS_KEYBOARD_IRQ	IRQ1
+
+#endif

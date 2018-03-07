@@ -6,13 +6,21 @@
 
 #define EVENT_ALL			0
 #define EVENT_TERMINATE		1
+
 #define EVENT_TIMER			2
-#define EVENT_EXCEPTION		3
+
+#define EVENT_CHAR			3
+#define EVENT_KEY			4
+#define EVENT_KEY_UP		5
+
+#define EVENT_EXCEPTION		6
 
 typedef struct {
 	uint32_t type;
 	size_t data[4];
 } event_t;
+
+/// timer
 
 typedef struct {
 	// if from event it is EVENT_TIMER otherwise it is NULL
@@ -20,6 +28,26 @@ typedef struct {
 	uint32_t type;
 	uint32_t id;
 } timer_t;
+
+/// IO
+
+typedef struct {
+	uint32_t type;
+	uint32_t scancode;
+} key_up_event_t;
+
+typedef struct {
+	uint32_t type;
+	uint32_t scancode;
+	bool held;
+} key_event_t;
+
+typedef struct {
+	uint32_t type;
+	char letter;
+} char_event_t;
+
+/// exceptions
 
 typedef struct {
 	uint32_t type;

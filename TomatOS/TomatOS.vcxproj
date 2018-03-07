@@ -31,12 +31,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\api\include\api\color.h" />
+    <ClInclude Include="src\api\include\api\keys.h" />
     <ClInclude Include="src\api\include\api\os.h" />
     <ClInclude Include="src\api\include\api\term.h" />
     <ClInclude Include="src\api\include\api\window.h" />
+    <ClInclude Include="src\drivers\drivers.h" />
+    <ClInclude Include="src\drivers\keyboard.h" />
     <ClInclude Include="src\drivers\ports.h" />
+    <ClInclude Include="src\drivers\timer.h" />
     <ClInclude Include="src\kernel\idt.h" />
-    <ClInclude Include="src\kernel\isr.h" />
+    <ClInclude Include="src\drivers\isr.h" />
     <ClInclude Include="src\kernel\kernel.h" />
     <ClInclude Include="src\libc\memory.h" />
     <ClInclude Include="src\libc\stdarg.h" />
@@ -50,9 +54,10 @@
     <ClCompile Include="src\api\os.c" />
     <ClCompile Include="src\api\term.c" />
     <ClCompile Include="src\api\window.c" />
+    <ClCompile Include="src\drivers\keyboard.c" />
     <ClCompile Include="src\drivers\ports.c" />
     <ClCompile Include="src\kernel\idt.c" />
-    <ClCompile Include="src\kernel\isr.c" />
+    <ClCompile Include="src\drivers\isr.c" />
     <ClCompile Include="src\kernel\kernel.c" />
     <ClCompile Include="src\libc\memory.c" />
     <ClCompile Include="src\libc\string.c" />
