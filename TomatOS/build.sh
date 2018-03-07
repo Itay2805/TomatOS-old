@@ -33,6 +33,14 @@ do
         echo "  $f > $of"
         i386-elf-gcc $CCFLAGS -c "./$f" -o "./$of" 
     done
+	for f in $(find $d/*.asm)
+    do
+        of=`echo $f | sed 's/\(.*\)asm/\1o/'`
+        of="build/$of"
+        objectFiles="$objectFiles $of"
+        echo "  $f > $of"
+        nasm "./$f" -f elf -o "./$of"
+    done
 done
 echo "  boot/kernel_entry.asm > build/kernel_entry.o"
 nasm boot/kernel_entry.asm -f elf -o build/kernel_entry.o
