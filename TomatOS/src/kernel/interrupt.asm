@@ -73,7 +73,7 @@ isr_common_stub:
 	sti
 	iret
 
-iqr_common_stub:
+irq_common_stub:
 	pusha 
     mov ax, ds
     push eax

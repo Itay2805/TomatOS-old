@@ -57,22 +57,22 @@ void kernel_isr_install() {
 	port_byte_out(0x21, 0x0);
 	port_byte_out(0xA1, 0x0);
 
-	set_idt_gate(32, (uintptr_t)irq0);
-	set_idt_gate(33, (uintptr_t)irq1);
-	set_idt_gate(34, (uintptr_t)irq2);
-	set_idt_gate(35, (uintptr_t)irq3);
-	set_idt_gate(36, (uintptr_t)irq4);
-	set_idt_gate(37, (uintptr_t)irq5);
-	set_idt_gate(38, (uintptr_t)irq6);
-	set_idt_gate(39, (uintptr_t)irq7);
-	set_idt_gate(40, (uintptr_t)irq8);
-	set_idt_gate(41, (uintptr_t)irq9);
-	set_idt_gate(42, (uintptr_t)irq10);
-	set_idt_gate(43, (uintptr_t)irq11);
-	set_idt_gate(44, (uintptr_t)irq12);
-	set_idt_gate(45, (uintptr_t)irq13);
-	set_idt_gate(46, (uintptr_t)irq14);
-	set_idt_gate(47, (uintptr_t)irq15);
+	kernel_set_idt_gate(32, (uintptr_t)irq0);
+	kernel_set_idt_gate(33, (uintptr_t)irq1);
+	kernel_set_idt_gate(34, (uintptr_t)irq2);
+	kernel_set_idt_gate(35, (uintptr_t)irq3);
+	kernel_set_idt_gate(36, (uintptr_t)irq4);
+	kernel_set_idt_gate(37, (uintptr_t)irq5);
+	kernel_set_idt_gate(38, (uintptr_t)irq6);
+	kernel_set_idt_gate(39, (uintptr_t)irq7);
+	kernel_set_idt_gate(40, (uintptr_t)irq8);
+	kernel_set_idt_gate(41, (uintptr_t)irq9);
+	kernel_set_idt_gate(42, (uintptr_t)irq10);
+	kernel_set_idt_gate(43, (uintptr_t)irq11);
+	kernel_set_idt_gate(44, (uintptr_t)irq12);
+	kernel_set_idt_gate(45, (uintptr_t)irq13);
+	kernel_set_idt_gate(46, (uintptr_t)irq14);
+	kernel_set_idt_gate(47, (uintptr_t)irq15);
 
 	kernel_set_idt();
 
