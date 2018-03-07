@@ -97,6 +97,7 @@ void window_write(window_t* window, char* text) {
 		// go to next line if needed
 		if (window->__cursor_x >= window->__width) {
 			window->__cursor_y++;
+			window->__cursor_x = 0;
 		}
 
 		// scroll if needed

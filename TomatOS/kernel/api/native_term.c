@@ -101,7 +101,8 @@ void native_term_write(char* text) {
         // go to next line if needed
         if(__term_x >= NATIVE_TERM_WIDTH) {
             __term_y++;
-        }
+			__term_x = 0;
+		}
 
         // scroll if needed
         if(__term_y >= NATIVE_TERM_HEIGHT) {
