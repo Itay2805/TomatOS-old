@@ -99,6 +99,15 @@
     <ClInclude Include="src\libc\stdio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\drivers\ata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\libc\setjmp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\api\include\api\coroutine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\api\native_term.c">
@@ -138,6 +147,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\libc\stdio.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\libc\setjmp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\api\coroutine.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

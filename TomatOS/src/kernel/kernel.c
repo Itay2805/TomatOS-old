@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <memory.h>
 #include <stdio.h>
+#include <setjmp.h>
 
 #include <api/term.h>
 #include <api/color.h>

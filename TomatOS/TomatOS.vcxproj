@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -31,10 +31,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\api\include\api\color.h" />
+    <ClInclude Include="src\api\include\api\coroutine.h" />
     <ClInclude Include="src\api\include\api\keys.h" />
     <ClInclude Include="src\api\include\api\os.h" />
     <ClInclude Include="src\api\include\api\term.h" />
     <ClInclude Include="src\api\include\api\window.h" />
+    <ClInclude Include="src\drivers\ata.h" />
     <ClInclude Include="src\drivers\drivers.h" />
     <ClInclude Include="src\drivers\keyboard.h" />
     <ClInclude Include="src\drivers\ports.h" />
@@ -43,6 +45,7 @@
     <ClInclude Include="src\drivers\isr.h" />
     <ClInclude Include="src\kernel\kernel.h" />
     <ClInclude Include="src\libc\memory.h" />
+    <ClInclude Include="src\libc\setjmp.h" />
     <ClInclude Include="src\libc\stdarg.h" />
     <ClInclude Include="src\libc\stdbool.h" />
     <ClInclude Include="src\libc\stddef.h" />
@@ -51,6 +54,7 @@
     <ClInclude Include="src\libc\string.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\api\coroutine.c" />
     <ClCompile Include="src\api\native_term.c" />
     <ClCompile Include="src\api\os.c" />
     <ClCompile Include="src\api\term.c" />
@@ -62,6 +66,7 @@
     <ClCompile Include="src\drivers\isr.c" />
     <ClCompile Include="src\kernel\kernel.c" />
     <ClCompile Include="src\libc\memory.c" />
+    <ClCompile Include="src\libc\setjmp.c" />
     <ClCompile Include="src\libc\stdio.c" />
     <ClCompile Include="src\libc\string.c" />
   </ItemGroup>
