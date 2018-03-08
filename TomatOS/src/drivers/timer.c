@@ -9,6 +9,7 @@
 
 #include <api/os.h>
 
+#include <string.h>
 #include <memory.h>
 
 typedef struct __timer_t {
@@ -80,7 +81,8 @@ void timer_cancel(uint32_t id) {
 void kernel_timer_init() {
 	register_interrupt_handler(DRIVERS_TIMER_IRQ, __timer_callback);
 
-	uint32_t divisor = DRIVERS_TIMER_HARWARE_CLOCK_FREQ / DRIVERS_TIMER_FREQ;
+	//uint32_t divisor = DRIVERS_TIMER_HARWARE_CLOCK_FREQ / DRIVERS_TIMER_FREQ;
+	uint32_t divisor = DRIVERS_TIMER_FREQ;
 	uint8_t low = (uint8_t)(divisor & 0xFF);
 	uint8_t high = (uint8_t)((divisor >> 8) & 0xFF);
 
