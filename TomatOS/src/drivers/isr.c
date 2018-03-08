@@ -126,7 +126,6 @@ void kernel_irq_handler(registers_t r) {
 	port_byte_out(0x20, 0x20);
 
 	if (__interrupt_handlers[r.int_no] != nullptr) {
-		term_write("calling\n");
 		isr_handle_t handler = __interrupt_handlers[r.int_no];
 		handler(r);
 	}

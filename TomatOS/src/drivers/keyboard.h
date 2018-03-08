@@ -1,5 +1,5 @@
-#ifndef DRIVER_TIMER_H
-#define DRIVER_TIMER_H
+#ifndef DRIVER_KEYBOARD_H
+#define DRIVER_KEYBOARD_H
 
 void kernel_keyboard_init(void);
 

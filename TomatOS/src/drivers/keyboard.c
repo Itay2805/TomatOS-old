@@ -11,7 +11,6 @@
 bool __key_states[0x7f];
 
 static void __keyboard_callback(registers_t regs) {
-	term_write("this is a test\n");
 	uint8_t scancode = port_byte_in(0x60);
 	event_t event;
 	if (scancode <= 0x7f) {

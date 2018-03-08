@@ -67,7 +67,7 @@ event_t os_pull_event_raw(uint32_t filter);
 event_t os_pull_event(uint32_t filter);
 void os_queue_event(event_t event);
 
-timer_t os_start_timer(uint32_t timeout);
+timer_t os_start_timer(float timeout);
 void os_cancel_timer(timer_t timer);
 void os_sleep(uint32_t timeout);
 

@@ -6,37 +6,22 @@
 #include <api/term.h>
 #include <api/color.h>
 
+#include "../drivers/timer.h"
+
 #define API_OS_QUEUE_INC 5
 
 event_t* __event_queue;
 int __queue_cap;
 volatile int __queue_size;
 const char* __label;
-
-event_t __pull_event(void) {
-	// wait for next event, need a better way
-	while (__queue_size == 0) {
-		__asm__("");
-	}
-	// get the event
-	event_t event = __event_queue[__queue_size];
-	__queue_size--;
-	return event;
-}
-
-void __queue_event(event_t event) {
-	__queue_size++;
-	if (__queue_cap >= __queue_size) {
-		__queue_cap += API_OS_QUEUE_INC;
-		__event_queue = realloc(__event_queue, __queue_cap);
-	}
-	__event_queue[__queue_size] = event;
-}
+uint32_t __timer_id;
 
 void kernel_os_init(void) {
 	__queue_size = 0;
 	__queue_cap = 0;
 	__event_queue = nullptr;
+
+	__timer_id = 0;
 
 	// TODO: somehow load label
 	__label = "<unlabeled>";
@@ -58,13 +43,18 @@ void os_set_computer_label(char* name) {
 event_t os_pull_event_raw(uint32_t filter) {
 	event_t event;
 	do {
-		event = __pull_event();
-	} while(filter != EVENT_ALL && event.type == filter);
+		while (__queue_size == 0) {
+			__asm__("");
+		}
+		event = __event_queue[--__queue_size];
+	} while(filter != EVENT_ALL && event.type != filter);
 	return event;
 }
 
 event_t os_pull_event(uint32_t filter) {
 	event_t event = os_pull_event_raw(filter);
+
+	// this is temp, will think for something better
 	if (event.type == EVENT_TERMINATE) {
 		// this means the program should be terminated...
 		// need to think how to handle this :think:
@@ -83,22 +73,29 @@ event_t os_pull_event(uint32_t filter) {
 		exception_t* exception = (exception_t*)&event;
 		term_write((char*)exception->msg);
 	}
+
 	return event;
 }
 
 void os_queue_event(event_t event) {
-	__queue_event(event);
+	if (__queue_cap <= __queue_size + 1) {
+		__queue_cap += API_OS_QUEUE_INC;
+		__event_queue = realloc(__event_queue, __queue_cap);
+	}
+	__event_queue[__queue_size] = event;
+	__queue_size++;
 }
 
-timer_t os_start_timer(uint32_t timeout) {
+timer_t os_start_timer(float timeout) {
 	timer_t timer;
-	timer.id = timeout;
+	timer.id = __timer_id++;
 	timer.type = 0;
+	timer_create(timer.id, (uint32_t)(timeout * 1000));
 	return timer;
 }
 
 void os_cancel_timer(timer_t timer) {
-
+	timer_cancel(timer.id);
 }
 
 bool timer_equals(timer_t a, timer_t b) {

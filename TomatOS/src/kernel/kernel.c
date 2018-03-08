@@ -13,22 +13,27 @@
 
 #include "../drivers/isr.h"
 #include "../drivers/keyboard.h"
+#include "../drivers/timer.h"
 #include "idt.h"
 
 void kernel_init() {
+	// install isrs
+	kernel_isr_install();
+
+	// enable interrupts
+#ifndef VISUAL_STUDIO
+	asm volatile("sti");
+#endif
+
+	// init keyboard driver
+	kernel_timer_init();
+	kernel_keyboard_init();
+
 	// init native terminal
 	kernel_init_native_term();
 	term_set_background_color(COLOR_BLACK);
 	term_set_text_color(COLOR_WHITE);
 	term_clear();
-
-
-	// install isrs
-	kernel_isr_install();
-
-	// init keyboard driver
-	kernel_keyboard_init();
-
 
 	// init memory management
 	kernel_memory_init();
@@ -80,6 +85,7 @@ void kmain(void) {
 					case KEYS_Z: term_write("Z"); break;
 					case KEYS_SPACE: term_write(" "); break;
 					case KEYS_ENTER: term_write("\n"); break;
+					default: term_write("unknown\n");
 				}
 			} break;
 		}
