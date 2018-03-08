@@ -47,6 +47,7 @@
     <ClInclude Include="src\libc\stdbool.h" />
     <ClInclude Include="src\libc\stddef.h" />
     <ClInclude Include="src\libc\stdint.h" />
+    <ClInclude Include="src\libc\stdio.h" />
     <ClInclude Include="src\libc\string.h" />
   </ItemGroup>
   <ItemGroup>
@@ -56,10 +57,12 @@
     <ClCompile Include="src\api\window.c" />
     <ClCompile Include="src\drivers\keyboard.c" />
     <ClCompile Include="src\drivers\ports.c" />
+    <ClCompile Include="src\drivers\timer.c" />
     <ClCompile Include="src\kernel\idt.c" />
     <ClCompile Include="src\drivers\isr.c" />
     <ClCompile Include="src\kernel\kernel.c" />
     <ClCompile Include="src\libc\memory.c" />
+    <ClCompile Include="src\libc\stdio.c" />
     <ClCompile Include="src\libc\string.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

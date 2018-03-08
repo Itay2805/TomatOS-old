@@ -96,6 +96,9 @@
     <ClInclude Include="src\api\include\api\keys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\libc\stdio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\api\native_term.c">
@@ -129,6 +132,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\drivers\keyboard.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\drivers\timer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\libc\stdio.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

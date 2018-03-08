@@ -69,7 +69,7 @@ void os_queue_event(event_t event);
 
 timer_t os_start_timer(float timeout);
 void os_cancel_timer(timer_t timer);
-void os_sleep(uint32_t timeout);
+void os_sleep(float timeout);
 
 
 

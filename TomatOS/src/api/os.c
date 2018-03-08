@@ -88,7 +88,7 @@ void os_queue_event(event_t event) {
 
 timer_t os_start_timer(float timeout) {
 	timer_t timer;
-	timer.id = __timer_id++;
+	timer.id = ++__timer_id;
 	timer.type = 0;
 	timer_create(timer.id, (uint32_t)(timeout * 1000));
 	return timer;
@@ -102,8 +102,13 @@ bool timer_equals(timer_t a, timer_t b) {
 	return a.id == b.id;
 }
 
-void os_sleep(uint32_t timeout) {
-
+void os_sleep(float timeout) {
+	timer_t timer = os_start_timer(timeout);
+	timer_t* timerEvent;
+	do {
+		event_t event = os_pull_event(EVENT_TIMER);
+		timerEvent = (timer_t*)&event;
+	} while (timerEvent->id != timer.id);
 }
 
 void os_shutdown(void) {

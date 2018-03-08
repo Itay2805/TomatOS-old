@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <memory.h>
+#include <stdio.h>
 
 #include <api/term.h>
 #include <api/color.h>
@@ -46,25 +47,4 @@ void kernel_init() {
 void kmain(void) {
 	kernel_init();
 
-	term_set_text_color(COLOR_RED);
-	term_set_background_color(COLOR_BLACK);
-	term_clear();
-	term_set_cursor_pos(0, 0);
-
-	timer_t timer = os_start_timer(10);
-
-	term_write("watiting 10 seconds..\n");
-
-	event_t event;
-	while (true) {
-		event = os_pull_event_raw(EVENT_TIMER);
-		switch (event.type) {
-			case EVENT_TIMER: {
-				timer_t* timerEvent = (timer_t*)&event;
-				if (timerEvent->id == timer.id) {
-					term_write("10 seconds have passed\n");
-				}
-			} break;
-		}
-	}
 }
