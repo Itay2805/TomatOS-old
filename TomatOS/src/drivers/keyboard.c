@@ -7,10 +7,13 @@
 #include <api/term.h>
 
 #include <stdbool.h>
+#include <stddef.h>
 
 bool __key_states[0x7f];
 
 static void __keyboard_callback(registers_t regs) {
+	UNUSED(regs);
+
 	uint8_t scancode = port_byte_in(0x60);
 	event_t event;
 	if (scancode <= 0x7f) {

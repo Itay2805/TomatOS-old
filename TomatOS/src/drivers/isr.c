@@ -1,8 +1,10 @@
 #include "isr.h"
 #include "../kernel/idt.h"
+#include "ports.h"
 
 #include <api/term.h>
 #include <api/os.h>
+#include <api/color.h>
 
 #include <memory.h>
 
@@ -112,13 +114,48 @@ void kernel_isr_install() {
 
 
 void kernel_isr_handler(registers_t r) {
-	// lets create an exception event
-	event_t event;
-	exception_t* exception = (exception_t*)&event;
-	exception->type = EVENT_EXCEPTION;
-	exception->code = r.int_no;
-	exception->msg = exception_messages[r.int_no];
-	os_queue_event(event);
+
+	// TODO: Add debug thing, need to think about how it will differ from the Debug
+
+	if (r.int_no == 3) {
+		// for the breakpoint interrupt I want to just stop the program until a key input
+		// it is just to have a way to see the program output without qemu crashing
+		// will wait until you press a key
+		
+		// save the terminal
+		uint16_t oldX = term_get_cursor_x();
+		uint16_t oldY = term_get_cursor_y();
+		uint8_t savedTextColor = term_get_text_color();
+		uint8_t savedBackgroundColor = term_get_background_color();
+		
+		// prepare for writing
+		term_set_cursor_pos(0, term_get_height() - 2);
+		term_set_text_color(COLOR_WHITE);
+		term_set_background_color(COLOR_RED);
+
+		term_write("BREAKPOINT: Press any key to continue\n");
+
+		// we must use a serial since we are in an interrupt
+		// which means all other interrupts won't work right now
+		while (!(port_byte_in(0x64) & 1));
+
+		term_set_cursor_pos(0, term_get_height() - 2);
+		term_write("BREAKPOINT: Continue....             \n");
+
+		// restore the terminal
+		term_set_text_color(savedTextColor);
+		term_set_background_color(savedBackgroundColor);
+		term_set_cursor_pos(oldX, oldY);
+	}
+	else {
+		// for any other exception we will just create an event
+		event_t event;
+		exception_t* exception = (exception_t*)&event;
+		exception->type = EVENT_EXCEPTION;
+		exception->code = r.int_no;
+		exception->msg = exception_messages[r.int_no];
+		os_queue_event(event);
+	}
 }
 
 void kernel_irq_handler(registers_t r) {

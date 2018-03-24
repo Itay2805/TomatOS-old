@@ -11,6 +11,7 @@
 
 #include <string.h>
 #include <memory.h>
+#include <stddef.h>
 
 typedef struct __timer_t {
 	uint32_t id;
@@ -23,6 +24,8 @@ __timer_t* base;
 // TODO: Maybe have the timer driver handle the id generation
 
 static void __timer_callback(registers_t regs) {
+	UNUSED(regs);
+
 	if (base == nullptr) return;
 	__timer_t* curr = base;
 	__timer_t* before = nullptr;

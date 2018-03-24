@@ -71,7 +71,9 @@ timer_t os_start_timer(float timeout);
 void os_cancel_timer(timer_t timer);
 void os_sleep(float timeout);
 
-
+#define BREAKPOINT asm("int $3");
+#define DEBUG(format, ...) do { printf(format, __VA_ARGS__);asm("int $3"); }while(0)
+#define ASSERT(check, format, ...) if(!(check)) { printf(format, __VA_ARGS__);asm("int $3"); }
 
 void os_shutdown(void);
 void os_reboot(void);

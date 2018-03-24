@@ -12,6 +12,7 @@
 #include <api/window.h>
 #include <api/os.h>
 #include <api/keys.h>
+#include <api/coroutine.h>
 
 #include "../drivers/isr.h"
 #include "../drivers/keyboard.h"
@@ -34,7 +35,7 @@ void kernel_init() {
 	asm volatile("sti");
 #endif
 
-	// init keyboard driver
+	// init drivers
 	kernel_timer_init();
 	kernel_keyboard_init();
 

@@ -74,11 +74,9 @@ void* memmove(void* dst, void* src, size_t length) {
 }
 
 void* memset(void* dst, uint8_t val, size_t length) {
-    uint8_t* dest = dst;
-    while (length > 0) {
-        *dest = val;
-        dest++;
-        length--;
+    uint8_t* dest = (uint8_t*)dst;
+    while (length--) {
+        *dest++ = val;
     }
     return dst;
 }
