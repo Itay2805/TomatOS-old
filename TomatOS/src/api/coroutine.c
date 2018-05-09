@@ -1,6 +1,7 @@
 #include "include/api/coroutine.h"
 
 #include <memory.h>
+#include <api/os.h>
 
 #define COROUTINE_STACK_SIZE 1024*1024
 
@@ -32,14 +33,14 @@ void* coroutine_resume(coroutine_t* coro, void* arg) {
 	if (coro->__stack == nullptr) {
 		coro->__stack = malloc(COROUTINE_STACK_SIZE);
 	}
+	
 	if (!setjmp(current->__caller)) {
 		// starting coroutine
 		funcparam = arg;
-		
 		// save current stack
 		uintptr_t prev_stack = 0;
 #ifndef VISUAL_STUDIO
-		asm("movl %0, %%esp" : "=r"(prev_stack) : );
+		asm("movl %%esp, %0" : "=r"(prev_stack) : );
 #endif
 		current->__prev_stack = prev_stack;
 		if (current->__first) {
@@ -47,7 +48,7 @@ void* coroutine_resume(coroutine_t* coro, void* arg) {
 			// we leave space for the longjmp
 			uintptr_t stack = current->__stack + COROUTINE_STACK_SIZE;
 #ifndef VISUAL_STUDIO
-			asm("movl %%esp, %0" : : "r"(stack));
+			asm("movl %0, %%esp" : : "r"(stack));
 #endif
 			// if we just started the coroutine, just call the function normally
 			current->__first = false;
@@ -63,7 +64,7 @@ void* coroutine_resume(coroutine_t* coro, void* arg) {
 		// for better clearity 
 		funcparam = current->__prev_stack;
 #ifndef VISUAL_STUDIO
-		asm("movl %%esp, %0" : : "r"(funcparam));
+		asm("movl %0, %%esp" : : "r"(funcparam));
 #endif
 		// free the stack
 		free(coro->__stack);

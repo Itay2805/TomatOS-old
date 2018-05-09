@@ -12,6 +12,7 @@
 #include <api/window.h>
 #include <api/os.h>
 #include <api/keys.h>
+#include <api/coroutine.h>
 
 #include "../drivers/isr.h"
 #include "../drivers/keyboard.h"
@@ -45,28 +46,24 @@ void kernel_init() {
 	kernel_init_window();
 }
 
+void test(void* arg) {
+	int max = arg;
+	for (int i = 0; i < max; i++) {
+		coroutine_yield(i);
+	}
+}
+
 void kmain(void) {
 	kernel_init();
 
-	timer_t timer = os_start_timer(5);
-	bool waiting = true;
-	while (waiting) {
-		event_t event = os_pull_event(EVENT_ALL);
-		switch (event.type) {
-		case EVENT_TIMER: {
-				timer_t * e = EVENT_CAST(timer_t);
-				if (e->id == timer.id) {
-					term_write("Timeout!\n");
-					waiting = true;
-				}
-			}
-			break;
-		case EVENT_KEY: {
-			key_event_t* e = EVENT_CAST(key_event_t);
-				term_write("Pressed!\n");
-				waiting = false;
-			}
+	term_write("hello world!\n");
+
+	coroutine_t coro = coroutine_create(test);
+	while (true) {
+		int i = coroutine_resume(&coro, 5);
+		if (coroutine_status(&coro) == COROUTINE_STATUS_DEAD) {
 			break;
 		}
+		printf("%d\n", i);
 	}
 }
