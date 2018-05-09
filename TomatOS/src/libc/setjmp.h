@@ -3,12 +3,16 @@
 
 #include <stdint.h>
 
-typedef uint32_t jmp_buf[20];
+typedef struct {
+	unsigned long ebp;
+	unsigned long ebx;
+	unsigned long edi;
+	unsigned long esi;
+	unsigned long esp;
+	unsigned long eip;
+} jmp_buf[1];
 
-extern int __builtin_setjmp(jmp_buf* buf);
-extern void __builtin_longjmp(jmp_buf* buf, int m);
-
-#define setjmp __builtin_setjmp
-#define longjmp __builtin_longjmp
+extern int setjmp(jmp_buf env);
+extern void longjmp(jmp_buf env, int value);
 
 #endif

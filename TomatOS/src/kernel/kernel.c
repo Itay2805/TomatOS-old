@@ -48,7 +48,7 @@ void kernel_init() {
 void kmain(void) {
 	kernel_init();
 
-	timer_t timer = os_start_timer(1000);
+	timer_t timer = os_start_timer(5);
 	bool waiting = true;
 	while (waiting) {
 		event_t event = os_pull_event(EVENT_ALL);

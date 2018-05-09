@@ -1,5 +1,4 @@
 # some values
-PREFIX="/usr/local/i386elfgcc"
 export PATH="$PREFIX/bin:$PATH"
 export C_INCLUDE_PATH=./src/api/include/:./src/libc/
 #export CFLAGS="-g -ffreestanding -Wall -Wextra -fno-exceptions -m32"
@@ -31,7 +30,7 @@ do
         of="build/$of"
         objectFiles="$objectFiles $of"
         echo "  $f > $of"
-        i386-elf-gcc $CCFLAGS -c "./$f" -o "./$of" 
+        gcc $CCFLAGS -c "./$f" -o "./$of" 
     done
 	for f in $(find $d/*.asm)
     do
@@ -47,7 +46,7 @@ nasm boot/kernel_entry.asm -f elf -o build/kernel_entry.o
 
 # link kernel
 echo "Linking kernel"
-i386-elf-ld -o build/kernel.bin -Ttext 0x1000 build/kernel_entry.o $objectFiles --oformat binary
+ld -melf_i386 -o build/kernel.bin -Ttext 0x1000 build/kernel_entry.o $objectFiles --oformat binary
 
 # compile the bootloader
 echo "Compiling bootloader"
