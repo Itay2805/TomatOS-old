@@ -46,24 +46,32 @@ void kernel_init() {
 	kernel_init_window();
 }
 
-void test(void* arg) {
-	int max = arg;
-	for (int i = 0; i < max; i++) {
-		coroutine_yield(i);
-	}
+void program(void* arg) {
+	// actual program
+	os_pull_event(EVENT_KEY);
+	printf("pressed!");
 }
 
 void kmain(void) {
 	kernel_init();
 
-	term_write("hello world!\n");
-
-	coroutine_t coro = coroutine_create(test);
+	// the main program coroutine
+	coroutine_t coro = coroutine_create(program);
+	event_t lastEvent;
 	while (true) {
-		int i = coroutine_resume(&coro, 5);
+		// resume the coroutine with an event
+		// in the first run it will ignore the event
+		// whenever the programs yields out of it's coroutine (by default
+		// it should only be when calling `poll_event_raw`) the kernel will halt until
+		// an input is received
+		int filter = coroutine_resume(&coro, &lastEvent);
+
+		// did the program finish? if so exit
 		if (coroutine_status(&coro) == COROUTINE_STATUS_DEAD) {
 			break;
 		}
-		printf("%d\n", i);
+
+		// call the kernel poll event (a blocking function)
+		lastEvent = kernel_poll_event(filter);
 	}
 }

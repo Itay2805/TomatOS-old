@@ -61,6 +61,7 @@ typedef struct {
 bool timer_equals(timer_t a, timer_t b);
 
 void kernel_os_init(void);
+event_t kernel_poll_event(uint32_t filter);
 
 const char* os_version(void);
 const char* os_get_computer_label(void);

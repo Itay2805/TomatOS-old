@@ -5,6 +5,7 @@
 
 #include <api/term.h>
 #include <api/color.h>
+#include <api/coroutine.h>
 
 #include "../drivers/timer.h"
 
@@ -15,6 +16,7 @@ static int queue_cap;
 static volatile int queue_front, queue_rear, queue_item_count;
 static const char* label;
 static uint32_t timer_id;
+
 
 void kernel_os_init(void) {
 	queue_item_count = 0;
@@ -42,11 +44,31 @@ void os_set_computer_label(char* name) {
 	// save label
 }
 
-event_t os_pull_event_raw(uint32_t filter) {
+// this is meant for the kernel only, it is a **blocking** poll event
+// basically the normal one will yield, the idea is that techncially
+// the program can catch that event yield, and do whatever it wants
+// until it will eventually yield as well to get some actual input
+event_t kernel_poll_event(uint32_t filter) {
 	event_t event;
 	do {
 		while (queue_item_count == 0) {
 			__asm__("");
+		}
+		event = event_queue[queue_front++];
+		if (queue_front == queue_cap) {
+			queue_cap = 0;
+		}
+		queue_item_count--;
+	} while (filter != EVENT_ALL && event.type != filter);
+	return event;
+}
+
+event_t os_pull_event_raw(uint32_t filter) {
+	event_t event;
+	do {
+		while (queue_item_count == 0) {
+			// if the queue is empty we yield
+			return *(event_t*)coroutine_yield(filter);
 		}
 		event = event_queue[queue_front++];
 		if (queue_front == queue_cap) {

@@ -28,11 +28,14 @@
     <None Include="boot\prot\switch.asm" />
     <None Include="build.sh" />
     <None Include="src\kernel\interrupt.asm" />
+    <None Include="src\libc\setjmp.asm" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\api\include\api\color.h" />
+    <ClInclude Include="src\api\include\api\coroutine.h" />
     <ClInclude Include="src\api\include\api\keys.h" />
     <ClInclude Include="src\api\include\api\os.h" />
+    <ClInclude Include="src\api\include\api\parallel.h" />
     <ClInclude Include="src\api\include\api\term.h" />
     <ClInclude Include="src\api\include\api\window.h" />
     <ClInclude Include="src\drivers\ata.h" />
@@ -53,6 +56,7 @@
     <ClInclude Include="src\libc\string.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\api\coroutine.c" />
     <ClCompile Include="src\api\native_term.c" />
     <ClCompile Include="src\api\os.c" />
     <ClCompile Include="src\api\term.c" />
@@ -64,7 +68,6 @@
     <ClCompile Include="src\drivers\isr.c" />
     <ClCompile Include="src\kernel\kernel.c" />
     <ClCompile Include="src\libc\memory.c" />
-    <ClCompile Include="src\libc\setjmp.c" />
     <ClCompile Include="src\libc\stdio.c" />
     <ClCompile Include="src\libc\string.c" />
   </ItemGroup>

@@ -52,5 +52,8 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+# Build folders
+x64
+
 # Visual studio folder 
 .vs
