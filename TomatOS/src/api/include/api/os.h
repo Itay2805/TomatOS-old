@@ -15,6 +15,9 @@
 
 #define EVENT_EXCEPTION		6
 
+#define EVENT_CAST_VAR(type, name) (type*)&name 
+#define EVENT_CAST(type) (type*)&event
+
 typedef struct {
 	uint32_t type;
 	size_t data[4];

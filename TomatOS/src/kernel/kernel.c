@@ -12,7 +12,6 @@
 #include <api/window.h>
 #include <api/os.h>
 #include <api/keys.h>
-#include <api/coroutine.h>
 
 #include "../drivers/isr.h"
 #include "../drivers/keyboard.h"
@@ -49,4 +48,25 @@ void kernel_init() {
 void kmain(void) {
 	kernel_init();
 
+	timer_t timer = os_start_timer(1000);
+	bool waiting = true;
+	while (waiting) {
+		event_t event = os_pull_event(EVENT_ALL);
+		switch (event.type) {
+		case EVENT_TIMER: {
+				timer_t * e = EVENT_CAST(timer_t);
+				if (e->id == timer.id) {
+					term_write("Timeout!\n");
+					waiting = true;
+				}
+			}
+			break;
+		case EVENT_KEY: {
+			key_event_t* e = EVENT_CAST(key_event_t);
+				term_write("Pressed!\n");
+				waiting = false;
+			}
+			break;
+		}
+	}
 }

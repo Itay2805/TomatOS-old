@@ -9,6 +9,7 @@
 void kernel_memory_init(void);
 
 void* malloc(size_t size);
+void* calloc(size_t nitems, size_t size);
 void* realloc(void* ptr, size_t newsize);
 bool free(void* ptr);
 

@@ -11,36 +11,36 @@
 /// Terminal Window setup
 ///////////////////////////////////////////////////////
 
-term_t __window_term;
+static term_t window_term;
 
-void window_term_write(char* text);
-void window_term_clear(void);
-void window_term_set_text_color(uint8_t color);
-void window_term_set_background_color(uint8_t color);
-uint8_t window_term_get_text_color(void);
-uint8_t window_term_get_background_color(void);
-void window_term_set_cursor_pos(uint16_t x, uint16_t y);
-uint16_t window_term_get_cursor_x(void);
-uint16_t window_term_get_cursor_y(void);
-uint16_t window_term_get_width(void);
-uint16_t window_term_get_height(void);
-void window_term_scroll(uint16_t n);
-void window_term_clear_line(uint16_t n);
+static void window_term_write(char* text);
+static void window_term_clear(void);
+static void window_term_set_text_color(uint8_t color);
+static void window_term_set_background_color(uint8_t color);
+static uint8_t window_term_get_text_color(void);
+static uint8_t window_term_get_background_color(void);
+static void window_term_set_cursor_pos(uint16_t x, uint16_t y);
+static uint16_t window_term_get_cursor_x(void);
+static uint16_t window_term_get_cursor_y(void);
+static uint16_t window_term_get_width(void);
+static uint16_t window_term_get_height(void);
+static void window_term_scroll(uint16_t n);
+static void window_term_clear_line(uint16_t n);
 
 void kernel_init_window(void) {
-	__window_term.write = window_term_write;
-	__window_term.clear = window_term_clear;
-	__window_term.set_text_color = window_term_set_text_color;
-	__window_term.set_background_color = window_term_set_background_color;
-	__window_term.get_text_color = window_term_get_text_color;
-	__window_term.get_background_color = window_term_get_background_color;
-	__window_term.set_cursor_pos = window_term_set_cursor_pos;
-	__window_term.get_cursor_x = window_term_get_cursor_x;
-	__window_term.get_cursor_y = window_term_get_cursor_y;
-	__window_term.get_width = window_term_get_width;
-	__window_term.get_height = window_term_get_height;
-	__window_term.scroll = window_term_scroll;
-	__window_term.clear_line = window_term_clear_line;
+	window_term.write = window_term_write;
+	window_term.clear = window_term_clear;
+	window_term.set_text_color = window_term_set_text_color;
+	window_term.set_background_color = window_term_set_background_color;
+	window_term.get_text_color = window_term_get_text_color;
+	window_term.get_background_color = window_term_get_background_color;
+	window_term.set_cursor_pos = window_term_set_cursor_pos;
+	window_term.get_cursor_x = window_term_get_cursor_x;
+	window_term.get_cursor_y = window_term_get_cursor_y;
+	window_term.get_width = window_term_get_width;
+	window_term.get_height = window_term_get_height;
+	window_term.scroll = window_term_scroll;
+	window_term.clear_line = window_term_clear_line;
 }
 
 ///////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ void kernel_init_window(void) {
 window_t window_create(term_t* parentTerm, uint16_t x, uint16_t y, uint16_t width, uint16_t height, bool visible) {
 	window_t window;
 
-	window.__term = __window_term;
+	window.__term = window_term;
 
 	window.__parent = parentTerm;
 	window.__x = x;
@@ -286,54 +286,56 @@ void window_redraw(window_t* window) {
 
 #define API_WINDOW_CURRENT_WINDOW ((window_t*)term_current())
 
-void window_term_write(char* text) {
+static void window_term_write(char* text) {
 	window_write(API_WINDOW_CURRENT_WINDOW, text);
 }
 
-void window_term_clear(void) {
+static void window_term_clear(void) {
 	window_clear(API_WINDOW_CURRENT_WINDOW);
 }
 
-void window_term_set_text_color(uint8_t color) {
+static void window_term_set_text_color(uint8_t color) {
 	window_set_text_color(API_WINDOW_CURRENT_WINDOW, color);
 }
 
-void window_term_set_background_color(uint8_t color) {
+static void window_term_set_background_color(uint8_t color) {
 	window_set_background_color(API_WINDOW_CURRENT_WINDOW, color);
 }
 
-uint8_t window_term_get_text_color(void) {
+static uint8_t window_term_get_text_color(void) {
 	return window_get_text_color(API_WINDOW_CURRENT_WINDOW);
 }
 
-uint8_t window_term_get_background_color(void) {
+static uint8_t window_term_get_background_color(void) {
 	return window_get_background_color(API_WINDOW_CURRENT_WINDOW);
 }
 
-void window_term_set_cursor_pos(uint16_t x, uint16_t y) {
+static void window_term_set_cursor_pos(uint16_t x, uint16_t y) {
 	window_set_cursor_pos(API_WINDOW_CURRENT_WINDOW, x, y);
 }
 
-uint16_t window_term_get_cursor_x(void) {
+static uint16_t window_term_get_cursor_x(void) {
 	return window_get_cursor_x(API_WINDOW_CURRENT_WINDOW);
 }
 
-uint16_t window_term_get_cursor_y(void) {
+static uint16_t window_term_get_cursor_y(void) {
 	return window_get_cursor_y(API_WINDOW_CURRENT_WINDOW);
 }
 
-uint16_t window_term_get_width(void) {
+static uint16_t window_term_get_width(void) {
 	return window_get_width(API_WINDOW_CURRENT_WINDOW);
 }
 
-uint16_t window_term_get_height(void) {
+static uint16_t window_term_get_height(void) {
 	return window_get_height(API_WINDOW_CURRENT_WINDOW);
 }
 
-void window_term_scroll(uint16_t n) {
+static void window_term_scroll(uint16_t n) {
 	window_scroll(API_WINDOW_CURRENT_WINDOW, n);
 }
 
-void window_term_clear_line(uint16_t n) {
+static void window_term_clear_line(uint16_t n) {
 	window_clear_line(API_WINDOW_CURRENT_WINDOW, n);
 }
+
+#undef API_WINDOW_CURRENT_WINDOW

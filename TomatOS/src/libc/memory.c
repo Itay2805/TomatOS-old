@@ -11,6 +11,7 @@
 
 
 #define LIBC_MEMORY_MAGIC 0xFACC0FF
+#define LIBC_MEMORY_START 0x10000
 
 typedef struct __memory_block_t {
 	struct __memory_block_t* before;
@@ -54,10 +55,10 @@ __memory_block_t* __get_next_free_block(__memory_block_t* from, bool* valid) {
 
 __memory_block_t* __merge_empty_blocks(__memory_block_t* from) {
 	bool valid;
-	
+
 	// get next block
 	__memory_block_t* next = __get_next_block(from, &valid);
-	
+
 	// if the block is valid and is not allocated, let's merge with it
 	if (valid && !next->allocated) {
 		from->size = sizeof(__memory_block_t) + next->size;
@@ -65,7 +66,7 @@ __memory_block_t* __merge_empty_blocks(__memory_block_t* from) {
 		next->size = 0;
 		next->magic = 0;
 	}
-	
+
 	// is the block before empty and valid? if so lets attempt to merge with it
 	if (from->before != nullptr && from->before->magic == LIBC_MEMORY_MAGIC && !from->before->allocated) {
 		return __merge_empty_blocks(from->before);
@@ -86,7 +87,7 @@ __memory_block_t* first_free_block;
 
 void kernel_memory_init(void) {
 	// setup our heap's start address
-	heap_start_address = (uintptr_t)0x10000;
+	heap_start_address = (uintptr_t)LIBC_MEMORY_START;
 
 	// setup the first block, always free
 	first_free_block = (__memory_block_t*)heap_start_address;
@@ -105,7 +106,7 @@ void* malloc(size_t size) {
 	do {
 		// do we have enough space
 		if (block->size >= size) {
-			 
+
 			// do we have enough space to divide the block into two blocks?
 			if ((block->size - size - sizeof(__memory_block_t)) > 0) {
 				// divide the memory block
@@ -114,7 +115,7 @@ void* malloc(size_t size) {
 				newblock->size = block->size - size;
 				newblock->magic = LIBC_MEMORY_MAGIC;
 				newblock->before = block;
-				
+
 				// set the block size
 				block->size = size;
 
@@ -188,4 +189,10 @@ void* realloc(void* ptr, size_t newsize) {
 	memcpy(newPtr, ptr, newsize);
 
 	return newPtr;
+}
+
+void* calloc(size_t nitems, size_t size) {
+	void* mem = malloc(nitems * size);
+	if(mem != nullptr) memset(mem, NULL, nitems * size);
+	return mem;
 }

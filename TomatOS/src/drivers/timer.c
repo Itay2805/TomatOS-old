@@ -52,7 +52,7 @@ static void __timer_callback(registers_t regs) {
 	}
 }
 
-void timer_create(uint32_t id, uint32_t milis) {
+void driver_timer_create(uint32_t id, uint32_t milis) {
 	__timer_t* timer = (__timer_t*)malloc(sizeof(__timer_t));
 	timer->id = id;
 	timer->milis_left = milis;
@@ -60,7 +60,7 @@ void timer_create(uint32_t id, uint32_t milis) {
 	base = timer;
 }
 
-void timer_cancel(uint32_t id) {
+void driver_timer_cancel(uint32_t id) {
 	if (base == nullptr) return;
 	__timer_t* curr = base;
 	__timer_t* before = nullptr;

@@ -10,21 +10,23 @@
 
 #define API_OS_QUEUE_INC 5
 
-event_t* __event_queue;
-int __queue_cap;
-volatile int __queue_size;
-const char* __label;
-uint32_t __timer_id;
+static event_t* event_queue;
+static int queue_cap;
+static volatile int queue_front, queue_rear, queue_item_count;
+static const char* label;
+static uint32_t timer_id;
 
 void kernel_os_init(void) {
-	__queue_size = 0;
-	__queue_cap = 0;
-	__event_queue = nullptr;
+	queue_item_count = 0;
+	queue_front = 0;
+	queue_rear = -1;
+	queue_cap = API_OS_QUEUE_INC;
+	event_queue = malloc(sizeof(event_t) * API_OS_QUEUE_INC);
 
-	__timer_id = 0;
+	timer_id = 0;
 
 	// TODO: somehow load label
-	__label = "<unlabeled>";
+	label = "<unlabeled>";
 }
 
 const char* os_version(void) {
@@ -32,21 +34,25 @@ const char* os_version(void) {
 }
 
 const char* os_get_computer_label(void) {
-	return __label;
+	return label;
 }
 
 void os_set_computer_label(char* name) {
-	__label = name;
+	label = name;
 	// save label
 }
 
 event_t os_pull_event_raw(uint32_t filter) {
 	event_t event;
 	do {
-		while (__queue_size == 0) {
+		while (queue_item_count == 0) {
 			__asm__("");
 		}
-		event = __event_queue[--__queue_size];
+		event = event_queue[queue_front++];
+		if (queue_front == queue_cap) {
+			queue_cap = 0;
+		}
+		queue_item_count--;
 	} while(filter != EVENT_ALL && event.type != filter);
 	return event;
 }
@@ -78,24 +84,27 @@ event_t os_pull_event(uint32_t filter) {
 }
 
 void os_queue_event(event_t event) {
-	if (__queue_cap <= __queue_size + 1) {
-		__queue_cap += API_OS_QUEUE_INC;
-		__event_queue = realloc(__event_queue, __queue_cap);
+	if (queue_cap == queue_item_count) {
+		// resize if needed
+		event_queue = realloc(event_queue, queue_cap + API_OS_QUEUE_INC);
 	}
-	__event_queue[__queue_size] = event;
-	__queue_size++;
+	if (queue_rear == queue_cap - 1) {
+		queue_rear = -1;
+	}
+	event_queue[++queue_rear] = event;
+	queue_item_count++;
 }
 
 timer_t os_start_timer(float timeout) {
 	timer_t timer;
-	timer.id = ++__timer_id;
+	timer.id = ++timer_id;
 	timer.type = 0;
-	timer_create(timer.id, (uint32_t)(timeout * 1000));
+	driver_timer_create(timer.id, (uint32_t)(timeout * 1000));
 	return timer;
 }
 
 void os_cancel_timer(timer_t timer) {
-	timer_cancel(timer.id);
+	driver_timer_cancel(timer.id);
 }
 
 bool timer_equals(timer_t a, timer_t b) {
