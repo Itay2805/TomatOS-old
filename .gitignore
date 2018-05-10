@@ -36,6 +36,7 @@
 *.x86_64
 *.hex
 *.bin
+*.iso
 
 # Debug files
 *.dSYM/
@@ -54,6 +55,7 @@ dkms.conf
 
 # Build folders
 x64
+
 
 # Visual studio folder 
 .vs
