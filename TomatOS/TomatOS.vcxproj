@@ -59,6 +59,7 @@
     <ClCompile Include="src\api\coroutine.c" />
     <ClCompile Include="src\api\native_term.c" />
     <ClCompile Include="src\api\os.c" />
+    <ClCompile Include="src\api\parallel.c" />
     <ClCompile Include="src\api\term.c" />
     <ClCompile Include="src\api\window.c" />
     <ClCompile Include="src\drivers\keyboard.c" />

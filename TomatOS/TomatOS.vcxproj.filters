@@ -158,5 +158,8 @@
     <ClCompile Include="src\api\coroutine.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\api\parallel.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
