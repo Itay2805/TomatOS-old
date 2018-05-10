@@ -1,4 +1,5 @@
-GCCPARAMS="-m32 -Iinclude -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Wno-write-strings"
+export C_INCLUDE_PATH=include:libc
+GCCPARAMS="-Wall -Wextra -m32 --fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Wno-write-strings"
 CCFLAGS="-Wall -Wextra -std=gnu99 -nostdinc -fno-builtin -fno-stack-protector -march=i386 -m32"
 NASMPARAMS="-f elf"
 LDPARAMS="-melf_i386"
@@ -30,6 +31,28 @@ do
         objects="$objects $of"
         echo "  $f > $of"
         g++ $GCCPARAMS -c "./$f" -o "./$of" 
+    done
+	for f in $(find $d/*.asm)
+    do
+        of=`echo $f | sed 's/\(.*\)asm/\1o/'`
+        of="build/$of"
+        objects="$objects $of"
+        echo "  $f > $of"
+        nasm $NASMPARAMS "./$f" -o "./$of"
+    done
+done
+
+echo "Compiling LIBC"
+for d in $(find libc/ -type d)
+do
+    mkdir "build/$d"
+    for f in $(find $d/*.c)
+    do
+        of=`echo $f | sed 's/\(.*\)c/\1o/'`
+        of="build/$of"
+        objects="$objects $of"
+        echo "  $f > $of"
+        gcc $CCFLAGS -c "./$f" -o "./$of" 
     done
 	for f in $(find $d/*.asm)
     do
