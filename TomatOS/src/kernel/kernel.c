@@ -13,6 +13,7 @@
 #include <api/os.h>
 #include <api/keys.h>
 #include <api/coroutine.h>
+#include <api/parallel.h>
 
 #include "../drivers/isr.h"
 #include "../drivers/keyboard.h"
@@ -46,10 +47,21 @@ void kernel_init() {
 	kernel_init_window();
 }
 
+void some_test() {
+	for (int i = 0; i < 10; i++) {
+		term_write("something\n");
+		os_pull_event(0);
+	}
+}
+
+void some_other_test() {
+	for (int i = 0; i < 10; i++) {
+		term_write("something else\n");
+	}
+}
+
 void program(void* arg) {
 	// actual program
-	os_pull_event(EVENT_KEY);
-	printf("pressed!");
 }
 
 void kmain(void) {
