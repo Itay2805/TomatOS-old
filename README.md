@@ -19,6 +19,7 @@ This is just a small OS I am working on. Nothing much.
 - timer API (interrupt based), used with the event system
 - keyboard API (interrupt based), used with the event system
 - coroutine API
+- parallel API, allowing to run multiple coroutines until either one, or all of them finish.
 
 # Building
 
