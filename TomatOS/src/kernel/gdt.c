@@ -30,16 +30,8 @@ void initialize_gdt() {
 	
 	gdt.code.available = 0;
 	gdt.code.always_0 = 0;
-	if (limit <= UINT16_MAX) {
-		// 16bit address space
-		gdt.code.big = 1;
-		gdt.code.gran = 0;
-	}
-	else {
-		// 32bit address space
-		gdt.code.big = 1;
-		gdt.code.gran = 1;
-	}
+	gdt.code.big = 1;
+	gdt.code.gran = 1;
 
 	gdt.code.limit_high = 0xF; //(limit >> 16) & 0xF;
 	gdt.code.base_high = 0;    //(base >> 24) & 0xFF;
@@ -52,5 +44,5 @@ void initialize_gdt() {
 	gdt_descriptor_t i;
 	i.size = sizeof(gdt_t);
 	i.start = (size_t)&gdt;
-	ASM(asm volatile("lgdt (%0)" : : "r"(&i)));
+	ASM(asm volatile("lgdt (%0)" : : "p"(&i)));
 }

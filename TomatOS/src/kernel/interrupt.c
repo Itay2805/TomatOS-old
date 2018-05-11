@@ -20,17 +20,17 @@ typedef struct gate_descriptor_t {
 	uint8_t reserved;
 	uint8_t access;
 	uint16_t handler_address_high_bits;
-} PACKED gate_descriptor_t;
+} PACKED idt_gate_t;
 
 typedef struct idt_pointer_t {
 	uint16_t size;
 	uintptr_t base;
-} PACKED idt_pointer_t;
+} PACKED idt_register_t;
 
 
 static interrupt_handler handlers[256];
-static idt_pointer_t idt_ptr;
-static gate_descriptor_t interrupt_descriptor_table[256];
+static idt_register_t idt_reg;
+static idt_gate_t idt[256];
 
 // default interrupt
 extern void ignore_interrupt();
@@ -52,9 +52,6 @@ extern void handle_interrupt_request_0C();
 extern void handle_interrupt_request_0D();
 extern void handle_interrupt_request_0E();
 extern void handle_interrupt_request_0F();
-
-// syscall
-extern void handle_syscall();
 
 // exceptions
 extern void handle_exception_interrupt_00();
@@ -83,46 +80,26 @@ void register_interrupt_handler(uint8_t interrupt, interrupt_handler handler) {
 
 #include <string.h>
 
-void handle_interrupt(registers_t regs) {
-	uint8_t* t = (uint8_t*)0xb8000;
-	char buf[256];
-	itoa(regs.int_no, buf, 10);
-	t[0] = buf[0];
-	t[1] = 0xF;
-	t[2] = buf[1];
-	t[3] = 0xF;
-	t[4] = buf[2];
-	t[5] = 0xF;
+void kernel_irq_handler(registers_t r) {
+	if (r.int_no >= 40) port_write8(PIC_SLAVE_COMMAND_PORT, 0x20);
+	port_write8(PIC_MASTER_COMMAND_PORT, 0x20);
 
-	itoa(regs.code, buf, 10);
-	t[10] = buf[0];
-	t[11] = 0xF;
-	t[12] = buf[1];
-	t[13] = 0xF;
-	t[14] = buf[2];
-	t[15] = 0xF;
-
-
-	if (handlers[regs.int_no] != NULL) {
-		handlers[regs.int_no](regs);
-	}
-	
-
-	// acknowledge irq
-	if (IRQ_OFFSET <= regs.int_no && regs.int_no < IRQ_OFFSET + 16) {
-		port_write8(PIC_MASTER_COMMAND_PORT, 0x20);
-		if (IRQ_OFFSET + 8 <= regs.int_no) {
-			port_write8(PIC_SLAVE_COMMAND_PORT, 0x20);
-		}
+	if (handlers[r.int_no] != NULL) {
+		handlers[r.int_no](r);
 	}
 }
 
-static void set_interrupt_descriptor_entry(uint8_t interrupt, uint16_t code_segment, void(*handler)(), uint8_t descriptorPrivLevel, uint8_t descriptorType) {
-	interrupt_descriptor_table[interrupt].handler_address_low_bits = ((uint32_t)handler) & 0xFFFF;
-	interrupt_descriptor_table[interrupt].gdt_code_segment_selector = code_segment;
-	interrupt_descriptor_table[interrupt].reserved = 0;
-	interrupt_descriptor_table[interrupt].access = IDT_DESC_PRESENT | ((descriptorPrivLevel & 3) << 5) | descriptorType;
-	interrupt_descriptor_table[interrupt].handler_address_high_bits = (((uint32_t)handler) >> 16) & 0xFFFF;
+void kernel_exception_handler(registers_t r) {
+	((uint8_t*)0xb8000)[0] = r.int_no + '0';
+	((uint8_t*)0xb8000)[1] = 0xF;
+}
+
+static void set_idt_gate(uint8_t n, void(*handler)(void)) {
+	idt[n].handler_address_low_bits = (uint16_t)(((uint32_t)handler) & 0xFFFF);
+	idt[n].gdt_code_segment_selector = CODE_SEGMENT;
+	idt[n].reserved = 0;
+	idt[n].access = 0x8E;
+	idt[n].handler_address_high_bits = (uint16_t)(((uint32_t)handler >> 16) & 0xFFFF);
 }
 
 void initialize_interrupts(void) {
@@ -130,29 +107,29 @@ void initialize_interrupts(void) {
 
 	// set default handlers
 	for (uint16_t i = 0; i < 256; i++) {
-		set_interrupt_descriptor_entry(i, codeSegment, &ignore_interrupt, 0, IDT_INTERRUPT_GATE);
+		set_idt_gate(i, &ignore_interrupt);
 		handlers[i] = NULL;
 	}
 	
-	set_interrupt_descriptor_entry(0x00, codeSegment, &handle_exception_interrupt_00, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(0x01, codeSegment, &handle_exception_interrupt_01, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(0x02, codeSegment, &handle_exception_interrupt_02, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(0x03, codeSegment, &handle_exception_interrupt_03, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(0x04, codeSegment, &handle_exception_interrupt_04, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(0x05, codeSegment, &handle_exception_interrupt_05, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(0x06, codeSegment, &handle_exception_interrupt_06, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(0x07, codeSegment, &handle_exception_interrupt_07, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(0x08, codeSegment, &handle_exception_interrupt_08, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(0x09, codeSegment, &handle_exception_interrupt_09, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(0x0A, codeSegment, &handle_exception_interrupt_0A, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(0x0B, codeSegment, &handle_exception_interrupt_0B, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(0x0C, codeSegment, &handle_exception_interrupt_0C, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(0x0D, codeSegment, &handle_exception_interrupt_0D, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(0x0E, codeSegment, &handle_exception_interrupt_0E, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(0x0F, codeSegment, &handle_exception_interrupt_0F, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(0x10, codeSegment, &handle_exception_interrupt_10, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(0x11, codeSegment, &handle_exception_interrupt_11, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(0x12, codeSegment, &handle_exception_interrupt_12, 0, IDT_INTERRUPT_GATE);
+	set_idt_gate(0x00, &handle_exception_interrupt_00);
+	set_idt_gate(0x01, &handle_exception_interrupt_01);
+	set_idt_gate(0x02, &handle_exception_interrupt_02);
+	set_idt_gate(0x03, &handle_exception_interrupt_03);
+	set_idt_gate(0x04, &handle_exception_interrupt_04);
+	set_idt_gate(0x05, &handle_exception_interrupt_05);
+	set_idt_gate(0x06, &handle_exception_interrupt_06);
+	set_idt_gate(0x07, &handle_exception_interrupt_07);
+	set_idt_gate(0x08, &handle_exception_interrupt_08);
+	set_idt_gate(0x09, &handle_exception_interrupt_09);
+	set_idt_gate(0x0A, &handle_exception_interrupt_0A);
+	set_idt_gate(0x0B, &handle_exception_interrupt_0B);
+	set_idt_gate(0x0C, &handle_exception_interrupt_0C);
+	set_idt_gate(0x0D, &handle_exception_interrupt_0D);
+	set_idt_gate(0x0E, &handle_exception_interrupt_0E);
+	set_idt_gate(0x0F, &handle_exception_interrupt_0F);
+	set_idt_gate(0x10, &handle_exception_interrupt_10);
+	set_idt_gate(0x11, &handle_exception_interrupt_11);
+	set_idt_gate(0x12, &handle_exception_interrupt_12);
 	
 	port_write8(PIC_MASTER_COMMAND_PORT, 0x11);
 	port_write8(PIC_SLAVE_COMMAND_PORT, 0x11);
@@ -170,28 +147,26 @@ void initialize_interrupts(void) {
 	port_write8(PIC_MASTER_DATA_PORT, 0x00);
 	port_write8(PIC_SLAVE_DATA_PORT, 0x00);
 
-	set_interrupt_descriptor_entry(IRQ_OFFSET + 0x00, codeSegment, &handle_interrupt_request_00, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(IRQ_OFFSET + 0x01, codeSegment, &handle_interrupt_request_01, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(IRQ_OFFSET + 0x02, codeSegment, &handle_interrupt_request_02, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(IRQ_OFFSET + 0x03, codeSegment, &handle_interrupt_request_03, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(IRQ_OFFSET + 0x04, codeSegment, &handle_interrupt_request_04, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(IRQ_OFFSET + 0x05, codeSegment, &handle_interrupt_request_05, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(IRQ_OFFSET + 0x06, codeSegment, &handle_interrupt_request_06, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(IRQ_OFFSET + 0x07, codeSegment, &handle_interrupt_request_07, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(IRQ_OFFSET + 0x08, codeSegment, &handle_interrupt_request_08, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(IRQ_OFFSET + 0x09, codeSegment, &handle_interrupt_request_09, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(IRQ_OFFSET + 0x0A, codeSegment, &handle_interrupt_request_0A, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(IRQ_OFFSET + 0x0B, codeSegment, &handle_interrupt_request_0B, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(IRQ_OFFSET + 0x0C, codeSegment, &handle_interrupt_request_0C, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(IRQ_OFFSET + 0x0D, codeSegment, &handle_interrupt_request_0D, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(IRQ_OFFSET + 0x0E, codeSegment, &handle_interrupt_request_0E, 0, IDT_INTERRUPT_GATE);
-	set_interrupt_descriptor_entry(IRQ_OFFSET + 0x0F, codeSegment, &handle_interrupt_request_0F, 0, IDT_INTERRUPT_GATE);
+	set_idt_gate(IRQ_OFFSET + 0x00, &handle_interrupt_request_00);
+	set_idt_gate(IRQ_OFFSET + 0x01, &handle_interrupt_request_01);
+	set_idt_gate(IRQ_OFFSET + 0x02, &handle_interrupt_request_02);
+	set_idt_gate(IRQ_OFFSET + 0x03, &handle_interrupt_request_03);
+	set_idt_gate(IRQ_OFFSET + 0x04, &handle_interrupt_request_04);
+	set_idt_gate(IRQ_OFFSET + 0x05, &handle_interrupt_request_05);
+	set_idt_gate(IRQ_OFFSET + 0x06, &handle_interrupt_request_06);
+	set_idt_gate(IRQ_OFFSET + 0x07, &handle_interrupt_request_07);
+	set_idt_gate(IRQ_OFFSET + 0x08, &handle_interrupt_request_08);
+	set_idt_gate(IRQ_OFFSET + 0x09, &handle_interrupt_request_09);
+	set_idt_gate(IRQ_OFFSET + 0x0A, &handle_interrupt_request_0A);
+	set_idt_gate(IRQ_OFFSET + 0x0B, &handle_interrupt_request_0B);
+	set_idt_gate(IRQ_OFFSET + 0x0C, &handle_interrupt_request_0C);
+	set_idt_gate(IRQ_OFFSET + 0x0D, &handle_interrupt_request_0D);
+	set_idt_gate(IRQ_OFFSET + 0x0E, &handle_interrupt_request_0E);
+	set_idt_gate(IRQ_OFFSET + 0x0F, &handle_interrupt_request_0F);
 	
-	set_interrupt_descriptor_entry(IRQ_SYSCALL, codeSegment, handle_syscall, 0, IDT_INTERRUPT_GATE);
-
-	idt_ptr.size = 256 * sizeof(gate_descriptor_t) - 1;
-	idt_ptr.base = (uintptr_t)&interrupt_descriptor_table;
-	ASM(asm volatile("lidt %0" : : "m"(idt_ptr)));
+	idt_reg.base = (uintptr_t)&idt;
+	idt_reg.size = 256 * sizeof(idt_gate_t) - 1;
+	ASM(asm volatile("lidtl (%0)" : : "r"(&idt_reg)));
 
 	ASM(asm("sti"));
 }

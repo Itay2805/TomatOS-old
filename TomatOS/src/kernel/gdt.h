@@ -33,7 +33,7 @@ typedef struct gdt_t {
 	gdt_entry_t null;
 	gdt_entry_t code;
 	gdt_entry_t data;
-} gdt_t;
+} PACKED gdt_t;
 
 void initialize_gdt();
 gdt_t* get_gdt();

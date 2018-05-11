@@ -13,11 +13,13 @@ CHECKSUM equ -(MAGIC + FLAGS)
 ; code section, start of bootloader
 [section .text]
 	[extern kmain]
+	[extern callConstructors]
 	[global bootloader]
 
 	; bootloader, will set the kernel stack and call the kmain function
 	bootloader:
 		mov esp, kernel_stack
+		call callConstructors
 		push eax
 		push ebx
 		call kmain
