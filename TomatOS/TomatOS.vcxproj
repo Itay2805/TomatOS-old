@@ -134,7 +134,11 @@
     <None Include="src\kernel\interrupt_stubs.asm" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\apis\Term.cpp" />
     <ClCompile Include="libc\string.c" />
+    <ClCompile Include="src\kernel\cpp\icxxabi.cpp" />
+    <ClCompile Include="src\kernel\cpp\memory.cpp" />
+    <ClCompile Include="src\kernel\cpp\purevirtual.cpp" />
     <ClCompile Include="src\kernel\gdt.c" />
     <ClCompile Include="src\kernel\interrupt.c" />
     <ClCompile Include="src\kernel\kernel.c" />
@@ -142,18 +146,22 @@
     <ClCompile Include="src\kernel\syscalls.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\apis\Term.hpp" />
     <ClInclude Include="include\syscall.h" />
     <ClInclude Include="libc\limits.h" />
     <ClInclude Include="libc\stdbool.h" />
     <ClInclude Include="libc\stddef.h" />
     <ClInclude Include="libc\stdint.h" />
-    <ClInclude Include="include\system.h" />
+    <ClInclude Include="include\tomato.h" />
     <ClInclude Include="libc\string.h" />
     <ClInclude Include="src\kernel\common.h" />
+    <ClInclude Include="src\kernel\cpp\icxxabi.h" />
+    <ClInclude Include="src\kernel\cpp\memory.h" />
     <ClInclude Include="src\kernel\gdt.h" />
     <ClInclude Include="src\kernel\interrupt.h" />
     <ClInclude Include="src\kernel\port.h" />
     <ClInclude Include="src\kernel\syscalls.h" />
+    <ClInclude Include="src\os\OS.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -27,9 +27,6 @@
     <None Include="src\kernel\interrupt_stubs.asm" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\system.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="libc\limits.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -63,6 +60,21 @@
     <ClInclude Include="include\syscall.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\tomato.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\apis\Term.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\os\OS.cpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kernel\cpp\icxxabi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kernel\cpp\memory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\kernel\kernel.c">
@@ -81,6 +93,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\kernel\syscalls.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\apis\Term.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kernel\cpp\purevirtual.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kernel\cpp\icxxabi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kernel\cpp\memory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

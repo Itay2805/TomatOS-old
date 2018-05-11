@@ -56,6 +56,7 @@ dkms.conf
 # Build folders
 x64
 Debug
+cpp
 
 
 # Visual studio folder 

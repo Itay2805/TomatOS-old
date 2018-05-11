@@ -12,8 +12,9 @@ typedef struct gdt_descriptor_t {
 } PACKED gdt_descriptor_t;
 
 void initialize_gdt() {
-	uint32_t base = 0;
-	uint32_t limit = 64 * 1024 * 1024;
+	// @TODO: Fix the base and limit stuff
+	//uint32_t base = 0;
+	//uint32_t limit = 64 * 1024 * 1024;
 
 	// set code sections
 	gdt.code.limit_low = 0xFFFF; // limit & 0xFFFF;

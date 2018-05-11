@@ -10,6 +10,14 @@ ignore_interrupt:
 	sti
 	iret
 
+
+global handle_syscall
+handle_syscall:
+    cli
+    push byte 0
+    push 0x80
+    jmp irq_common_stub
+
 global handle_exception_interrupt_00
 global handle_exception_interrupt_01
 global handle_exception_interrupt_02

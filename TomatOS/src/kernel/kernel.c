@@ -1,11 +1,13 @@
 
 #include <stdint.h>
 
-#include <system.h>
-
 #include "gdt.h"
 #include "interrupt.h"
 #include "syscalls.h"
+
+#include "syscalls/term.h"
+
+#include <tomato.h>
 
 typedef void(*constructor)();
 constructor start_ctors;
@@ -15,11 +17,20 @@ void callConstructors() {
 		(*i)();
 }
 
-void kmain(const void* multiboot_structure, uint32_t multiboot_magic) {
-	initialize_gdt();
-	initialize_syscalls();
-	initialize_interrupts();
+// os entry point
+extern void startup();
 
-	asm("int $3");
-	//tomato_term_write("test");
+void kmain(const void* multiboot_structure, uint32_t multiboot_magic) {
+	// initialize the kernel
+	initialize_gdt();
+	initialize_interrupts();
+	
+	// initialize syscalls
+	initialize_syscalls();
+	syscall_term_init();
+
+	tomato_term_write("this is a test");
+
+	// call the os startup
+	// startup();
 }

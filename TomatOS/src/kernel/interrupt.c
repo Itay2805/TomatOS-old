@@ -35,6 +35,9 @@ static idt_gate_t idt[256];
 // default interrupt
 extern void ignore_interrupt();
 
+// syscall interrupt
+extern void handle_syscall();
+
 // request interrupts
 extern void handle_interrupt_request_00();
 extern void handle_interrupt_request_01();
@@ -161,6 +164,8 @@ void initialize_interrupts(void) {
 	set_idt_gate(IRQ_OFFSET + 0x0E, &handle_interrupt_request_0E);
 	set_idt_gate(IRQ_OFFSET + 0x0F, &handle_interrupt_request_0F);
 	
+	set_idt_gate(IRQ_SYSCALL, &handle_syscall);
+
 	idt_reg.base = (uintptr_t)&idt;
 	idt_reg.size = 256 * sizeof(idt_gate_t) - 1;
 	ASM(asm volatile("lidtl (%0)" : : "r"(&idt_reg)));

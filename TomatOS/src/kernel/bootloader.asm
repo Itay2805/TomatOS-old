@@ -14,6 +14,7 @@ CHECKSUM equ -(MAGIC + FLAGS)
 [section .text]
 	[extern kmain]
 	[extern callConstructors]
+	; [extern __cxa_finalize]
 	[global bootloader]
 
 	; bootloader, will set the kernel stack and call the kmain function
@@ -25,6 +26,12 @@ CHECKSUM equ -(MAGIC + FLAGS)
 		call kmain
 
 	bootloader_exit:
+		; C++ atexit
+		;sub esp, 4
+		;mov [esp], dword 0x0
+		;call __cxa_finalize
+		;add esp, 4
+
 		cli 
 		hlt
 		jmp bootloader_exit
