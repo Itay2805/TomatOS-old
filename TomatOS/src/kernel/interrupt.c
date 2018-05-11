@@ -90,8 +90,7 @@ void kernel_irq_handler(registers_t r) {
 }
 
 void kernel_exception_handler(registers_t r) {
-	((uint8_t*)0xb8000)[0] = r.int_no + '0';
-	((uint8_t*)0xb8000)[1] = 0xF;
+	// @TODO: handling exceptions
 }
 
 static void set_idt_gate(uint8_t n, void(*handler)(void)) {
@@ -103,8 +102,6 @@ static void set_idt_gate(uint8_t n, void(*handler)(void)) {
 }
 
 void initialize_interrupts(void) {
-	uint16_t codeSegment = (uint16_t)CODE_SEGMENT;
-
 	// set default handlers
 	for (uint16_t i = 0; i < 256; i++) {
 		set_idt_gate(i, &ignore_interrupt);

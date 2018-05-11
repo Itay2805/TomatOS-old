@@ -6,8 +6,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#define CODE_SEGMENT ((uintptr_t)(&get_gdt()->code) - (uintptr_t)get_gdt())
-#define DATA_SEGMENT ((uintptr_t)(&get_gdt()->data) - (uintptr_t)get_gdt())
+#define CODE_SEGMENT offsetof(gdt_t, code)
+#define DATA_SEGMENT offsetof(gdt_t, data)
 
 typedef struct gdt_entry_t {
 	unsigned int limit_low : 16;
@@ -31,6 +31,7 @@ typedef struct gdt_entry_t {
 
 typedef struct gdt_t {
 	gdt_entry_t null;
+	gdt_entry_t unused;
 	gdt_entry_t code;
 	gdt_entry_t data;
 } PACKED gdt_t;

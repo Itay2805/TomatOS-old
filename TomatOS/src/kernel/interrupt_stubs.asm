@@ -1,6 +1,9 @@
 [extern kernel_exception_handler]
 [extern kernel_irq_handler]
 
+CODE_SEGMENT equ 16
+DATA_SEGMENT equ 24
+
 global ignore_interrupt
 ignore_interrupt:
 	cli
@@ -48,7 +51,7 @@ exception_common_stub:
 	pusha
 	mov ax, ds
 	push eax
-	mov ax, 0x10
+	mov ax, DATA_SEGMENT
 	mov ds, ax
 	mov es, ax
 	mov fs, ax
@@ -70,7 +73,7 @@ irq_common_stub:
 	pusha 
     mov ax, ds
     push eax
-    mov ax, 0x10
+    mov ax, DATA_SEGMENT
     mov ds, ax
     mov es, ax
     mov fs, ax

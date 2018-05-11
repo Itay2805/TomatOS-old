@@ -45,4 +45,5 @@ void initialize_gdt() {
 	i.size = sizeof(gdt_t);
 	i.start = (size_t)&gdt;
 	ASM(asm volatile("lgdt (%0)" : : "p"(&i)));
+
 }
