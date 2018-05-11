@@ -1,6 +1,7 @@
 #include "term.h"
 
 #include <stdint.h>
+#include <stddef.h>
 
 #include <tomato.h>
 
@@ -26,6 +27,18 @@ static uint8_t*    vmemory;
 /////////////////////////////////////////////////
 
 static uint32_t syscall_term_write(registers_t text);
+static uint32_t syscall_term_clear(registers_t text);
+static uint32_t syscall_term_set_text_color(registers_t text);
+static uint32_t syscall_term_set_background_color(registers_t text);
+static uint32_t syscall_term_get_text_color(registers_t text);
+static uint32_t syscall_term_get_background_color(registers_t text);
+static uint32_t syscall_term_set_cursor_pos(registers_t text);
+static uint32_t syscall_term_get_cursor_x(registers_t text);
+static uint32_t syscall_term_get_cursor_y(registers_t text);
+static uint32_t syscall_term_get_width(registers_t text);
+static uint32_t syscall_term_get_height(registers_t text);
+static uint32_t syscall_term_scroll(registers_t text);
+static uint32_t syscall_term_clear_line(registers_t text);
 
 void syscall_term_init(void) {
 	// set the video memory buffer
@@ -37,9 +50,18 @@ void syscall_term_init(void) {
 
 	// register all the syscalls
 	register_syscall(TOMATO_SYSCALL_TERM_WRITE, syscall_term_write);
-
-	// clear screen and reset cursor
-	// we can pass nullptr beacuse the native terminal does not use the term_t instance
+	register_syscall(TOMATO_SYSCALL_TERM_CLEAR, syscall_term_clear);
+	register_syscall(TOMATO_SYSCALL_TERM_SET_TEXT_COLOR, syscall_term_set_text_color);
+	register_syscall(TOMATO_SYSCALL_TERM_SET_BACKGROUND_COLOR, syscall_term_set_background_color);
+	register_syscall(TOMATO_SYSCALL_TERM_GET_TEXT_COLOR, syscall_term_get_text_color);
+	register_syscall(TOMATO_SYSCALL_TERM_GET_BACKGROUND_COLOR, syscall_term_get_background_color);
+	register_syscall(TOMATO_SYSCALL_TERM_SET_CURSOR_POS, syscall_term_set_cursor_pos);
+	register_syscall(TOMATO_SYSCALL_TERM_GET_CURSOR_X, syscall_term_get_cursor_x);
+	register_syscall(TOMATO_SYSCALL_TERM_GET_CUSROR_Y, syscall_term_get_cursor_y);
+	register_syscall(TOMATO_SYSCALL_TERM_GET_WIDTH, syscall_term_get_width);
+	register_syscall(TOMATO_SYSCALL_TERM_GET_HEIGHT, syscall_term_get_height);
+	register_syscall(TOMATO_SYSCALL_TERM_SCROLL, syscall_term_scroll);
+	register_syscall(TOMATO_SYSCALL_TERM_CLEAR_LINE, syscall_term_clear_line);
 }
 
 
@@ -109,6 +131,100 @@ static uint32_t syscall_term_write(registers_t regs) {
 		}
 	}
 	update_cursor();
+
+	return 0;
+}
+
+static uint32_t syscall_term_clear(registers_t regs) {
+	UNUSED(regs);
+	
+	for (size_t i = 0; i < NATIVE_TERM_HEIGHT * NATIVE_TERM_WIDTH * 2; i += 2) {
+		vmemory[i + 0] = 0;
+		vmemory[i + 1] = bg_color << 4 | fg_color;
+	}
+
+	return 0;
+}
+
+static uint32_t syscall_term_set_text_color(registers_t regs) {
+	uint8_t color = regs.ebx;
+
+	fg_color = color;
+
+	return 0;
+}
+
+static uint32_t syscall_term_set_background_color(registers_t regs) {
+	uint8_t color = regs.ebx;
+
+	bg_color = color;
+
+	return 0;
+}
+
+static uint32_t syscall_term_get_text_color(registers_t regs) {
+	UNUSED(regs);
+
+	return fg_color;
+}
+
+static uint32_t syscall_term_get_background_color(registers_t regs) {
+	UNUSED(regs);
+
+	return bg_color;
+}
+
+static uint32_t syscall_term_set_cursor_pos(registers_t regs) {
+	uint16_t x = regs.ebx;
+	uint16_t y = regs.ecx;
+
+	term_x = x;
+	term_y = y;
+	update_cursor();
+
+	return 0;
+}
+
+static uint32_t syscall_term_get_cursor_x(registers_t regs) {
+	UNUSED(regs);
+
+	return term_x;
+}
+
+static uint32_t syscall_term_get_cursor_y(registers_t regs) {
+	UNUSED(regs);
+
+	return term_y;
+}
+
+static uint32_t syscall_term_get_width(registers_t regs) {
+	UNUSED(regs);
+
+	return NATIVE_TERM_WIDTH;
+}
+
+static uint32_t syscall_term_get_height(registers_t regs) {
+	UNUSED(regs);
+
+	return NATIVE_TERM_HEIGHT;
+}
+
+static uint32_t syscall_term_scroll(registers_t regs) {
+	uint16_t n = (uint16_t)regs.ebx;
+
+	native_term_scroll(n);
+
+	return 0;
+}
+
+static uint32_t syscall_term_clear_line(registers_t regs) {
+	uint16_t n = (uint16_t)regs.ebx;
+
+	size_t offset = (n * NATIVE_TERM_WIDTH) * 2;
+	for (size_t i = offset; i < NATIVE_TERM_WIDTH * 2 + offset; i += 2) {
+		vmemory[i + 0] = 0;
+		vmemory[i + 1] = bg_color << 4 | fg_color;
+	}
 
 	return 0;
 }

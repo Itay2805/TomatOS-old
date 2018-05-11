@@ -7,8 +7,6 @@
 
 #include "syscalls/term.h"
 
-#include <tomato.h>
-
 typedef void(*constructor)();
 constructor start_ctors;
 constructor end_ctors;
@@ -29,8 +27,6 @@ void kmain(const void* multiboot_structure, uint32_t multiboot_magic) {
 	initialize_syscalls();
 	syscall_term_init();
 
-	tomato_term_write("this is a test");
-
 	// call the os startup
-	// startup();
+	startup();
 }
