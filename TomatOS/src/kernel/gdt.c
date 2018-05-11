@@ -6,13 +6,18 @@ gdt_t* get_gdt() {
 	return &gdt;
 }
 
+typedef struct gdt_descriptor_t {
+	uint16_t size;
+	uint32_t start;
+} PACKED gdt_descriptor_t;
+
 void initialize_gdt() {
 	uint32_t base = 0;
 	uint32_t limit = 64 * 1024 * 1024;
 
 	// set code sections
-	gdt.code.limit_low = limit & 0xFFFF;
-	gdt.code.base_low = base & 0xFFFFFF;
+	gdt.code.limit_low = 0xFFFF; // limit & 0xFFFF;
+	gdt.code.base_low = 0;       // base & 0xFFFFFF;
 
 	// type
 	gdt.code.accessed = 0;
@@ -36,16 +41,16 @@ void initialize_gdt() {
 		gdt.code.gran = 1;
 	}
 
-	gdt.code.limit_high = (limit >> 16) & 0xF;
-	gdt.code.base_high = (base >> 24) & 0xFF;
+	gdt.code.limit_high = 0xF; //(limit >> 16) & 0xF;
+	gdt.code.base_high = 0;    //(base >> 24) & 0xFF;
 	
 	// set data segment, copy from code and set code to false
 	gdt.data = gdt.code;
 	gdt.data.code = 0;
 
 	// install gdts
-	size_t i[2];
-	i[1] = (size_t)&gdt;
-	i[0] = sizeof(gdt_t) << 16;
-	ASM(asm volatile("lgdt (%0)" : : "p"(((uintptr_t)i) + 2)));
+	gdt_descriptor_t i;
+	i.size = sizeof(gdt_t);
+	i.start = (size_t)&gdt;
+	ASM(asm volatile("lgdt (%0)" : : "r"(&i)));
 }

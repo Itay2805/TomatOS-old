@@ -11,7 +11,7 @@ CHECKSUM equ -(MAGIC + FLAGS)
 	dd CHECKSUM
 
 ; code section, start of bootloader
-[section .code]
+[section .text]
 	[extern kmain]
 	[global bootloader]
 
@@ -28,6 +28,6 @@ CHECKSUM equ -(MAGIC + FLAGS)
 		jmp bootloader_exit
 
 ; allocate for the kernel 2MB of stack
-[section .data]
-	TIMES 2097152 DB 0
+[section .bss]
+	resb 2*1024*1024
 	kernel_stack:

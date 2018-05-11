@@ -7,6 +7,7 @@ LDPARAMS="-melf_i386"
 # cleanup
 echo "Removing old build folder"
 rm kernel.bin
+rm kernel.iso
 rm -rf build
 mkdir build
 

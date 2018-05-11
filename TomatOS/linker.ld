@@ -9,7 +9,6 @@ SECTIONS
 	.text :
 	{
 		*(.multiboot)
-		*(.code)
 		*(.text)
 		*(.rodata)
 	}
