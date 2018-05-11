@@ -48,6 +48,13 @@ void syscall_term_init(void) {
 	bg_color = 0;
 	fg_color = 0xf;
 
+	// disable blink
+	port_read8(0x03DA);
+	port_write8(0x03C0, 0x30);
+	int reg = port_read8(0x03C1);
+	reg &= 0xF7;
+	port_write8(0x03C0, reg);
+
 	// register all the syscalls
 	register_syscall(TOMATO_SYSCALL_TERM_WRITE, syscall_term_write);
 	register_syscall(TOMATO_SYSCALL_TERM_CLEAR, syscall_term_clear);

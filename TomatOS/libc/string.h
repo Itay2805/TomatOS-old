@@ -7,6 +7,10 @@
 extern "C" {
 #endif
 
+	void* malloc(size_t size);
+	void* realloc(void* ptr, size_t newsize);
+	int free(void* ptr);
+
 	char* itoa(int32_t n, char* str, uint8_t radix);
 
 	char* strrev(char *str);

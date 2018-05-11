@@ -66,13 +66,25 @@
     <ClInclude Include="include\apis\Term.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\os\OS.cpp">
+    <ClInclude Include="include\cpp\icxxabi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\kernel\cpp\icxxabi.h">
+    <ClInclude Include="include\cpp\memory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\kernel\cpp\memory.h">
+    <ClInclude Include="include\cpp\purevirtual.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kernel\syscalls\term.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\apis\Window.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\apis\Colors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kernel\heap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -95,16 +107,22 @@
     <ClCompile Include="src\kernel\syscalls.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\apis\Term.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\kernel\cpp\purevirtual.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\kernel\cpp\icxxabi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\kernel\cpp\memory.cpp">
+    <ClCompile Include="src\kernel\syscalls\term.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\apis\Term.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\os\os.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kernel\heap.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

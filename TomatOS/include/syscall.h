@@ -20,6 +20,11 @@
 #define TOMATO_SYSCALL_TERM_CLEAR_LINE				0x0D
 #define TOMATO_SYSCALL_TERM_CLEAR_BLIT				0x0E
 
+//// 0x10 - 0x14 - heap
+#define TOMATO_SYSCALL_HEAP_ALLOCATE				0x10
+#define TOMATO_SYSCALL_HEAP_REALLOCATE				0x11
+#define TOMATO_SYSCALL_HEAP_FREE					0x12
+
 inline static uint32_t tomato_syscall(uint32_t id) {
 	uint32_t ret;
 	asm volatile("int $0x80" : "=a"(ret) : "a"(id));

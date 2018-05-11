@@ -1,5 +1,20 @@
 #include "string.h"
 
+// TODO: make so it will only have inlined assembly
+#include <syscall.h>
+
+void* malloc(size_t size) {
+	return (void*)tomato_syscall_1p(TOMATO_SYSCALL_HEAP_ALLOCATE, (uint32_t)size);
+}
+
+void* realloc(void* ptr, size_t newsize) {
+	return (void*)tomato_syscall_2p(TOMATO_SYSCALL_HEAP_REALLOCATE, (uint32_t)ptr, (uint32_t)newsize);
+}
+
+int free(void* ptr) {
+	return (bool_t)tomato_syscall_1p(TOMATO_SYSCALL_HEAP_FREE, (uint32_t)ptr);
+}
+
 char* strrev(char *str) {
 	char c, *front, *back;
 

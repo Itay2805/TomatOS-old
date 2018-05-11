@@ -7,7 +7,7 @@
 #include <syscall.h>
 
 /////////////////////////////////////////////////////
-//// term API
+//// term syscalls
 /////////////////////////////////////////////////////
 
 inline void tomato_term_write(const char* text) { 
@@ -60,6 +60,22 @@ inline void tomato_term_scroll(uint16_t n) {
 
 inline void tomato_term_clear_line(uint16_t n) {
 	tomato_syscall_1p(TOMATO_SYSCALL_TERM_CLEAR_LINE, (uint32_t)n);
+}
+
+/////////////////////////////////////////////////////
+//// heap syscalls
+/////////////////////////////////////////////////////
+
+inline void* tomato_heap_allocate(size_t size) {
+	return (void*)tomato_syscall_1p(TOMATO_SYSCALL_HEAP_ALLOCATE, (uint32_t)size);
+}
+
+inline void* tomato_heap_reallocate(void* ptr, size_t newsize) {
+	return (void*)tomato_syscall_2p(TOMATO_SYSCALL_HEAP_REALLOCATE, (uint32_t)ptr, (uint32_t)newsize);
+}
+
+inline bool_t tomato_heap_free(void* ptr) {
+	return (bool_t)tomato_syscall_1p(TOMATO_SYSCALL_HEAP_FREE, (uint32_t)ptr);
 }
 
 #endif

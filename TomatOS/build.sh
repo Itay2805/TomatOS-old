@@ -43,29 +43,6 @@ do
     done
 done
 
-echo "Compiling LIBC"
-for d in $(find libc/ -type d)
-do
-    mkdir "build/$d"
-    for f in $(find $d/*.c)
-    do
-        of=`echo $f | sed 's/\(.*\)c/\1o/'`
-        of="build/$of"
-        objects="$objects $of"
-        echo "  $f > $of"
-        gcc $CCFLAGS -c "./$f" -o "./$of" 
-    done
-	for f in $(find $d/*.asm)
-    do
-        of=`echo $f | sed 's/\(.*\)asm/\1o/'`
-        of="build/$of"
-        objects="$objects $of"
-        echo "  $f > $of"
-        nasm $NASMPARAMS "./$f" -o "./$of"
-    done
-done
-
-
 echo "Compiling APIs"
 mkdir build/include/
 for d in $(find include/apis/ -type d)
@@ -86,6 +63,28 @@ do
         objects="$objects $of"
         echo "  $f > $of"
         g++ $GCCPARAMS -c "./$f" -o "./$of" 
+    done
+	for f in $(find $d/*.asm)
+    do
+        of=`echo $f | sed 's/\(.*\)asm/\1o/'`
+        of="build/$of"
+        objects="$objects $of"
+        echo "  $f > $of"
+        nasm $NASMPARAMS "./$f" -o "./$of"
+    done
+done
+
+echo "Compiling LIBC"
+for d in $(find libc/ -type d)
+do
+    mkdir "build/$d"
+    for f in $(find $d/*.c)
+    do
+        of=`echo $f | sed 's/\(.*\)c/\1o/'`
+        of="build/$of"
+        objects="$objects $of"
+        echo "  $f > $of"
+        gcc $CCFLAGS -c "./$f" -o "./$of" 
     done
 	for f in $(find $d/*.asm)
     do
