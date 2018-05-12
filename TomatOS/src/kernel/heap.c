@@ -84,16 +84,18 @@ static memory_block_t* first_free_block;
 //// syscalls
 //////////////////////////////////////////////////////////////
 
-static uint32_t syscall_heap_allocate(registers_t text) {
-	return (uint32_t)heap_allocate((size_t)text.ebx);
+// @TODO: move to the syscall directory
+
+static void syscall_heap_allocate(registers_t* regs) {
+	regs->eax = (uint32_t)heap_allocate((size_t)regs->ebx);
 }
 
-static uint32_t syscall_heap_reallocate(registers_t text) {
-	return (uint32_t)heap_reallocate((void*)text.ebx, (size_t)text.ecx);
+static void syscall_heap_reallocate(registers_t* regs) {
+	regs->eax = (uint32_t)heap_reallocate((void*)regs->ebx, (size_t)regs->ecx);
 }
 
-static uint32_t syscall_heap_free(registers_t text) {
-	return (uint32_t)heap_free((void*)text.ebx);
+static void syscall_heap_free(registers_t* regs) {
+	heap_free((void*)regs->ebx);
 }
 
 //////////////////////////////////////////////////////////////

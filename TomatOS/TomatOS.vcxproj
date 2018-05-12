@@ -135,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\apis\Term.cpp" />
+    <ClCompile Include="include\apis\tomato.c" />
     <ClCompile Include="libc\string.c" />
     <ClCompile Include="src\kernel\cpp\icxxabi.cpp" />
     <ClCompile Include="src\kernel\cpp\purevirtual.cpp" />
@@ -144,13 +145,16 @@
     <ClCompile Include="src\kernel\kernel.c" />
     <ClCompile Include="src\kernel\port.c" />
     <ClCompile Include="src\kernel\syscalls.c" />
+    <ClCompile Include="src\kernel\syscalls\os.c" />
     <ClCompile Include="src\kernel\syscalls\term.c" />
     <ClCompile Include="src\os\os.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\apis\Colors.h" />
+    <ClInclude Include="include\apis\OS.hpp" />
     <ClInclude Include="include\apis\Term.hpp" />
     <ClInclude Include="include\apis\Window.hpp" />
+    <ClInclude Include="include\cpp.hpp" />
     <ClInclude Include="include\syscall.h" />
     <ClInclude Include="libc\limits.h" />
     <ClInclude Include="libc\stdbool.h" />
@@ -167,6 +171,7 @@
     <ClInclude Include="src\kernel\interrupt.h" />
     <ClInclude Include="src\kernel\port.h" />
     <ClInclude Include="src\kernel\syscalls.h" />
+    <ClInclude Include="src\kernel\syscalls\os.h" />
     <ClInclude Include="src\kernel\syscalls\term.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

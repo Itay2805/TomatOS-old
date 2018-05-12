@@ -88,7 +88,7 @@ void kernel_irq_handler(registers_t r) {
 	port_write8(PIC_MASTER_COMMAND_PORT, 0x20);
 
 	if (handlers[r.int_no] != NULL) {
-		handlers[r.int_no](r);
+		handlers[r.int_no](&r);
 	}
 }
 

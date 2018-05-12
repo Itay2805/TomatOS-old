@@ -12,10 +12,9 @@
 
 static syscall_handle handlers[256];
 
-static void syscall_handler(registers_t regs) {
-	if (handlers[regs.eax] != NULL) {
-		uint32_t eax = handlers[regs.eax](regs);
-		ASM(asm volatile("mov %0, %%eax" : : "r"(eax)));
+static void syscall_handler(registers_t* regs) {
+	if (handlers[regs->eax] != NULL) {
+		handlers[regs->eax](regs);
 	}
 }
 

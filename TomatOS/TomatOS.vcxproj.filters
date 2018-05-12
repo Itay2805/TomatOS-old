@@ -87,6 +87,15 @@
     <ClInclude Include="src\kernel\heap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cpp.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\apis\OS.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kernel\syscalls\os.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\kernel\kernel.c">
@@ -123,6 +132,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\kernel\heap.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kernel\syscalls\os.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\apis\tomato.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

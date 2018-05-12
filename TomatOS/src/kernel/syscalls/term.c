@@ -26,19 +26,19 @@ static uint8_t*    vmemory;
 //// syscalls forward declarations
 /////////////////////////////////////////////////
 
-static uint32_t syscall_term_write(registers_t text);
-static uint32_t syscall_term_clear(registers_t text);
-static uint32_t syscall_term_set_text_color(registers_t text);
-static uint32_t syscall_term_set_background_color(registers_t text);
-static uint32_t syscall_term_get_text_color(registers_t text);
-static uint32_t syscall_term_get_background_color(registers_t text);
-static uint32_t syscall_term_set_cursor_pos(registers_t text);
-static uint32_t syscall_term_get_cursor_x(registers_t text);
-static uint32_t syscall_term_get_cursor_y(registers_t text);
-static uint32_t syscall_term_get_width(registers_t text);
-static uint32_t syscall_term_get_height(registers_t text);
-static uint32_t syscall_term_scroll(registers_t text);
-static uint32_t syscall_term_clear_line(registers_t text);
+static void syscall_term_write(registers_t* text);
+static void syscall_term_clear(registers_t* text);
+static void syscall_term_set_text_color(registers_t* text);
+static void syscall_term_set_background_color(registers_t* text);
+static void syscall_term_get_text_color(registers_t* text);
+static void syscall_term_get_background_color(registers_t* text);
+static void syscall_term_set_cursor_pos(registers_t* text);
+static void syscall_term_get_cursor_x(registers_t* text);
+static void syscall_term_get_cursor_y(registers_t* text);
+static void syscall_term_get_width(registers_t* text);
+static void syscall_term_get_height(registers_t* text);
+static void syscall_term_scroll(registers_t* text);
+static void syscall_term_clear_line(registers_t* text);
 
 void syscall_term_init(void) {
 	// set the video memory buffer
@@ -56,6 +56,7 @@ void syscall_term_init(void) {
 	port_write8(0x03C0, reg);
 
 	// register all the syscalls
+	term_kwrite("syscall init: registering TERM syscalls\n");
 	register_syscall(TOMATO_SYSCALL_TERM_WRITE, syscall_term_write);
 	register_syscall(TOMATO_SYSCALL_TERM_CLEAR, syscall_term_clear);
 	register_syscall(TOMATO_SYSCALL_TERM_SET_TEXT_COLOR, syscall_term_set_text_color);
@@ -69,6 +70,11 @@ void syscall_term_init(void) {
 	register_syscall(TOMATO_SYSCALL_TERM_GET_HEIGHT, syscall_term_get_height);
 	register_syscall(TOMATO_SYSCALL_TERM_SCROLL, syscall_term_scroll);
 	register_syscall(TOMATO_SYSCALL_TERM_CLEAR_LINE, syscall_term_clear_line);
+}
+
+void term_kreset(void) {
+	term_x = 0;
+	term_y = 0;
 }
 
 
@@ -101,9 +107,7 @@ static void native_term_scroll(uint16_t n) {
 //// syscall handlers
 /////////////////////////////////////////////////
 
-static uint32_t syscall_term_write(registers_t regs) {
-	const char* text = (const char*)regs.ebx;
-
+void term_kwrite(const char* text) {
 	while (*text != 0) {
 		char c = *text;
 		if (c == '\n') {
@@ -138,100 +142,81 @@ static uint32_t syscall_term_write(registers_t regs) {
 		}
 	}
 	update_cursor();
-
-	return 0;
 }
 
-static uint32_t syscall_term_clear(registers_t regs) {
+static void syscall_term_write(registers_t* regs) {
+	const char* text = (const char*)regs->ebx;
+
+	term_kwrite(text);
+}
+
+static void syscall_term_clear(registers_t* regs) {
 	UNUSED(regs);
 	
 	for (size_t i = 0; i < NATIVE_TERM_HEIGHT * NATIVE_TERM_WIDTH * 2; i += 2) {
 		vmemory[i + 0] = 0;
 		vmemory[i + 1] = bg_color << 4 | fg_color;
 	}
-
-	return 0;
 }
 
-static uint32_t syscall_term_set_text_color(registers_t regs) {
-	uint8_t color = regs.ebx;
+static void syscall_term_set_text_color(registers_t* regs) {
+	uint8_t color = regs->ebx;
 
 	fg_color = color;
-
-	return 0;
 }
 
-static uint32_t syscall_term_set_background_color(registers_t regs) {
-	uint8_t color = regs.ebx;
+static void syscall_term_set_background_color(registers_t* regs) {
+	uint8_t color = regs->ebx;
 
 	bg_color = color;
-
-	return 0;
 }
 
-static uint32_t syscall_term_get_text_color(registers_t regs) {
-	UNUSED(regs);
-
-	return fg_color;
+static void syscall_term_get_text_color(registers_t* regs) {
+	regs->eax = fg_color;
 }
 
-static uint32_t syscall_term_get_background_color(registers_t regs) {
-	UNUSED(regs);
-
-	return bg_color;
+static void syscall_term_get_background_color(registers_t* regs) {
+	regs->eax = bg_color;
 }
 
-static uint32_t syscall_term_set_cursor_pos(registers_t regs) {
-	uint16_t x = regs.ebx;
-	uint16_t y = regs.ecx;
+static void syscall_term_set_cursor_pos(registers_t* regs) {
+	uint16_t x = regs->ebx;
+	uint16_t y = regs->ecx;
 
 	term_x = x;
 	term_y = y;
 	update_cursor();
-
-	return 0;
 }
 
-static uint32_t syscall_term_get_cursor_x(registers_t regs) {
+static void syscall_term_get_cursor_x(registers_t* regs) {
+	regs->eax = term_x;
+}
+
+static void syscall_term_get_cursor_y(registers_t* regs) {
+	regs->eax = term_y;
+}
+
+static void syscall_term_get_width(registers_t* regs) {
+	regs->eax = NATIVE_TERM_WIDTH;
+}
+
+static void syscall_term_get_height(registers_t* regs) {
 	UNUSED(regs);
-
-	return term_x;
+	regs->eax = NATIVE_TERM_HEIGHT;
 }
 
-static uint32_t syscall_term_get_cursor_y(registers_t regs) {
-	UNUSED(regs);
-
-	return term_y;
-}
-
-static uint32_t syscall_term_get_width(registers_t regs) {
-	UNUSED(regs);
-
-	return NATIVE_TERM_WIDTH;
-}
-
-static uint32_t syscall_term_get_height(registers_t regs) {
-	UNUSED(regs);
-
-	return NATIVE_TERM_HEIGHT;
-}
-
-static uint32_t syscall_term_scroll(registers_t regs) {
-	uint16_t n = (uint16_t)regs.ebx;
+static void syscall_term_scroll(registers_t* regs) {
+	uint16_t n = (uint16_t)regs->ebx;
 
 	native_term_scroll(n);
-
-	return 0;
 }
 
-static uint32_t syscall_term_clear_line(registers_t regs) {
-	uint16_t n = (uint16_t)regs.ebx;
+static void syscall_term_clear_line(registers_t* regs) {
+	uint16_t n = (uint16_t)regs->ebx;
 
 	size_t offset = (n * NATIVE_TERM_WIDTH) * 2;
 	for (size_t i = offset; i < NATIVE_TERM_WIDTH * 2 + offset; i += 2) {
 		vmemory[i + 0] = 0;
 		vmemory[i + 1] = bg_color << 4 | fg_color;
 	}
-
-	return 0;
 }

@@ -52,7 +52,7 @@ typedef struct cpu_state_t {
 	uint32_t eip, cs, eflags, useresp, ss; /* Pushed by the processor automatically */
 } PACKED registers_t;
 
-typedef void(*interrupt_handler)(registers_t regs);
+typedef void(*interrupt_handler)(registers_t* regs);
 
 void initialize_interrupts(void);
 void register_interrupt_handler(uint8_t interrupt, interrupt_handler handler);

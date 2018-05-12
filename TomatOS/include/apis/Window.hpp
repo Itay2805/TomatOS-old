@@ -1,6 +1,8 @@
 #ifndef TOMATO_API_WINDOW_H
 #define TOMATO_API_WINDOW_H
 
+#include <cpp.hpp>
+
 #include <apis/Term.hpp>
 
 namespace Tomato {
