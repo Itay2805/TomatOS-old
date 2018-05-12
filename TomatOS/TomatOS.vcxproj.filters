@@ -140,5 +140,11 @@
     <ClCompile Include="include\apis\tomato.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="include\apis\Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\apis\OS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

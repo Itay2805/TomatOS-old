@@ -134,8 +134,10 @@
     <None Include="src\kernel\interrupt_stubs.asm" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\apis\OS.cpp" />
     <ClCompile Include="include\apis\Term.cpp" />
     <ClCompile Include="include\apis\tomato.c" />
+    <ClCompile Include="include\apis\Window.cpp" />
     <ClCompile Include="libc\string.c" />
     <ClCompile Include="src\kernel\cpp\icxxabi.cpp" />
     <ClCompile Include="src\kernel\cpp\purevirtual.cpp" />

@@ -1,5 +1,5 @@
-#ifndef TOMATO_API_COLORS_H
-#define TOMATO_API_COLORS_H
+#ifndef TOMATO_API_COLORS_HPP
+#define TOMATO_API_COLORS_HPP
 
 #include <stdint.h>
 

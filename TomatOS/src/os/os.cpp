@@ -3,26 +3,38 @@
 
 #include <apis/Term.hpp>
 #include <apis/OS.hpp>
-#include <apis/Colors.h>
+#include <apis/Colors.hpp>
 #include <apis/Window.hpp>
+#include <apis/Coroutine.hpp>
 
+using namespace Tomato;
+
+static void test(void* test) {
+	for (int i = 0; i < 10; i++) {
+		Coroutine::Yield(i);
+	}
+}
 
 extern "C" void startup() {
 
-	using namespace Tomato;
-	
 	Term::SetBackgroundColor(Colors::LIGHT_BLUE);
 	Term::SetTextColor(Colors::WHITE);
 	Term::Clear();
 
-	Window window(Term::Current(), 10, 10, 10, 10, true);
-	ITerm* old = Term::Redirect((ITerm*)&window);
+	Term::Write(OS::Version());
+	Term::Write("\n");
 
-	Term::SetBackgroundColor(Colors::RED);
-	Term::Clear();
+	char buf[3];
+	buf[1] = '\n';
+	buf[2] = 0;
 
-	const char* version = OS::Version();
-	Term::Write(version);
-
-	Term::Redirect(old);
+	Coroutine coro(test);
+	while(true) {
+		int i = coro.Resume<void*, int>();
+		if (coro.GetStatus() == Coroutine::DEAD) {
+			break;
+		}
+		buf[0] = i + '0';
+		Term::Write(buf);
+	}
 }

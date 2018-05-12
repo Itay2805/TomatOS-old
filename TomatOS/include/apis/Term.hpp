@@ -1,5 +1,5 @@
-#ifndef TOMATO_API_TERM_H
-#define TOMATO_API_TERM_H
+#ifndef TOMATO_API_TERM_HPP
+#define TOMATO_API_TERM_HPP
 
 #include <tomato.h>
 #include <stdint.h>

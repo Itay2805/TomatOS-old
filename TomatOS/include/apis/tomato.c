@@ -16,6 +16,13 @@ extern "C" {
 const char* tomato_os_version() {
 	return (const char*)tomato_syscall(TOMATO_SYSCALL_OS_VERSION);
 }
+void tomato_os_pull_event_blocking(event_t* event) {
+	// @TODO
+}
+
+void tomato_os_queue_event(event_t* event) {
+	// @TODO
+}
 
 /////////////////////////////////////////////////////
 //// term syscalls

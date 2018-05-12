@@ -16,6 +16,14 @@ static void syscall_version(registers_t* regs) {
 	regs->eax = (uint32_t)version_str;
 }
 
+static void syscall_create_timer() {
+
+}
+
+static void syscall_cancel_timer() {
+
+}
+
 void syscall_os_init(void) {
 	term_kwrite("syscall init: registering OS syscalls\n");
 	register_syscall(TOMATO_SYSCALL_OS_VERSION, syscall_version);

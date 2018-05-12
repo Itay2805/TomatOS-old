@@ -1,5 +1,5 @@
-#ifndef TOMATO_API_WINDOW_H
-#define TOMATO_API_WINDOW_H
+#ifndef TOMATO_API_WINDOW_HPP
+#define TOMATO_API_WINDOW_HPP
 
 #include <cpp.hpp>
 

@@ -15,7 +15,14 @@ extern "C" {
 	//// os syscalls
 	/////////////////////////////////////////////////////
 
+	typedef struct event_t {
+		uint32_t type;
+		size_t data[4];
+	} event_t;
+
 	const char* tomato_os_version();
+	void tomato_os_pull_event_blocking(event_t* event);
+	void tomato_os_queue_event(event_t* event);
 
 	/////////////////////////////////////////////////////
 	//// term syscalls
