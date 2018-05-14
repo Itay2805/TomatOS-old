@@ -16,12 +16,20 @@ extern "C" {
 const char* tomato_os_version() {
 	return (const char*)tomato_syscall(TOMATO_SYSCALL_OS_VERSION);
 }
-void tomato_os_pull_event_blocking(event_t* event) {
+void tomato_os_pull_event_blocking(event_t* event, uint32_t filter) {
 	// @TODO
 }
 
 void tomato_os_queue_event(event_t* event) {
-	// @TODO
+	tomato_syscall_1p(TOMATO_SYSCALL_OS_QUEUE_EVENT, (uint32_t)event);
+}
+
+uint32_t tomato_os_start_timer(uint32_t millis) {
+	return tomato_syscall_1p(TOMATO_SYSCALL_OS_START_TIMER, millis);
+}
+
+void tomato_os_cancel_timer(uint32_t id) {
+	tomato_syscall_1p(TOMATO_SYSCALL_OS_CANCEL_TIMER, id);
 }
 
 /////////////////////////////////////////////////////

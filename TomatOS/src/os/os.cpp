@@ -9,14 +9,7 @@
 
 using namespace Tomato;
 
-static void test(void* test) {
-	for (int i = 0; i < 10; i++) {
-		Coroutine::Yield(i);
-	}
-}
-
-extern "C" void startup() {
-
+void program(void*) {
 	Term::SetBackgroundColor(Colors::LIGHT_BLUE);
 	Term::SetTextColor(Colors::WHITE);
 	Term::Clear();
@@ -24,17 +17,30 @@ extern "C" void startup() {
 	Term::Write(OS::Version());
 	Term::Write("\n");
 
-	char buf[3];
-	buf[1] = '\n';
-	buf[2] = 0;
+	Term::Write("Sleeping for 10 seconds");
+	OS::Sleep(10);
+	Term::Write("Slept for 10 seconds!");
 
-	Coroutine coro(test);
-	while(true) {
-		int i = coro.Resume<void*, int>();
+	Timer heyTimer = OS::StartTimer(1);
+	while (true) {
+		Event event = OS::PullEvent();
+		switch (event.GetEventType()) {
+			case Event::TIMER: {
+				Term::Write("Hey!\n");
+				heyTimer = OS::StartTimer(1);
+			} break;
+		}
+	}
+}
+
+extern "C" void startup() {
+	Coroutine coro(program);
+	event_t event;
+	while (true) {
+		Event::EventType filter = (Event::EventType)coro.Resume<uint32_t, event_t*>(&event);
 		if (coro.GetStatus() == Coroutine::DEAD) {
 			break;
 		}
-		buf[0] = i + '0';
-		Term::Write(buf);
+		tomato_os_pull_event_blocking(&event, filter);
 	}
 }

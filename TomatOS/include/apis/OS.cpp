@@ -28,12 +28,12 @@ namespace Tomato {
 	}
 
 	Timer OS::StartTimer(float timeout) {
-		// @TODO
-		return 0;
+		uint32_t millis = timeout * 1000;
+		return (Timer)tomato_os_start_timer(millis);
 	}
 
 	void OS::CancelTimer(Timer t) {
-		// @TODO
+		tomato_os_cancel_timer((uint32_t)t);
 	}
 
 	const char* OS::Version() {

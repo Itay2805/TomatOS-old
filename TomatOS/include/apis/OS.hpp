@@ -16,13 +16,13 @@ namespace Tomato {
 
 	public:
 		enum EventType : uint32_t {
-			ALL				= 0,
-			TERMINATE		= 1,
-			TIMER			= 2,
-			CHAR			= 3,
-			KEY				= 4,
-			KEY_UP			= 5,
-			EXCEPTION		= 6
+			ALL				= TOMATO_EVENT_ALL,
+			TERMINATE		= TOMATO_EVENT_TERMINATE,
+			TIMER			= TOMATO_EVENT_TIMER,
+			CHAR			= TOMATO_EVENT_CHAR,
+			KEY				= TOMATO_EVENT_KEY,
+			KEY_UP			= TOMATO_EVENT_KEY_UP,
+			EXCEPTION		= TOMATO_EVENT_EXCEPTION
 		};
 
 		Event() {}
@@ -66,23 +66,6 @@ namespace Tomato {
 	class ExceptionEvent : public Event {
 	public:
 		enum ExceptionType : size_t {
-			DIVISION_BY_ZERO,
-			DEBUG_SINGLE_STEP,
-			NON_MASKABLE_INTERRUPT,
-			BREAKPOINT,
-			INTO_DETECTED_OVERFLOW,
-			OUT_OF_BOUNDS,
-			INVALID_OPCODE,
-			NO_COPROCESSOR,
-			DOUBLE_FAULT,
-			BAD_TSS,
-			SEGMENT_NOT_PRESENT,
-			GENERAL_PROTECTION_FAULT,
-			PAGE_FAULT,
-			UNKNOWN_INTERRUPT,
-			COPROCESSOR_FAULT,
-			ALIGNMENT_CHECK,
-			MACHINE_CHECK
 		};
 
 		ExceptionType GetExceptionType() {
@@ -90,13 +73,14 @@ namespace Tomato {
 		}
 
 		const char* GetMessage() {
-			return (const char*)data[0];
+			return (const char*)data[1];
 		}
 
 	};
 
 	class OS {
 	private:
+		OS() {}
 
 	public:
 
@@ -118,10 +102,10 @@ namespace Tomato {
 
 		static void QueueEvent(uint32_t type, uint32_t p1 = 0, uint32_t p2 = 0, uint32_t p3 = 0, uint32_t p4 = 0);
 
-		Timer StartTimer(float timeout);
-		void CancelTimer(Timer timer);
+		static Timer StartTimer(float timeout);
+		static void CancelTimer(Timer timer);
 		
-		void Sleep(float timeout);
+		static void Sleep(float timeout);
 
 		static const char* Version();
 

@@ -49,11 +49,11 @@ void syscall_term_init(void) {
 	fg_color = 0xf;
 
 	// disable blink
-	port_read8(0x03DA);
-	port_write8(0x03C0, 0x30);
-	int reg = port_read8(0x03C1);
+	inb(0x03DA);
+	outb(0x03C0, 0x30);
+	int reg = inb(0x03C1);
 	reg &= 0xF7;
-	port_write8(0x03C0, reg);
+	outb(0x03C0, reg);
 
 	// register all the syscalls
 	term_kwrite("syscall init: registering TERM syscalls\n");
@@ -84,10 +84,10 @@ void term_kreset(void) {
 
 static void update_cursor() {
 	int offset = term_x + term_y * NATIVE_TERM_WIDTH;
-	port_write8(REG_SCREEN_CTRL, 14);
-	port_write8(REG_SCREEN_DATA, (unsigned char)(offset >> 8));
-	port_write8(REG_SCREEN_CTRL, 15);
-	port_write8(REG_SCREEN_DATA, (unsigned char)(offset & 0xff));
+	outb(REG_SCREEN_CTRL, 14);
+	outb(REG_SCREEN_DATA, (unsigned char)(offset >> 8));
+	outb(REG_SCREEN_CTRL, 15);
+	outb(REG_SCREEN_DATA, (unsigned char)(offset & 0xff));
 }
 
 static void native_term_scroll(uint16_t n) {

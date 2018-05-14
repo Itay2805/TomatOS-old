@@ -27,6 +27,40 @@ typedef struct idt_pointer_t {
 	uintptr_t base;
 } PACKED idt_register_t;
 
+static const char* exceptionMsgs[] = {
+	"Divide-by-zero Error",
+	"Debug"
+	"Non-maskable interrupt"
+	"Breakpoint",
+	"Overflow",
+	"Bound Range Exceeded",
+	"Invalid Opcode",
+	"Device Not Available",
+	"Double Fault (Abort)",
+	"Coprocessor Segment Overrun (Legacy)",
+	"Invalid TSS",
+	"Segment Not Present",
+	"Stack-Segment Fault",
+	"General Protection Fault",
+	"Page Fault",
+	"Reserved",
+	"x87 Floating-Point Exception",
+	"Alignment Check",
+	"Machine Check (Abort)",
+	"SIMD Floating-Point Exception",
+	"Virtualization Exception",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Security Exception",
+	"Reserved"
+};
 
 static interrupt_handler handlers[256];
 static idt_register_t idt_reg;
@@ -65,17 +99,30 @@ extern void handle_exception_interrupt_04();
 extern void handle_exception_interrupt_05();
 extern void handle_exception_interrupt_06();
 extern void handle_exception_interrupt_07();
-extern void handle_exception_interrupt_08();
+extern void handle_exception_interrupt_08();	// ERROR CODE
 extern void handle_exception_interrupt_09();
-extern void handle_exception_interrupt_0A();
-extern void handle_exception_interrupt_0B();
-extern void handle_exception_interrupt_0C();
-extern void handle_exception_interrupt_0D();
-extern void handle_exception_interrupt_0E();
+extern void handle_exception_interrupt_0A();	// ERROR CODE
+extern void handle_exception_interrupt_0B();	// ERROR CODE
+extern void handle_exception_interrupt_0C();	// ERROR CODE
+extern void handle_exception_interrupt_0D();	// ERROR CODE
+extern void handle_exception_interrupt_0E();	// ERROR CODE
 extern void handle_exception_interrupt_0F();
 extern void handle_exception_interrupt_10();
-extern void handle_exception_interrupt_11();
+extern void handle_exception_interrupt_11();	// ERROR CODE
 extern void handle_exception_interrupt_12();
+extern void handle_exception_interrupt_13();
+extern void handle_exception_interrupt_14();
+extern void handle_exception_interrupt_15();
+extern void handle_exception_interrupt_16();
+extern void handle_exception_interrupt_17();
+extern void handle_exception_interrupt_18();
+extern void handle_exception_interrupt_19();
+extern void handle_exception_interrupt_1A();
+extern void handle_exception_interrupt_1B();
+extern void handle_exception_interrupt_1C();
+extern void handle_exception_interrupt_1D();
+extern void handle_exception_interrupt_1E();	// ERROR CODE
+extern void handle_exception_interrupt_1F();
 
 void register_interrupt_handler(uint8_t interrupt, interrupt_handler handler) {
 	handlers[interrupt] = handler;
@@ -84,8 +131,8 @@ void register_interrupt_handler(uint8_t interrupt, interrupt_handler handler) {
 #include <string.h>
 
 void kernel_irq_handler(registers_t r) {
-	if (r.int_no >= 40) port_write8(PIC_SLAVE_COMMAND_PORT, 0x20);
-	port_write8(PIC_MASTER_COMMAND_PORT, 0x20);
+	if (r.int_no >= 40) outb(PIC_SLAVE_COMMAND_PORT, 0x20);
+	outb(PIC_MASTER_COMMAND_PORT, 0x20);
 
 	if (handlers[r.int_no] != NULL) {
 		handlers[r.int_no](&r);
@@ -94,6 +141,7 @@ void kernel_irq_handler(registers_t r) {
 
 void kernel_exception_handler(registers_t r) {
 	// @TODO: handling exceptions
+
 }
 
 static void set_idt_gate(uint8_t n, void(*handler)(void)) {
@@ -131,21 +179,21 @@ void initialize_interrupts(void) {
 	set_idt_gate(0x11, &handle_exception_interrupt_11);
 	set_idt_gate(0x12, &handle_exception_interrupt_12);
 	
-	port_write8(PIC_MASTER_COMMAND_PORT, 0x11);
-	port_write8(PIC_SLAVE_COMMAND_PORT, 0x11);
+	outb(PIC_MASTER_COMMAND_PORT, 0x11);
+	outb(PIC_SLAVE_COMMAND_PORT, 0x11);
 	
 	// remapping 
-	port_write8(PIC_MASTER_DATA_PORT, IRQ_OFFSET);
-	port_write8(PIC_SLAVE_DATA_PORT, IRQ_OFFSET + 8);
+	outb(PIC_MASTER_DATA_PORT, IRQ_OFFSET);
+	outb(PIC_SLAVE_DATA_PORT, IRQ_OFFSET + 8);
 
-	port_write8(PIC_MASTER_DATA_PORT, 0x04);
-	port_write8(PIC_SLAVE_DATA_PORT, 0x02);
+	outb(PIC_MASTER_DATA_PORT, 0x04);
+	outb(PIC_SLAVE_DATA_PORT, 0x02);
 
-	port_write8(PIC_MASTER_DATA_PORT, 0x01);
-	port_write8(PIC_SLAVE_DATA_PORT, 0x01);
+	outb(PIC_MASTER_DATA_PORT, 0x01);
+	outb(PIC_SLAVE_DATA_PORT, 0x01);
 
-	port_write8(PIC_MASTER_DATA_PORT, 0x00);
-	port_write8(PIC_SLAVE_DATA_PORT, 0x00);
+	outb(PIC_MASTER_DATA_PORT, 0x00);
+	outb(PIC_SLAVE_DATA_PORT, 0x00);
 
 	set_idt_gate(IRQ_OFFSET + 0x00, &handle_interrupt_request_00);
 	set_idt_gate(IRQ_OFFSET + 0x01, &handle_interrupt_request_01);

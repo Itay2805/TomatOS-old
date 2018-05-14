@@ -37,6 +37,19 @@ global handle_exception_interrupt_0F
 global handle_exception_interrupt_10
 global handle_exception_interrupt_11
 global handle_exception_interrupt_12
+global handle_exception_interrupt_13
+global handle_exception_interrupt_14
+global handle_exception_interrupt_15
+global handle_exception_interrupt_16
+global handle_exception_interrupt_17
+global handle_exception_interrupt_18
+global handle_exception_interrupt_19
+global handle_exception_interrupt_1A
+global handle_exception_interrupt_1B
+global handle_exception_interrupt_1C
+global handle_exception_interrupt_1D
+global handle_exception_interrupt_1E
+global handle_exception_interrupt_1F
 
 global handle_interrupt_request_00
 global handle_interrupt_request_01
@@ -206,6 +219,85 @@ handle_exception_interrupt_12:
     push byte 0
     push byte 18
     jmp exception_common_stub
+
+handle_exception_interrupt_13:
+    cli
+    push byte 0
+    push byte 19
+    jmp exception_common_stub
+
+handle_exception_interrupt_14:
+    cli
+    push byte 0
+    push byte 20
+    jmp exception_common_stub
+
+handle_exception_interrupt_15:
+    cli
+    push byte 0
+    push byte 21
+    jmp exception_common_stub
+
+handle_exception_interrupt_16:
+    cli
+    push byte 0
+    push byte 22
+    jmp exception_common_stub
+
+handle_exception_interrupt_17:
+    cli
+    push byte 0
+    push byte 23
+    jmp exception_common_stub
+
+handle_exception_interrupt_18:
+    cli
+    push byte 0
+    push byte 24
+    jmp exception_common_stub
+
+handle_exception_interrupt_19:
+    cli
+    push byte 0
+    push byte 25
+    jmp exception_common_stub
+
+handle_exception_interrupt_1A:
+    cli
+    push byte 0
+    push byte 26
+    jmp exception_common_stub
+
+handle_exception_interrupt_1B:
+    cli
+    push byte 0
+    push byte 27
+    jmp exception_common_stub
+
+handle_exception_interrupt_1C:
+    cli
+    push byte 0
+    push byte 28
+    jmp exception_common_stub
+
+handle_exception_interrupt_1D:
+    cli
+    push byte 0
+    push byte 29
+    jmp exception_common_stub
+
+handle_exception_interrupt_1E:
+    cli
+    push byte 30
+    jmp exception_common_stub
+
+handle_exception_interrupt_1F:
+    cli
+    push byte 0
+    push byte 31
+    jmp exception_common_stub
+
+;;;;;;; IRQs
 
 handle_interrupt_request_00:
 	cli

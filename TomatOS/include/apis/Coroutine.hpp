@@ -33,7 +33,7 @@ namespace Tomato {
 		Coroutine(CoroutineFunc func);
 		~Coroutine();
 
-		template<typename Argument = void*, typename Return = void*>
+		template<typename Return = void*, typename Argument = void*>
 		Return Resume(void* arg = nullptr) {
 			// save old coroutine reference
 			Coroutine* old = current;
