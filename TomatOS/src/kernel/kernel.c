@@ -9,6 +9,8 @@
 #include "syscalls/term.h"
 #include "syscalls/os.h"
 
+#include "drivers/timer.h"
+
 typedef void(*constructor)();
 constructor start_ctors;
 constructor end_ctors;
@@ -36,6 +38,9 @@ void kmain(const void* multiboot_structure, uint32_t multiboot_magic) {
 	uint32_t* memupper = (uint32_t*)(((size_t)multiboot_structure) + 8);
 	uint32_t heap_start = 10 * 1024 * 1024;
 	initialize_heap(heap_start, (*memupper)*1024 - heap_start - 10 * 1024);
+
+	// initialize driver
+	driver_timer_init();
 
 	// reset terminal
 	term_kreset();

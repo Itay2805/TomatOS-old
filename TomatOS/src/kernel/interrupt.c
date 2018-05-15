@@ -4,8 +4,6 @@
 
 #include "gdt.h"
 
-#define IRQ_OFFSET 32
-
 #define PIC_MASTER_COMMAND_PORT 0x20
 #define PIC_MASTER_DATA_PORT 0x21
 #define PIC_SLAVE_COMMAND_PORT 0xA0
@@ -129,19 +127,26 @@ void register_interrupt_handler(uint8_t interrupt, interrupt_handler handler) {
 }
 
 #include <string.h>
+#include "syscalls/term.h"
 
 void kernel_irq_handler(registers_t r) {
-	if (r.int_no >= 40) outb(PIC_SLAVE_COMMAND_PORT, 0x20);
-	outb(PIC_MASTER_COMMAND_PORT, 0x20);
-
 	if (handlers[r.int_no] != NULL) {
 		handlers[r.int_no](&r);
 	}
+
+	outb(PIC_MASTER_COMMAND_PORT, 0x20);
+	if (r.int_no >= 40) outb(PIC_SLAVE_COMMAND_PORT, 0x20);
 }
 
 void kernel_exception_handler(registers_t r) {
 	// @TODO: handling exceptions
 
+	int irqnum = r.int_no;
+	char buf[256];
+	itoa(irqnum, buf, 10);
+	term_kwrite("exception: ");
+	term_kwrite(buf);
+	term_kwrite("\n");
 }
 
 static void set_idt_gate(uint8_t n, void(*handler)(void)) {

@@ -13,34 +13,20 @@ void program(void*) {
 	Term::SetBackgroundColor(Colors::LIGHT_BLUE);
 	Term::SetTextColor(Colors::WHITE);
 	Term::Clear();
-
-	Term::Write(OS::Version());
-	Term::Write("\n");
-
-	Term::Write("Sleeping for 10 seconds");
-	OS::Sleep(10);
-	Term::Write("Slept for 10 seconds!");
-
-	Timer heyTimer = OS::StartTimer(1);
-	while (true) {
-		Event event = OS::PullEvent();
-		switch (event.GetEventType()) {
-			case Event::TIMER: {
-				Term::Write("Hey!\n");
-				heyTimer = OS::StartTimer(1);
-			} break;
-		}
+	
+	for (int i = 0; i < Term::GetHeight() - 1; i++) {
+		Term::Write(OS::Version());
+		Term::Write("\n");
 	}
+	
+	OS::Sleep(4);
+
+	Term::SetBackgroundColor(Colors::BLUE);
+
+	Term::Scroll(5);
 }
 
 extern "C" void startup() {
 	Coroutine coro(program);
-	event_t event;
-	while (true) {
-		Event::EventType filter = (Event::EventType)coro.Resume<uint32_t, event_t*>(&event);
-		if (coro.GetStatus() == Coroutine::DEAD) {
-			break;
-		}
-		tomato_os_pull_event_blocking(&event, filter);
-	}
+	OS::RunBlockingEventLoop(&coro);
 }

@@ -5,6 +5,9 @@ NASMPARAMS="-f elf"
 LDPARAMS="-melf_i386"
 
 # cleanup
+clear 
+clear
+
 echo "Removing old build folder"
 rm kernel.bin
 rm kernel.iso

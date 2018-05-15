@@ -16,8 +16,9 @@ extern "C" {
 const char* tomato_os_version() {
 	return (const char*)tomato_syscall(TOMATO_SYSCALL_OS_VERSION);
 }
-void tomato_os_pull_event_blocking(event_t* event, uint32_t filter) {
-	// @TODO
+
+int tomato_os_pull_event(event_t* event, uint32_t filter) {
+	return tomato_syscall_2p(TOMATO_SYSCALL_OS_PULL_EVENT, (uint32_t)event, (uint32_t)filter);
 }
 
 void tomato_os_queue_event(event_t* event) {
@@ -100,8 +101,8 @@ void* tomato_heap_reallocate(void* ptr, size_t newsize) {
 	return (void*)tomato_syscall_2p(TOMATO_SYSCALL_HEAP_REALLOCATE, (uint32_t)ptr, (uint32_t)newsize);
 }
 
-bool_t tomato_heap_free(void* ptr) {
-	return (bool_t)tomato_syscall_1p(TOMATO_SYSCALL_HEAP_FREE, (uint32_t)ptr);
+bool tomato_heap_free(void* ptr) {
+	return (bool)tomato_syscall_1p(TOMATO_SYSCALL_HEAP_FREE, (uint32_t)ptr);
 }
 
 #ifdef __cplusplus

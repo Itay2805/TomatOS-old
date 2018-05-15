@@ -29,7 +29,7 @@ extern "C" {
 	} event_t;
 
 	const char* tomato_os_version();
-	void tomato_os_pull_event_blocking(event_t* event, uint32_t filter);
+	int tomato_os_pull_event(event_t* event, uint32_t filter);
 	void tomato_os_queue_event(event_t* event);
 	uint32_t tomato_os_start_timer(uint32_t millis);
 	void tomato_os_cancel_timer(uint32_t id);
@@ -58,7 +58,7 @@ extern "C" {
 
 	void* tomato_heap_allocate(size_t size);
 	void* tomato_heap_reallocate(void* ptr, size_t newsize);
-	bool_t tomato_heap_free(void* ptr);
+	bool tomato_heap_free(void* ptr);
 
 #ifdef __cplusplus
 }

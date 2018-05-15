@@ -12,7 +12,7 @@ void* realloc(void* ptr, size_t newsize) {
 }
 
 int free(void* ptr) {
-	return (bool_t)tomato_syscall_1p(TOMATO_SYSCALL_HEAP_FREE, (uint32_t)ptr);
+	return (bool)tomato_syscall_1p(TOMATO_SYSCALL_HEAP_FREE, (uint32_t)ptr);
 }
 
 char* strrev(char *str) {

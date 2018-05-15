@@ -129,11 +129,13 @@
     <None Include="build.sh" />
     <None Include="kernel.bin" />
     <None Include="kernel.iso" />
+    <None Include="libc\setjmp.asm" />
     <None Include="linker.ld" />
     <None Include="src\kernel\bootloader.asm" />
     <None Include="src\kernel\interrupt_stubs.asm" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\apis\Coroutine.cpp" />
     <ClCompile Include="include\apis\OS.cpp" />
     <ClCompile Include="include\apis\Term.cpp" />
     <ClCompile Include="include\apis\tomato.c" />
@@ -141,6 +143,7 @@
     <ClCompile Include="libc\string.c" />
     <ClCompile Include="src\kernel\cpp\icxxabi.cpp" />
     <ClCompile Include="src\kernel\cpp\purevirtual.cpp" />
+    <ClCompile Include="src\kernel\drivers\timer.c" />
     <ClCompile Include="src\kernel\gdt.c" />
     <ClCompile Include="src\kernel\heap.c" />
     <ClCompile Include="src\kernel\interrupt.c" />
@@ -153,12 +156,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\apis\Colors.h" />
+    <ClInclude Include="include\apis\Colors.hpp" />
+    <ClInclude Include="include\apis\Coroutine.hpp" />
     <ClInclude Include="include\apis\OS.hpp" />
     <ClInclude Include="include\apis\Term.hpp" />
     <ClInclude Include="include\apis\Window.hpp" />
     <ClInclude Include="include\cpp.hpp" />
     <ClInclude Include="include\syscall.h" />
     <ClInclude Include="libc\limits.h" />
+    <ClInclude Include="libc\setjmp.h" />
     <ClInclude Include="libc\stdbool.h" />
     <ClInclude Include="libc\stddef.h" />
     <ClInclude Include="libc\stdint.h" />
@@ -168,6 +174,7 @@
     <ClInclude Include="include\cpp\icxxabi.h" />
     <ClInclude Include="include\cpp\memory.h" />
     <ClInclude Include="include\cpp\purevirtual.hpp" />
+    <ClInclude Include="src\kernel\drivers\timer.h" />
     <ClInclude Include="src\kernel\gdt.h" />
     <ClInclude Include="src\kernel\heap.h" />
     <ClInclude Include="src\kernel\interrupt.h" />

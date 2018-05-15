@@ -25,6 +25,9 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="src\kernel\interrupt_stubs.asm" />
+    <None Include="libc\setjmp.asm">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="libc\limits.h">
@@ -96,6 +99,18 @@
     <ClInclude Include="src\kernel\syscalls\os.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\apis\Coroutine.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\apis\Colors.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libc\setjmp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kernel\drivers\timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\kernel\kernel.c">
@@ -144,6 +159,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="include\apis\OS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\apis\Coroutine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kernel\drivers\timer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

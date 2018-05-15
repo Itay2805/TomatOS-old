@@ -15,7 +15,7 @@
 typedef struct memory_block_t {
 	struct memory_block_t* before;
 	size_t size;
-	bool_t allocated;
+	bool allocated;
 	uint32_t magic;
 } memory_block_t;
 
@@ -122,7 +122,7 @@ void* heap_allocate(size_t size) {
 	if (size == 0) return NULL;
 
 	// we start from the first free block
-	bool_t valid = true; // assume the first block is valid
+	bool valid = true; // assume the first block is valid
 	memory_block_t* block = first_free_block;
 	do {
 		// do we have enough space
@@ -141,7 +141,7 @@ void* heap_allocate(size_t size) {
 				block->size = size;
 
 				// set the previous block of the next block, only if valid
-				bool_t nextBlockValid;
+				bool nextBlockValid;
 				memory_block_t* next = get_next_block(newblock, &nextBlockValid);
 				if (nextBlockValid) {
 					next->before = newblock;
@@ -170,7 +170,7 @@ void* heap_reallocate(void* ptr, size_t newsize) {
 	// no pointer given? just return a new block
 	if (ptr == NULL) return heap_allocate(newsize);
 
-	bool_t valid;
+	bool valid;
 	get_block(ptr, &valid);
 	if (!valid) {
 		return NULL;
@@ -191,8 +191,8 @@ void* heap_reallocate(void* ptr, size_t newsize) {
 	return newPtr;
 }
 
-bool_t heap_free(void* ptr) {
-	bool_t valid;
+bool heap_free(void* ptr) {
+	bool valid;
 	memory_block_t* block = get_block(ptr, &valid);
 	if (!valid) {
 		return false;

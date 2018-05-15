@@ -94,10 +94,9 @@ static void native_term_scroll(uint16_t n) {
 	size_t length_copy = ((NATIVE_TERM_HEIGHT - n) * NATIVE_TERM_WIDTH) * 2;
 	size_t length_remove = (n * NATIVE_TERM_WIDTH) * 2;
 	for (size_t i = 0; i < length_copy; i++) {
-		vmemory[i] = vmemory[i + (n * NATIVE_TERM_WIDTH) * 2];
-		vmemory[i + 1] = vmemory[1 + i + (n * NATIVE_TERM_WIDTH) * 2];
+		vmemory[i] = vmemory[i + length_remove];
 	}
-	for (size_t i = 0; i < length_remove; i++) {
+	for (int i = 0; i < length_remove; i += 2) {
 		vmemory[i + length_copy] = 0;
 		vmemory[i + 1 + length_copy] = bg_color << 4 | fg_color;
 	}

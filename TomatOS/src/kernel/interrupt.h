@@ -6,6 +6,8 @@
 #include "common.h"
 #include "port.h"
 
+#define IRQ_OFFSET 32
+
 #define EXCEPTION_DIVIDE_BY_ZERO					0x00
 #define EXCEPTION_DEBUG								0x01
 #define EXCEPTION_NON_MASKABLE_INTERRUPT			0x02
@@ -42,22 +44,22 @@
 // we can't actually check for this exception on kernel level
 #define EXCEPTION_TRIPLE_FAULT
 
-#define IRQ_TIMER								0x00
-#define IRQ_KEYBOARD							0x01
-#define IRQ_CASCADE								0x02
-#define IRQ_COM2								0x03
-#define IRQ_COM1								0x04
-#define IRQ_LPT2								0x05
-#define IRQ_FLOPPY								0x06
-#define IRQ_LPT1								0x07
-#define IRQ_CMOS_REAL_TIME_CLOCK				0x08
-#define IRQ_PERIPHERALS_1						0x09
-#define IRQ_PERIPHERALS_2						0x0A
-#define IRQ_PERIPHERALS_3						0x0B
-#define IRQ_MOUSE								0x0C
-#define IRQ_COPRPCESSOR							0x0D
-#define IRQ_PRIMARY_ATA							0x0E
-#define IRQ_SECONDARY_ATA						0x0F
+#define IRQ_TIMER								(IRQ_OFFSET + 0x00)
+#define IRQ_KEYBOARD							(IRQ_OFFSET + 0x01)
+#define IRQ_CASCADE								(IRQ_OFFSET + 0x02)
+#define IRQ_COM2								(IRQ_OFFSET + 0x03)
+#define IRQ_COM1								(IRQ_OFFSET + 0x04)
+#define IRQ_LPT2								(IRQ_OFFSET + 0x05)
+#define IRQ_FLOPPY								(IRQ_OFFSET + 0x06)
+#define IRQ_LPT1								(IRQ_OFFSET + 0x07)
+#define IRQ_CMOS_REAL_TIME_CLOCK				(IRQ_OFFSET + 0x08)
+#define IRQ_PERIPHERALS_1						(IRQ_OFFSET + 0x09)
+#define IRQ_PERIPHERALS_2						(IRQ_OFFSET + 0x0A)
+#define IRQ_PERIPHERALS_3						(IRQ_OFFSET + 0x0B)
+#define IRQ_MOUSE								(IRQ_OFFSET + 0x0C)
+#define IRQ_COPRPCESSOR							(IRQ_OFFSET + 0x0D)
+#define IRQ_PRIMARY_ATA							(IRQ_OFFSET + 0x0E)
+#define IRQ_SECONDARY_ATA						(IRQ_OFFSET + 0x0F)
 
 #define IRQ_SYSCALL								0x80
 

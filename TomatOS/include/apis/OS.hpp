@@ -84,12 +84,22 @@ namespace Tomato {
 
 	public:
 
+		template<class E = Event>
+		static E PullEventBlocking(Event::EventType filter = Event::ALL) {
+			event_t native_event;
+			while (!tomato_os_pull_event(&native_event, (uint32_t)filter)) {
+				asm("nop");
+			}
+			Event event(native_event.type, native_event.data);
+			E* casted = (E*)&event;
+			return *casted;
+		}
+
 		// for now the pull event raw will be blocking 
 		template<class E = Event>
 		static E PullEventRaw(Event::EventType filter = Event::ALL) {
-			event_t* native_event = Coroutine::Yield<event_t*>(filter);
-			Event event(native_event->type, native_event->data);
-			E* casted = (E*)&event;
+			Event* event = Coroutine::Yield<Event*>(filter);
+			E* casted = (E*)event;
 			return *casted;
 		}
 
@@ -99,6 +109,8 @@ namespace Tomato {
 			// will only be able to do it when we have a process or something
 			return PullEventRaw<E>(filter);
 		}
+
+		static void RunBlockingEventLoop(Coroutine* coro);
 
 		static void QueueEvent(uint32_t type, uint32_t p1 = 0, uint32_t p2 = 0, uint32_t p3 = 0, uint32_t p4 = 0);
 
