@@ -14,16 +14,16 @@ void program(void*) {
 	Term::SetTextColor(Colors::WHITE);
 	Term::Clear();
 	
-	for (int i = 0; i < Term::GetHeight() - 1; i++) {
-		Term::Write(OS::Version());
-		Term::Write("\n");
+	Term::Write(OS::Version());
+	Term::Write("\n");
+
+	while (true) {
+		CharEvent event = OS::PullEvent<CharEvent>(Event::CHAR);
+		char buf[2];
+		buf[0] = event.GetChar();
+		buf[1] = 0;
+		Term::Write(buf);
 	}
-	
-	OS::Sleep(4);
-
-	Term::SetBackgroundColor(Colors::BLUE);
-
-	Term::Scroll(5);
 }
 
 extern "C" void startup() {

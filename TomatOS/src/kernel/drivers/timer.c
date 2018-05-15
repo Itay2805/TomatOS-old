@@ -58,7 +58,7 @@ void driver_cancel_timer(uint32_t id) {
 
 static int skips = 1;
 
-void interrupt_timer_handle(registers_t* regs) {
+static void interrupt_timer_handle(registers_t* regs) {
 	UNUSED(regs);
 
 	if (base == NULL) return;

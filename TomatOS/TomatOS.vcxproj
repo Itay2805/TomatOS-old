@@ -143,6 +143,7 @@
     <ClCompile Include="libc\string.c" />
     <ClCompile Include="src\kernel\cpp\icxxabi.cpp" />
     <ClCompile Include="src\kernel\cpp\purevirtual.cpp" />
+    <ClCompile Include="src\kernel\drivers\keyboard.c" />
     <ClCompile Include="src\kernel\drivers\timer.c" />
     <ClCompile Include="src\kernel\gdt.c" />
     <ClCompile Include="src\kernel\heap.c" />
@@ -174,6 +175,7 @@
     <ClInclude Include="include\cpp\icxxabi.h" />
     <ClInclude Include="include\cpp\memory.h" />
     <ClInclude Include="include\cpp\purevirtual.hpp" />
+    <ClInclude Include="src\kernel\drivers\keyboard.h" />
     <ClInclude Include="src\kernel\drivers\timer.h" />
     <ClInclude Include="src\kernel\gdt.h" />
     <ClInclude Include="src\kernel\heap.h" />

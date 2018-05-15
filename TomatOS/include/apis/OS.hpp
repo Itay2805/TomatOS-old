@@ -78,6 +78,31 @@ namespace Tomato {
 
 	};
 
+	class CharEvent : public Event {
+	public:
+		char GetChar() {
+			return (char)data[0];
+		}
+	};
+
+	class KeyEvent : public Event {
+	public:
+		uint8_t GetKeyCode() {
+			return (uint8_t)data[0];
+		}
+		
+		bool IsHeld() {
+			return (bool)data[1];
+		}
+	};
+
+	class KeyUpEvent : public Event {
+	public:
+		uint8_t GetKeyCode() {
+			return (uint8_t)data[0];
+		}
+	};
+
 	class OS {
 	private:
 		OS() {}

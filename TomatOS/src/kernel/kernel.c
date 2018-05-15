@@ -10,6 +10,7 @@
 #include "syscalls/os.h"
 
 #include "drivers/timer.h"
+#include "drivers/keyboard.h"
 
 typedef void(*constructor)();
 constructor start_ctors;
@@ -41,6 +42,7 @@ void kmain(const void* multiboot_structure, uint32_t multiboot_magic) {
 
 	// initialize driver
 	driver_timer_init();
+	driver_keyboard_init();
 
 	// reset terminal
 	term_kreset();
