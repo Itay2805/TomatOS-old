@@ -16,6 +16,7 @@ void program(void*) {
 	
 	Term::Write(OS::Version());
 	Term::Write("\n");
+	Term::Write("!@#$%^&*()\n");
 
 	while (true) {
 		char c = OS::PullEvent<CharEvent>(Event::KEY).GetChar();
