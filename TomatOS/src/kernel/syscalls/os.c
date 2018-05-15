@@ -9,6 +9,7 @@
 #include "../interrupt.h"
 #include "../syscalls.h"
 #include "../port.h"
+#include "../heap.h"
 
 static const char* version_str = "TomatOS - 2.0";
 
@@ -22,13 +23,23 @@ static int front;
 static int rear;
 static int count;
 
+// for syncing stuff we need to lock the queue
+static bool locked = false;
+
 void os_kqueue_event(event_t event) {
+	locked = true;
+	
 	if (count == cap) {
 		cap += QUEUE_CAP;
-		array = realloc(array, sizeof(event_t) * cap);
+		array = heap_reallocate(array, sizeof(event_t) * cap);
+	}
+	if (rear == cap - 1) {
+		rear = -1;
 	}
 	array[++rear] = event;
 	count++;
+
+	locked = false;
 }
 
 static void syscall_version(registers_t* regs) {
@@ -36,11 +47,19 @@ static void syscall_version(registers_t* regs) {
 }
 
 static void syscall_pull_event(registers_t* regs) {
+	// if the queue is locked, say there is no event
+	if (locked) {
+		regs->eax = 0;
+		return;
+	}
+
 	uint32_t filter = regs->ecx;
 	event_t* event = (event_t*)regs->ebx;
-	while(true) {
-		if (count == 0) {
-			regs->eax = false;
+	while (true) {
+		// if queue gets locked while we iterate it return 
+		// also if there are no items in the queue return
+		if (locked || count == 0) {
+			regs->eax = 0;
 			return;
 		}
 		*event = array[front++];
@@ -48,11 +67,13 @@ static void syscall_pull_event(registers_t* regs) {
 			front = 0;
 		}
 		count--;
-		if (filter == TOMATO_EVENT_ALL || event->type & filter) {
-			regs->eax = true;
+		if (filter == TOMATO_EVENT_ALL || (event->type & filter) != 0) {
+			regs->eax = count + 1;
 			return;
 		}
-	} while (filter != TOMATO_EVENT_ALL && !(event->type & filter));
+	}
+
+
 }
 
 static void syscall_queue_event(registers_t* regs) {
@@ -71,7 +92,7 @@ static void syscall_cancel_timer(registers_t* regs) {
 
 void syscall_os_init(void) {
 	cap = QUEUE_CAP;
-	array = malloc(sizeof(event_t) * cap);
+	array = heap_allocate(sizeof(event_t) * cap);
 	front = 0;
 	rear = -1;
 	count = 0;

@@ -18,9 +18,9 @@ void program(void*) {
 	Term::Write("\n");
 
 	while (true) {
-		CharEvent event = OS::PullEvent<CharEvent>(Event::CHAR);
+		char c = OS::PullEvent<CharEvent>(Event::KEY).GetChar();
 		char buf[2];
-		buf[0] = event.GetChar();
+		buf[0] = c;
 		buf[1] = 0;
 		Term::Write(buf);
 	}

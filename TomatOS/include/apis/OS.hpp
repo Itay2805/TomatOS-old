@@ -4,6 +4,7 @@
 #include <tomato.h>
 
 #include <apis/Coroutine.hpp>
+#include <apis/Term.hpp>
 
 namespace Tomato {
 
@@ -111,10 +112,18 @@ namespace Tomato {
 
 		template<class E = Event>
 		static E PullEventBlocking(Event::EventType filter = Event::ALL) {
+			char buf[256];
+			
 			event_t native_event;
+			native_event.type = 0;
+			native_event.data[0] = 0;
+			native_event.data[1] = 0;
+			native_event.data[2] = 0;
+			native_event.data[3] = 0;
 			while (!tomato_os_pull_event(&native_event, (uint32_t)filter)) {
 				asm("nop");
 			}
+
 			Event event(native_event.type, native_event.data);
 			E* casted = (E*)&event;
 			return *casted;

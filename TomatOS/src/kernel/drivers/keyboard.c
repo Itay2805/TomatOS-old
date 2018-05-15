@@ -17,17 +17,32 @@ static bool keystates[256];
 static char vkcodes[256];
 static char chars[256];
 
+#define DEBUG_KEYBOARD 0
+
 static void interrupt_keyboard_handle(registers_t* regs) {
 	uint8_t scancode = inb(0x60);
 	event_t event;
-
+	
+#if DEBUG_KEYBOARD
 	char buf[256];
 	itoa(scancode, buf, 10);
+	term_kwrite("scancode: ");
 	term_kwrite(buf);
 	term_kwrite("\n");
+#endif
 
-	if (scancode <= 0x7f) {		
+	if (scancode <= 0x7f) {
 		uint8_t vkcode = vkcodes[scancode];
+		if (vkcode == 0) return;
+		
+#if DEBUG_KEYBOARD
+		char buf[2];
+		buf[0] = vkcode;
+		buf[1] = 0;
+		term_kwrite("vkcode: ");
+		term_kwrite(buf);
+		term_kwrite("\n");
+#endif
 
 		// key press
 		event.type = TOMATO_EVENT_KEY;
@@ -42,7 +57,21 @@ static void interrupt_keyboard_handle(registers_t* regs) {
 			if (keystates[TOMATO_KEYS_SHIFT_LEFT] || keystates[TOMATO_KEYS_SHIFT_RIGHT]) {
 				scancode += SCANCODE_LIMIT;
 			}
+
+#if DEBUG_KEYBOARD
+			term_kwrite("first press\n");
+#endif
+
 			if (chars[scancode] != 0) {
+#if DEBUG_KEYBOARD
+				char buf[2];
+				buf[0] = chars[scancode];
+				buf[1] = 0;
+				term_kwrite("char: ");
+				term_kwrite(buf);
+				term_kwrite("\n");
+#endif
+
 				event.type = TOMATO_EVENT_CHAR;
 				event.data[0] = chars[scancode];
 				event.data[1] = 0;
@@ -53,8 +82,8 @@ static void interrupt_keyboard_handle(registers_t* regs) {
 		keystates[vkcode] = true;
 	}
 	else {
-
-		uint8_t vkcode = vkcodes[scancode + SCANCODE_LIMIT];
+		uint8_t vkcode = vkcodes[scancode - 0x7f];
+		if (vkcode == 0) return;
 
 		// key release
 		scancode -= 0x80;
@@ -73,28 +102,28 @@ void driver_keyboard_init(void) {
 	
 	// 0 - 9
 	for (int i = 0; i < 10; i++) {
-		vkcodes[2 + i] = '0' + i;
+		chars[2 + i] = '0' + i;
 	}
 	
 	// A - Z
-	chars[10] = 'A';
-	chars[11] = 'B';
-	chars[30] = 'C';
-	chars[48] = 'D';
-	chars[46] = 'E';
-	chars[32] = 'F';
-	chars[18] = 'G';
-	chars[33] = 'H';
-	chars[34] = 'I';
-	chars[35] = 'J';
-	chars[23] = 'K';
-	chars[36] = 'L';
-	chars[37] = 'M';
-	chars[38] = 'N';
-	chars[50] = 'O';
-	chars[49] = 'P';
-	chars[24] = 'Q';
-	chars[25] = 'R';
+	chars[30] = 'A';
+	chars[48] = 'B';
+	chars[46] = 'C';
+	chars[32] = 'D';
+	chars[18] = 'E';
+	chars[33] = 'F';
+	chars[34] = 'G';
+	chars[35] = 'H';
+	chars[23] = 'I';
+	chars[36] = 'J';
+	chars[37] = 'K';
+	chars[38] = 'L';
+	chars[50] = 'M';
+	chars[49] = 'N';
+	chars[24] = 'O';
+	chars[25] = 'P';
+	chars[16] = 'Q';
+	chars[19] = 'R';
 	chars[31] = 'S';
 	chars[20] = 'T';
 	chars[22] = 'U';
@@ -133,8 +162,7 @@ void driver_keyboard_init(void) {
 
 	vkcodes[42] = TOMATO_KEYS_SHIFT_LEFT;
 	vkcodes[54] = TOMATO_KEYS_SHIFT_RIGHT;
-
-	// TODO: NUMPAD keys
+	
 	// TODO: backspace - 14
 }
 

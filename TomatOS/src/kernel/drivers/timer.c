@@ -14,7 +14,7 @@
 #define PIT_DATA3   0x42
 #define PIT_SET		0x36
 
-#define DRIVER_TIMER_INTERVAL 100
+#define DRIVER_TIMER_INTERVAL 10
 
 typedef struct timer_node_t {
 	uint32_t id;
