@@ -15,20 +15,31 @@ extern "C" {
 	//// keys
 	/////////////////////////////////////////////////////
 
-#define TOMATO_KEYS_SHIFT_LEFT		0xA0
-#define TOMATO_KEYS_SHIFT_RIGHT		0xA1
+#define TOMATO_KEYS_SHIFT_LEFT		160
+#define TOMATO_KEYS_SHIFT_RIGHT		161
+
+#define TOMATO_KEYS_NUMPAD0			96
+#define TOMATO_KEYS_NUMPAD1			97
+#define TOMATO_KEYS_NUMPAD2			98
+#define TOMATO_KEYS_NUMPAD3			99
+#define TOMATO_KEYS_NUMPAD4			100
+#define TOMATO_KEYS_NUMPAD5			101
+#define TOMATO_KEYS_NUMPAD6			102
+#define TOMATO_KEYS_NUMPAD7			103
+#define TOMATO_KEYS_NUMPAD8			104
+#define TOMATO_KEYS_NUMPAD9			105
 
 	/////////////////////////////////////////////////////
 	//// os syscalls
 	/////////////////////////////////////////////////////
 
-#define TOMATO_EVENT_ALL			0x00
-#define TOMATO_EVENT_TERMINATE		0x01
-#define TOMATO_EVENT_TIMER			0x02
-#define TOMATO_EVENT_CHAR			0x04
-#define TOMATO_EVENT_KEY			0x08
-#define TOMATO_EVENT_KEY_UP			0x16
-#define TOMATO_EVENT_EXCEPTION		0x32
+#define TOMATO_EVENT_ALL			(1 << 0)
+#define TOMATO_EVENT_TERMINATE		(1 << 1)
+#define TOMATO_EVENT_TIMER			(1 << 2)
+#define TOMATO_EVENT_CHAR			(1 << 3)
+#define TOMATO_EVENT_KEY			(1 << 4)
+#define TOMATO_EVENT_KEY_UP			(1 << 5)
+#define TOMATO_EVENT_EXCEPTION		(1 << 6)
 
 	typedef struct event_t {
 		uint32_t type;

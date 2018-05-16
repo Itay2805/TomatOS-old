@@ -21,19 +21,19 @@ static char chars[256];
 
 static void interrupt_keyboard_handle(registers_t* regs) {
 	uint8_t scancode = inb(0x60);
-	event_t event;
 
 	if (scancode <= 0x7f) {
 		uint8_t vkcode = vkcodes[scancode];
 		if (vkcode == 0) return;
 
 		// key press
-		event.type = TOMATO_EVENT_KEY;
-		event.data[0] = vkcode;
-		event.data[1] = keystates[vkcode];
-		event.data[2] = 0;
-		event.data[3] = 0;
-		os_kqueue_event(event);
+		event_t keyevent;
+		keyevent.type = TOMATO_EVENT_KEY;
+		keyevent.data[0] = vkcode;
+		keyevent.data[1] = keystates[vkcode];
+		keyevent.data[2] = 0;
+		keyevent.data[3] = 0;
+		os_kqueue_event(keyevent);
 
 		// char event
 		if (!keystates[vkcode] && vkcode != TOMATO_KEYS_SHIFT_LEFT && vkcode != TOMATO_KEYS_SHIFT_RIGHT) {
@@ -42,10 +42,13 @@ static void interrupt_keyboard_handle(registers_t* regs) {
 			}
 
 			if (chars[scancode] != 0) {
-				event.type = TOMATO_EVENT_CHAR;
-				event.data[0] = chars[scancode];
-				event.data[1] = 0;
-				os_kqueue_event(event);
+				event_t charevent;
+				charevent.type = TOMATO_EVENT_CHAR;
+				charevent.data[0] = chars[scancode];
+				charevent.data[1] = 0;
+				charevent.data[2] = 0;
+				charevent.data[3] = 0;
+				os_kqueue_event(charevent);
 			}
 		}
 
@@ -53,9 +56,10 @@ static void interrupt_keyboard_handle(registers_t* regs) {
 	}
 	else {
 		// key release
-		uint8_t vkcode = vkcodes[scancode - 0x7f];
+		uint8_t vkcode = vkcodes[scancode - 0x80];
 		if (vkcode == 0) return;
 
+		event_t event;
 		event.type = TOMATO_EVENT_KEY_UP;
 		event.data[0] = vkcode;
 		event.data[1] = 0;
@@ -121,15 +125,34 @@ void driver_keyboard_init(void) {
 
 	// numpad
 	chars[82] = '0';
+	vkcodes[82] = TOMATO_KEYS_NUMPAD0;
+
 	chars[79] = '1';
+	vkcodes[79] = TOMATO_KEYS_NUMPAD1;
+	
 	chars[80] = '2';
+	vkcodes[80] = TOMATO_KEYS_NUMPAD2;
+	
 	chars[81] = '3';
+	vkcodes[81] = TOMATO_KEYS_NUMPAD3;
+	
 	chars[75] = '4';
+	vkcodes[75] = TOMATO_KEYS_NUMPAD4;
+	
 	chars[76] = '5';
+	vkcodes[76] = TOMATO_KEYS_NUMPAD5;
+	
 	chars[77] = '6';
+	vkcodes[77] = TOMATO_KEYS_NUMPAD6;
+	
 	chars[71] = '7';
+	vkcodes[71] = TOMATO_KEYS_NUMPAD7;
+	
 	chars[72] = '8';
+	vkcodes[72] = TOMATO_KEYS_NUMPAD8;
+	
 	chars[73] = '9';
+	vkcodes[73] = TOMATO_KEYS_NUMPAD9;
 
 	// special characters are offseted
 	chars[SCANCODE_LIMIT + 2] = '!';

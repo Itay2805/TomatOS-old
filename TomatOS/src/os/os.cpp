@@ -19,7 +19,7 @@ void program(void*) {
 	Term::Write("!@#$%^&*()\n");
 
 	while (true) {
-		char c = OS::PullEvent<CharEvent>(Event::KEY).GetChar();
+		char c = OS::PullEvent<CharEvent>(Event::CHAR).GetChar();
 		char buf[2];
 		buf[0] = c;
 		buf[1] = 0;

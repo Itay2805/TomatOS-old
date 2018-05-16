@@ -62,6 +62,10 @@ namespace Tomato {
 			return t != GetTimer();
 		}
 
+		static Event::EventType GetStaticEventType() {
+			return EventType::TIMER;
+		}
+
 	};
 
 	class ExceptionEvent : public Event {
@@ -77,12 +81,20 @@ namespace Tomato {
 			return (const char*)data[1];
 		}
 
+		static Event::EventType GetStaticEventType() {
+			return EventType::EXCEPTION;
+		}
+
 	};
 
 	class CharEvent : public Event {
 	public:
 		char GetChar() {
 			return (char)data[0];
+		}
+
+		static Event::EventType GetStaticEventType() {
+			return EventType::CHAR;
 		}
 	};
 
@@ -95,12 +107,20 @@ namespace Tomato {
 		bool IsHeld() {
 			return (bool)data[1];
 		}
+
+		static Event::EventType GetStaticEventType() {
+			return EventType::KEY;
+		}
 	};
 
 	class KeyUpEvent : public Event {
 	public:
 		uint8_t GetKeyCode() {
 			return (uint8_t)data[0];
+		}
+
+		static Event::EventType GetStaticEventType() {
+			return EventType::KEY_UP;
 		}
 	};
 
