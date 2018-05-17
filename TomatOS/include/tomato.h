@@ -33,13 +33,13 @@ extern "C" {
 	//// os syscalls
 	/////////////////////////////////////////////////////
 
-#define TOMATO_EVENT_ALL			(1 << 0)
-#define TOMATO_EVENT_TERMINATE		(1 << 1)
-#define TOMATO_EVENT_TIMER			(1 << 2)
-#define TOMATO_EVENT_CHAR			(1 << 3)
-#define TOMATO_EVENT_KEY			(1 << 4)
-#define TOMATO_EVENT_KEY_UP			(1 << 5)
-#define TOMATO_EVENT_EXCEPTION		(1 << 6)
+#define TOMATO_EVENT_ALL			0
+#define TOMATO_EVENT_TERMINATE		1
+#define TOMATO_EVENT_TIMER			2
+#define TOMATO_EVENT_CHAR			3
+#define TOMATO_EVENT_KEY			4
+#define TOMATO_EVENT_KEY_UP			5
+#define TOMATO_EVENT_EXCEPTION		6
 
 	typedef struct event_t {
 		uint32_t type;

@@ -11,6 +11,7 @@
 
 #include "drivers/timer.h"
 #include "drivers/keyboard.h"
+#include "drivers/ata.h"
 
 typedef void(*constructor)();
 constructor start_ctors;
@@ -43,6 +44,7 @@ void kmain(const void* multiboot_structure, uint32_t multiboot_magic) {
 	// initialize driver
 	driver_timer_init();
 	driver_keyboard_init();
+	driver_ata_init();
 
 	// reset terminal
 	term_kreset();

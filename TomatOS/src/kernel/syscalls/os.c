@@ -67,7 +67,7 @@ static void syscall_pull_event(registers_t* regs) {
 			front = 0;
 		}
 		count--;
-		if (filter == TOMATO_EVENT_ALL || (event->type & filter) != 0) {
+		if (filter == TOMATO_EVENT_ALL || event->type == filter) {
 			regs->eax = count + 1;
 			return;
 		}
