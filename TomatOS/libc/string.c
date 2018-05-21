@@ -69,6 +69,19 @@ size_t strlen(const char* str) {
 	return cnt;
 }
 
+int strncmp(const char* s1, const char* s2, size_t n) {
+	while (n && *s1 && (*s1 == *s2)) {
+		++s1;
+		++s2;
+		--n;
+	}
+	if (n == 0) {
+		return 0;
+	} else {
+		return (*(unsigned char *)s1 - *(unsigned char *)s2);
+	}
+}
+
 int memcmp(const void* vl, const void* vr, size_t n) {
 	const uint8_t *l = vl, *r = vr;
 	for (; n && *l == *r; n--, l++, r++);

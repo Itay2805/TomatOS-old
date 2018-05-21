@@ -27,7 +27,10 @@ void program(void*) {
 	}
 }
 
+#include <String.hpp>
+
 extern "C" void startup() {
+	cpplib::String str = "This is a test";
 	Coroutine coro(program);
 	OS::RunBlockingEventLoop(&coro);
 }

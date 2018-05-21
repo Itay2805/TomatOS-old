@@ -17,6 +17,7 @@ extern "C" {
 	int strcmp(const char* src, const char* dst);
 	char* strcpy(char* dst, const char* src);
 	size_t strlen(const char* str);
+	int strncmp(const char* str1, const char* str2, size_t num);
 
 	int memcmp(const void* src, const void* dst, size_t n);
 	void* memcpy(void* dst, const void* src, size_t length);

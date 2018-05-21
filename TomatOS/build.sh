@@ -99,6 +99,37 @@ do
     done
 done
 
+
+echo "Compiling CPPLIB"
+for d in $(find cpplib/ -type d)
+do
+    mkdir "build/$d"
+    for f in $(find $d/*.c)
+    do
+        of=`echo $f | sed 's/\(.*\)c/\1o/'`
+        of="build/$of"
+        objects="$objects $of"
+        echo "  $f > $of"
+        gcc $CCFLAGS -c "./$f" -o "./$of" 
+    done
+    for f in $(find $d/*.cpp)
+    do
+        of=`echo $f | sed 's/\(.*\)cpp/\1o/'`
+        of="build/$of"
+        objects="$objects $of"
+        echo "  $f > $of"
+        g++ $GCCPARAMS -c "./$f" -o "./$of" 
+    done
+	for f in $(find $d/*.asm)
+    do
+        of=`echo $f | sed 's/\(.*\)asm/\1o/'`
+        of="build/$of"
+        objects="$objects $of"
+        echo "  $f > $of"
+        nasm $NASMPARAMS "./$f" -o "./$of"
+    done
+done
+
 echo "Linking"
 ld $LDPARAMS -T linker.ld -o kernel.bin $objects
 

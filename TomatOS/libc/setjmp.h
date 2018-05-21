@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-	typedef struct {
+	typedef struct jmp_buf {
 		unsigned long ebp;
 		unsigned long ebx;
 		unsigned long edi;

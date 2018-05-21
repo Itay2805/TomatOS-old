@@ -70,16 +70,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)libc;$(ProjectDir)include;</IncludePath>
+    <IncludePath>$(ProjectDir)libc;$(ProjectDir)cpplib;$(ProjectDir)include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)libc;$(ProjectDir)include;</IncludePath>
+    <IncludePath>$(ProjectDir)libc;$(ProjectDir)cpplib;$(ProjectDir)include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir)libc;$(ProjectDir)include;</IncludePath>
+    <IncludePath>$(ProjectDir)libc;$(ProjectDir)cpplib;$(ProjectDir)include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)libc;$(ProjectDir)include;</IncludePath>
+    <IncludePath>$(ProjectDir)libc;$(ProjectDir)cpplib;$(ProjectDir)include</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -143,6 +143,7 @@
     <ClCompile Include="libc\string.c" />
     <ClCompile Include="src\kernel\cpp\icxxabi.cpp" />
     <ClCompile Include="src\kernel\cpp\purevirtual.cpp" />
+    <ClCompile Include="src\kernel\drivers\ata.c" />
     <ClCompile Include="src\kernel\drivers\keyboard.c" />
     <ClCompile Include="src\kernel\drivers\timer.c" />
     <ClCompile Include="src\kernel\gdt.c" />
@@ -156,9 +157,12 @@
     <ClCompile Include="src\os\os.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cpplib\Mem.hpp" />
+    <ClInclude Include="cpplib\String.hpp" />
     <ClInclude Include="include\apis\Colors.h" />
     <ClInclude Include="include\apis\Colors.hpp" />
     <ClInclude Include="include\apis\Coroutine.hpp" />
+    <ClInclude Include="include\apis\FS.hpp" />
     <ClInclude Include="include\apis\OS.hpp" />
     <ClInclude Include="include\apis\Term.hpp" />
     <ClInclude Include="include\apis\Window.hpp" />
@@ -175,6 +179,7 @@
     <ClInclude Include="include\cpp\icxxabi.h" />
     <ClInclude Include="include\cpp\memory.h" />
     <ClInclude Include="include\cpp\purevirtual.hpp" />
+    <ClInclude Include="src\kernel\drivers\ata.h" />
     <ClInclude Include="src\kernel\drivers\keyboard.h" />
     <ClInclude Include="src\kernel\drivers\timer.h" />
     <ClInclude Include="src\kernel\gdt.h" />
@@ -182,8 +187,10 @@
     <ClInclude Include="src\kernel\interrupt.h" />
     <ClInclude Include="src\kernel\port.h" />
     <ClInclude Include="src\kernel\syscalls.h" />
+    <ClInclude Include="src\kernel\syscalls\fs.h" />
     <ClInclude Include="src\kernel\syscalls\os.h" />
     <ClInclude Include="src\kernel\syscalls\term.h" />
+    <ClInclude Include="src\os\Log.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
