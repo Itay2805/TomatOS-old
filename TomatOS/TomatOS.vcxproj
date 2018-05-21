@@ -157,8 +157,10 @@
     <ClCompile Include="src\os\os.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cpplib\Mem.hpp" />
+    <ClInclude Include="cpplib\Memory.hpp" />
     <ClInclude Include="cpplib\String.hpp" />
+    <ClInclude Include="cpplib\Tmplate.hpp" />
+    <ClInclude Include="cpplib\Typedefs.hpp" />
     <ClInclude Include="include\apis\Colors.h" />
     <ClInclude Include="include\apis\Colors.hpp" />
     <ClInclude Include="include\apis\Coroutine.hpp" />

@@ -126,10 +126,16 @@
     <ClInclude Include="src\os\Log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cpplib\Mem.hpp">
+    <ClInclude Include="cpplib\String.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cpplib\String.hpp">
+    <ClInclude Include="cpplib\Typedefs.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cpplib\Tmplate.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cpplib\Memory.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
