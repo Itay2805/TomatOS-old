@@ -123,7 +123,7 @@ namespace cpplib {
 		}
 
 		Status Replace(size_t from, size_t to, const Data& with) {
-			return Relace(from, to, &with, 0, 1);
+			return Replace(from, to, &with, 0, 1);
 		}
 
 		Status Set(size_t at, const Data* s, size_t f, size_t t) {

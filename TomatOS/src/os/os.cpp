@@ -9,7 +9,7 @@
 
 #include <Pair.hpp>
 #include <Typedefs.hpp>
-#include <Vector.hpp>
+#include <VectorSorted.hpp>
 
 using namespace Tomato;
 using namespace cpplib;
@@ -22,15 +22,39 @@ void program(void*) {
 	Term::Write(OS::Version());
 	Term::Write("\n");
 	
-	Vector<CStr> strings;
-	strings.Append("string 1");
-	strings.Append("string 2");
-	strings.Append("string 3");
+	Status st;
 
-	VectorCursor<CStr> cursor(strings);
+	VectorSorted<int> strings;
+
+	st = strings.Insert(3);
+	Term::Write(ErrorMessages[st]);
+	Term::Write("\n");
+
+	st = strings.Insert(1);
+	Term::Write(ErrorMessages[st]);
+	Term::Write("\n");
+
+	st = strings.Insert(2);
+	Term::Write(ErrorMessages[st]);
+	Term::Write("\n");
+
+	st = strings.Insert(4);
+	Term::Write(ErrorMessages[st]);
+	Term::Write("\n");
+
+	st = strings.Insert(0);
+	Term::Write(ErrorMessages[st]);
+	Term::Write("\n");
+
+	Term::Write("================\n");
+
+	VectorCursor<int> cursor(strings);
 
 	for (; cursor.IsValid(); ++cursor) {
-		Term::Write(cursor.Item());
+		char buf[2];
+		buf[0] = cursor.Item() + '0';
+		buf[1] = 0;
+		Term::Write(buf);
 		Term::Write("\n");
 	}
 

@@ -144,6 +144,15 @@
     <ClInclude Include="cpplib\Vector.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cpplib\Status.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cpplib\Map.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cpplib\VectorSorted.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\kernel\kernel.c">
@@ -204,6 +213,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\kernel\drivers\ata.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cpplib\Status.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

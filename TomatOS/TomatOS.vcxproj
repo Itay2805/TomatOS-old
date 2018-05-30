@@ -135,6 +135,7 @@
     <None Include="src\kernel\interrupt_stubs.asm" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="cpplib\Status.cpp" />
     <ClCompile Include="include\apis\Coroutine.cpp" />
     <ClCompile Include="include\apis\OS.cpp" />
     <ClCompile Include="include\apis\Term.cpp" />
@@ -157,8 +158,11 @@
     <ClCompile Include="src\os\os.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cpplib\Map.hpp" />
     <ClInclude Include="cpplib\Memory.hpp" />
     <ClInclude Include="cpplib\Pair.hpp" />
+    <ClInclude Include="cpplib\VectorSorted.hpp" />
+    <ClInclude Include="cpplib\Status.hpp" />
     <ClInclude Include="cpplib\String.hpp" />
     <ClInclude Include="cpplib\Tmplate.hpp" />
     <ClInclude Include="cpplib\Typedefs.hpp" />

@@ -13,6 +13,7 @@ namespace cpplib {
 		ERROR_FULL,
 		ERROR_RANGE,
 		ERROR_NO_MEMORY,
+		ERROR_EXISTS,
 	};
 
 	extern const char* ErrorMessages[];
