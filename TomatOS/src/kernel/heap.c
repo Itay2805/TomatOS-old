@@ -133,7 +133,7 @@ void* heap_allocate(size_t size) {
 				// divide the memory block
 				memory_block_t* newblock = (memory_block_t*)((uintptr_t)block + sizeof(memory_block_t) + size);
 				newblock->allocated = false;
-				newblock->size = block->size - size;
+				newblock->size = block->size - size - sizeof(memory_block_t);
 				newblock->magic = MEMORY_MAGIC;
 				newblock->before = block;
 
