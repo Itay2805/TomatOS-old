@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -18,66 +18,11 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="boot\boot.asm" />
-    <None Include="boot\disk.asm" />
-    <None Include="boot\kernel_entry.asm" />
-    <None Include="boot\print.asm" />
-    <None Include="boot\prot\gdt.asm" />
-    <None Include="boot\prot\print.asm" />
-    <None Include="boot\prot\switch.asm" />
-    <None Include="build.sh" />
-    <None Include="src\kernel\interrupt.asm" />
-    <None Include="src\libc\setjmp.asm" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\api\include\api\color.h" />
-    <ClInclude Include="src\api\include\api\coroutine.h" />
-    <ClInclude Include="src\api\include\api\keys.h" />
-    <ClInclude Include="src\api\include\api\os.h" />
-    <ClInclude Include="src\api\include\api\parallel.h" />
-    <ClInclude Include="src\api\include\api\term.h" />
-    <ClInclude Include="src\api\include\api\window.h" />
-    <ClInclude Include="src\drivers\ata.h" />
-    <ClInclude Include="src\drivers\drivers.h" />
-    <ClInclude Include="src\drivers\keyboard.h" />
-    <ClInclude Include="src\drivers\ports.h" />
-    <ClInclude Include="src\drivers\timer.h" />
-    <ClInclude Include="src\kernel\idt.h" />
-    <ClInclude Include="src\drivers\isr.h" />
-    <ClInclude Include="src\kernel\kernel.h" />
-    <ClInclude Include="src\libc\memory.h" />
-    <ClInclude Include="src\libc\setjmp.h" />
-    <ClInclude Include="src\libc\stdarg.h" />
-    <ClInclude Include="src\libc\stdbool.h" />
-    <ClInclude Include="src\libc\stddef.h" />
-    <ClInclude Include="src\libc\stdint.h" />
-    <ClInclude Include="src\libc\stdio.h" />
-    <ClInclude Include="src\libc\string.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\api\coroutine.c" />
-    <ClCompile Include="src\api\native_term.c" />
-    <ClCompile Include="src\api\os.c" />
-    <ClCompile Include="src\api\parallel.c" />
-    <ClCompile Include="src\api\term.c" />
-    <ClCompile Include="src\api\window.c" />
-    <ClCompile Include="src\drivers\keyboard.c" />
-    <ClCompile Include="src\drivers\ports.c" />
-    <ClCompile Include="src\drivers\timer.c" />
-    <ClCompile Include="src\kernel\idt.c" />
-    <ClCompile Include="src\drivers\isr.c" />
-    <ClCompile Include="src\kernel\kernel.c" />
-    <ClCompile Include="src\libc\memory.c" />
-    <ClCompile Include="src\libc\stdio.c" />
-    <ClCompile Include="src\libc\string.c" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{41A4FE77-FDD9-4B56-B101-C8FAF23AAB78}</ProjectGuid>
+    <ProjectGuid>{AB8D6E22-5E39-40E6-A230-EEBE20CB730A}</ProjectGuid>
     <RootNamespace>TomatOS</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
-    <ProjectName>TomatOS</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -125,16 +70,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)src\api\include;$(ProjectDir)src\libc</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir)src\api\include;$(ProjectDir)src\libc</IncludePath>
+    <IncludePath>$(ProjectDir)libc;$(ProjectDir)cpplib;$(ProjectDir)include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)src\api\include;$(ProjectDir)src\libc</IncludePath>
+    <IncludePath>$(ProjectDir)libc;$(ProjectDir)cpplib;$(ProjectDir)include</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(ProjectDir)libc;$(ProjectDir)cpplib;$(ProjectDir)include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)src\api\include;$(ProjectDir)src\libc</IncludePath>
+    <IncludePath>$(ProjectDir)libc;$(ProjectDir)cpplib;$(ProjectDir)include</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -142,15 +87,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <PreprocessorDefinitions>VISUAL_STUDIO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ExceptionHandling>false</ExceptionHandling>
-      <BasicRuntimeChecks />
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <BufferSecurityCheck />
     </ClCompile>
-    <Link>
-      <AdditionalDependencies />
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -158,15 +95,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <PreprocessorDefinitions>VISUAL_STUDIO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ExceptionHandling>false</ExceptionHandling>
-      <BasicRuntimeChecks />
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <BufferSecurityCheck />
     </ClCompile>
-    <Link>
-      <AdditionalDependencies />
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -176,16 +105,10 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <PreprocessorDefinitions>VISUAL_STUDIO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ExceptionHandling>false</ExceptionHandling>
-      <BasicRuntimeChecks />
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <BufferSecurityCheck />
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies />
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -196,18 +119,87 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <PreprocessorDefinitions>VISUAL_STUDIO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ExceptionHandling>false</ExceptionHandling>
-      <BasicRuntimeChecks />
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <BufferSecurityCheck />
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies />
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="build.sh" />
+    <None Include="kernel.bin" />
+    <None Include="kernel.iso" />
+    <None Include="libc\setjmp.asm" />
+    <None Include="linker.ld" />
+    <None Include="src\kernel\bootloader.asm" />
+    <None Include="src\kernel\interrupt_stubs.asm" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="cpplib\Status.cpp" />
+    <ClCompile Include="include\apis\Coroutine.cpp" />
+    <ClCompile Include="include\apis\OS.cpp" />
+    <ClCompile Include="include\apis\Term.cpp" />
+    <ClCompile Include="include\apis\tomato.c" />
+    <ClCompile Include="include\apis\Window.cpp" />
+    <ClCompile Include="libc\string.c" />
+    <ClCompile Include="src\kernel\cpp\icxxabi.cpp" />
+    <ClCompile Include="src\kernel\cpp\purevirtual.cpp" />
+    <ClCompile Include="src\kernel\drivers\ata.c" />
+    <ClCompile Include="src\kernel\drivers\keyboard.c" />
+    <ClCompile Include="src\kernel\drivers\timer.c" />
+    <ClCompile Include="src\kernel\gdt.c" />
+    <ClCompile Include="src\kernel\heap.c" />
+    <ClCompile Include="src\kernel\interrupt.c" />
+    <ClCompile Include="src\kernel\kernel.c" />
+    <ClCompile Include="src\kernel\port.c" />
+    <ClCompile Include="src\kernel\syscalls.c" />
+    <ClCompile Include="src\kernel\syscalls\os.c" />
+    <ClCompile Include="src\kernel\syscalls\term.c" />
+    <ClCompile Include="src\os\os.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="cpplib\Map.hpp" />
+    <ClInclude Include="cpplib\Memory.hpp" />
+    <ClInclude Include="cpplib\Pair.hpp" />
+    <ClInclude Include="cpplib\VectorSorted.hpp" />
+    <ClInclude Include="cpplib\Status.hpp" />
+    <ClInclude Include="cpplib\String.hpp" />
+    <ClInclude Include="cpplib\Tmplate.hpp" />
+    <ClInclude Include="cpplib\Typedefs.hpp" />
+    <ClInclude Include="cpplib\Vector.hpp" />
+    <ClInclude Include="include\apis\Colors.h" />
+    <ClInclude Include="include\apis\Colors.hpp" />
+    <ClInclude Include="include\apis\Coroutine.hpp" />
+    <ClInclude Include="include\apis\FS.hpp" />
+    <ClInclude Include="include\apis\OS.hpp" />
+    <ClInclude Include="include\apis\Term.hpp" />
+    <ClInclude Include="include\apis\Window.hpp" />
+    <ClInclude Include="include\cpp.hpp" />
+    <ClInclude Include="include\syscall.h" />
+    <ClInclude Include="libc\limits.h" />
+    <ClInclude Include="libc\setjmp.h" />
+    <ClInclude Include="libc\stdbool.h" />
+    <ClInclude Include="libc\stddef.h" />
+    <ClInclude Include="libc\stdint.h" />
+    <ClInclude Include="include\tomato.h" />
+    <ClInclude Include="libc\string.h" />
+    <ClInclude Include="src\kernel\common.h" />
+    <ClInclude Include="include\cpp\icxxabi.h" />
+    <ClInclude Include="include\cpp\memory.h" />
+    <ClInclude Include="include\cpp\purevirtual.hpp" />
+    <ClInclude Include="src\kernel\drivers\ata.h" />
+    <ClInclude Include="src\kernel\drivers\keyboard.h" />
+    <ClInclude Include="src\kernel\drivers\timer.h" />
+    <ClInclude Include="src\kernel\gdt.h" />
+    <ClInclude Include="src\kernel\heap.h" />
+    <ClInclude Include="src\kernel\interrupt.h" />
+    <ClInclude Include="src\kernel\port.h" />
+    <ClInclude Include="src\kernel\syscalls.h" />
+    <ClInclude Include="src\kernel\syscalls\fs.h" />
+    <ClInclude Include="src\kernel\syscalls\os.h" />
+    <ClInclude Include="src\kernel\syscalls\term.h" />
+    <ClInclude Include="src\os\Log.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

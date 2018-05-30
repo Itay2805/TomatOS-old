@@ -1,89 +1,54 @@
-// #include <term.h>
 
-#include <string.h>
 #include <stdint.h>
-#include <stdbool.h>
-#include <memory.h>
-#include <stdio.h>
-#include <setjmp.h>
 
-#include <api/term.h>
-#include <api/color.h>
-#include <api/window.h>
-#include <api/os.h>
-#include <api/keys.h>
-#include <api/coroutine.h>
-#include <api/parallel.h>
+#include "gdt.h"
+#include "interrupt.h"
+#include "heap.h"
+#include "syscalls.h"
 
-#include "../drivers/isr.h"
-#include "../drivers/keyboard.h"
-#include "../drivers/timer.h"
-#include "idt.h"
+#include "syscalls/term.h"
+#include "syscalls/os.h"
 
-void kernel_init() {
+#include "drivers/timer.h"
+#include "drivers/keyboard.h"
+#include "drivers/ata.h"
 
-	// init native terminal
-	kernel_init_native_term();
-	term_set_background_color(COLOR_BLACK);
-	term_set_text_color(COLOR_WHITE);
-	term_clear();
-
-	// install isrs
-	kernel_isr_install();
-
-	// enable interrupts
-#ifndef VISUAL_STUDIO
-	asm volatile("sti");
-#endif
-
-	// init drivers
-	kernel_timer_init();
-	kernel_keyboard_init();
-
-	// init memory management
-	kernel_memory_init();
-
-	// init window
-	kernel_init_window();
+typedef void(*constructor)();
+constructor start_ctors;
+constructor end_ctors;
+void callConstructors() {
+	for (constructor* i = &start_ctors; i != &end_ctors; i++)
+		(*i)();
 }
 
-void some_test() {
-	for (int i = 0; i < 10; i++) {
-		term_write("something\n");
-		os_pull_event(0);
-	}
-}
+// os entry point
+extern void startup();
 
-void some_other_test() {
-	for (int i = 0; i < 10; i++) {
-		term_write("something else\n");
-	}
-}
+void kmain(const void* multiboot_structure, uint32_t multiboot_magic) {
+	UNUSED(multiboot_magic);
 
-void program(void* arg) {
-	// actual program
-}
+	// initialize the kernel
+	initialize_gdt();
+	initialize_interrupts();
+	
+	// initialize syscalls
+	initialize_syscalls();
+	syscall_term_init();
+	syscall_os_init();
 
-void kmain(void) {
-	kernel_init();
+	// initialize heap
+	uint32_t* memupper = (uint32_t*)(((size_t)multiboot_structure) + 8);
+	uint32_t heap_start = 10 * 1024 * 1024;
+	initialize_heap(heap_start, (*memupper)*1024 - heap_start - 10 * 1024);
 
-	// the main program coroutine
-	coroutine_t coro = coroutine_create(program);
-	event_t lastEvent;
-	while (true) {
-		// resume the coroutine with an event
-		// in the first run it will ignore the event
-		// whenever the programs yields out of it's coroutine (by default
-		// it should only be when calling `poll_event_raw`) the kernel will halt until
-		// an input is received
-		int filter = coroutine_resume(&coro, &lastEvent);
+	// initialize driver
+	driver_timer_init();
+	driver_keyboard_init();
+	driver_ata_init();
 
-		// did the program finish? if so exit
-		if (coroutine_status(&coro) == COROUTINE_STATUS_DEAD) {
-			break;
-		}
-
-		// call the kernel poll event (a blocking function)
-		lastEvent = kernel_poll_event(filter);
-	}
+	// reset terminal
+	term_kreset();
+	
+	// call the os startup
+	startup();
 }

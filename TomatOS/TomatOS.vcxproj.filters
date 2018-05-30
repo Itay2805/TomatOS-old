@@ -7,7 +7,7 @@
     </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
@@ -15,147 +15,207 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="boot\prot\gdt.asm">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="boot\prot\print.asm">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="boot\prot\switch.asm">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="boot\boot.asm">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="boot\disk.asm">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="boot\kernel_entry.asm">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="boot\print.asm">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="build.sh" />
-    <None Include="src\kernel\interrupt.asm">
+    <None Include="kernel.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="kernel.iso" />
+    <None Include="linker.ld" />
+    <None Include="src\kernel\bootloader.asm">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="src\libc\setjmp.asm">
+    <None Include="src\kernel\interrupt_stubs.asm" />
+    <None Include="libc\setjmp.asm">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\api\include\api\color.h">
+    <ClInclude Include="libc\limits.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\api\include\api\os.h">
+    <ClInclude Include="libc\stdint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\api\include\api\term.h">
+    <ClInclude Include="libc\string.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\api\include\api\window.h">
+    <ClInclude Include="libc\stdbool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\drivers\ports.h">
+    <ClInclude Include="libc\stddef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\libc\memory.h">
+    <ClInclude Include="src\kernel\gdt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\libc\stdarg.h">
+    <ClInclude Include="src\kernel\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\libc\stdbool.h">
+    <ClInclude Include="src\kernel\interrupt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\libc\stddef.h">
+    <ClInclude Include="src\kernel\port.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\libc\stdint.h">
+    <ClInclude Include="src\kernel\syscalls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\libc\string.h">
+    <ClInclude Include="include\syscall.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\kernel\idt.h">
+    <ClInclude Include="include\tomato.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\kernel\kernel.h">
+    <ClInclude Include="include\apis\Term.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\drivers\isr.h">
+    <ClInclude Include="include\cpp\icxxabi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\drivers\timer.h">
+    <ClInclude Include="include\cpp\memory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\drivers\keyboard.h">
+    <ClInclude Include="include\cpp\purevirtual.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\drivers\drivers.h">
+    <ClInclude Include="src\kernel\syscalls\term.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\api\include\api\keys.h">
+    <ClInclude Include="include\apis\Window.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\libc\stdio.h">
+    <ClInclude Include="include\apis\Colors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\drivers\ata.h">
+    <ClInclude Include="src\kernel\heap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\libc\setjmp.h">
+    <ClInclude Include="include\cpp.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\api\include\api\coroutine.h">
+    <ClInclude Include="include\apis\OS.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\api\include\api\parallel.h">
+    <ClInclude Include="src\kernel\syscalls\os.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\apis\Coroutine.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\apis\Colors.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libc\setjmp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kernel\drivers\timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kernel\drivers\keyboard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kernel\drivers\ata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kernel\syscalls\fs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\apis\FS.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\os\Log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cpplib\String.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cpplib\Typedefs.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cpplib\Tmplate.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cpplib\Memory.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cpplib\Pair.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cpplib\Vector.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cpplib\Status.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cpplib\Map.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cpplib\VectorSorted.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\api\native_term.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\api\os.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\api\term.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\api\window.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\drivers\ports.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\libc\memory.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\libc\string.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\kernel\idt.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\kernel\kernel.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\drivers\isr.c">
+    <ClCompile Include="libc\string.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\drivers\keyboard.c">
+    <ClCompile Include="src\kernel\gdt.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\drivers\timer.c">
+    <ClCompile Include="src\kernel\port.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\libc\stdio.c">
+    <ClCompile Include="src\kernel\interrupt.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\api\coroutine.c">
+    <ClCompile Include="src\kernel\syscalls.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kernel\cpp\purevirtual.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kernel\cpp\icxxabi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kernel\syscalls\term.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\apis\Term.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\os\os.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kernel\heap.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kernel\syscalls\os.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\apis\tomato.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\apis\Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\apis\OS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\apis\Coroutine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kernel\drivers\timer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kernel\drivers\keyboard.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kernel\drivers\ata.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cpplib\Status.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\api\parallel.c">

@@ -1,26 +1,22 @@
-# some values
-export PATH="$PREFIX/bin:$PATH"
-export C_INCLUDE_PATH=./src/api/include/:./src/libc/
-#export CFLAGS="-g -ffreestanding -Wall -Wextra -fno-exceptions -m32"
-#export C_SOURCES=
-
-TARGET=i386
-
-CCFLAGS="-Wall -Wextra -std=gnu99 -nostdinc -fno-builtin -fno-stack-protector -march=$TARGET -m32"
-
-# this is kept for debugging, so it will give me all the warnings possible
-#CCFLAGS="-O3 -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wconversion -Wstrict-prototypes -Wunsafe-loop-optimizations -std=gnu99 -nostdinc -fno-builtin -fno-stack-protector -Wmissing-prototypes -Wmissing-declarations -march=$TARGET -m32"
+export C_INCLUDE_PATH=include:libc
+GCCPARAMS="-Wall -std=c++11 -fno-use-cxa-atexit -Iinclude -Ilibc -Icpplib -Wextra -m32 -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Wno-write-strings"
+CCFLAGS="-Wall -Wextra -std=gnu99 -nostdinc -fno-builtin -fno-stack-protector -march=i386 -m32"
+NASMPARAMS="-f elf"
+LDPARAMS="-melf_i386"
 
 # cleanup
+clear 
+clear
+
 echo "Removing old build folder"
-rm os-image.bin
-rm -r build
+rm kernel.bin
+rm kernel.iso
+rm -rf build
 mkdir build
 
-objectFiles=""
+echo "Compiling kernel"
+objects=""
 
-# get all the c files in the kernel
-echo "Compiling os: "
 for d in $(find src/ -type d)
 do
     mkdir "build/$d"
@@ -28,7 +24,68 @@ do
     do
         of=`echo $f | sed 's/\(.*\)c/\1o/'`
         of="build/$of"
-        objectFiles="$objectFiles $of"
+        objects="$objects $of"
+        echo "  $f > $of"
+        gcc $CCFLAGS -c "./$f" -o "./$of" 
+    done
+    for f in $(find $d/*.cpp)
+    do
+        of=`echo $f | sed 's/\(.*\)cpp/\1o/'`
+        of="build/$of"
+        objects="$objects $of"
+        echo "  $f > $of"
+        g++ $GCCPARAMS -c "./$f" -o "./$of" 
+    done
+	for f in $(find $d/*.asm)
+    do
+        of=`echo $f | sed 's/\(.*\)asm/\1o/'`
+        of="build/$of"
+        objects="$objects $of"
+        echo "  $f > $of"
+        nasm $NASMPARAMS "./$f" -o "./$of"
+    done
+done
+
+echo "Compiling APIs"
+mkdir build/include/
+for d in $(find include/apis/ -type d)
+do
+    mkdir "build/$d"
+    for f in $(find $d/*.c)
+    do
+        of=`echo $f | sed 's/\(.*\)c/\1o/'`
+        of="build/$of"
+        objects="$objects $of"
+        echo "  $f > $of"
+        gcc $CCFLAGS -c "./$f" -o "./$of" 
+    done
+    for f in $(find $d/*.cpp)
+    do
+        of=`echo $f | sed 's/\(.*\)cpp/\1o/'`
+        of="build/$of"
+        objects="$objects $of"
+        echo "  $f > $of"
+        g++ $GCCPARAMS -c "./$f" -o "./$of" 
+    done
+	for f in $(find $d/*.asm)
+    do
+        of=`echo $f | sed 's/\(.*\)asm/\1o/'`
+        of="build/$of"
+        objects="$objects $of"
+        echo "  $f > $of"
+        nasm $NASMPARAMS "./$f" -o "./$of"
+    done
+done
+
+echo "Compiling LIBC"
+for d in $(find libc/ -type d)
+do
+    mkdir "build/$d"
+    for f in $(find $d/*.c)
+    do
+        of=`echo $f | sed 's/\(.*\)c/\1o/'`
+        of="build/$of"
+        objects="$objects $of"
         echo "  $f > $of"
         gcc $CCFLAGS -c "./$f" -o "./$of" 
     done
@@ -36,22 +93,57 @@ do
     do
         of=`echo $f | sed 's/\(.*\)asm/\1o/'`
         of="build/$of"
-        objectFiles="$objectFiles $of"
+        objects="$objects $of"
         echo "  $f > $of"
-        nasm "./$f" -f elf -o "./$of"
+        nasm $NASMPARAMS "./$f" -o "./$of"
     done
 done
-echo "  boot/kernel_entry.asm > build/kernel_entry.o"
-nasm boot/kernel_entry.asm -f elf -o build/kernel_entry.o
 
-# link kernel
-echo "Linking kernel"
-ld -melf_i386 -o build/kernel.bin -Ttext 0x1000 build/kernel_entry.o $objectFiles --oformat binary
 
-# compile the bootloader
-echo "Compiling bootloader"
-nasm ./boot/boot.asm -f bin -o ./build/boot.bin
+echo "Compiling CPPLIB"
+for d in $(find cpplib/ -type d)
+do
+    mkdir "build/$d"
+    for f in $(find $d/*.c)
+    do
+        of=`echo $f | sed 's/\(.*\)c/\1o/'`
+        of="build/$of"
+        objects="$objects $of"
+        echo "  $f > $of"
+        gcc $CCFLAGS -c "./$f" -o "./$of" 
+    done
+    for f in $(find $d/*.cpp)
+    do
+        of=`echo $f | sed 's/\(.*\)cpp/\1o/'`
+        of="build/$of"
+        objects="$objects $of"
+        echo "  $f > $of"
+        g++ $GCCPARAMS -c "./$f" -o "./$of" 
+    done
+	for f in $(find $d/*.asm)
+    do
+        of=`echo $f | sed 's/\(.*\)asm/\1o/'`
+        of="build/$of"
+        objects="$objects $of"
+        echo "  $f > $of"
+        nasm $NASMPARAMS "./$f" -o "./$of"
+    done
+done
 
-# create a boot image
-echo "Creating boot image - os-image.bin"
-cat ./build/boot.bin ./build/kernel.bin > os-image.bin
+echo "Linking"
+ld $LDPARAMS -T linker.ld -o kernel.bin $objects
+
+echo "Building ISO"
+mkdir iso
+mkdir iso/boot
+mkdir iso/boot/grub
+cp kernel.bin iso/boot/kernel.bin
+echo 'set timeout=0'                        >> iso/boot/grub/grub.cfg
+echo 'set default=0'                        >> iso/boot/grub/grub.cfg
+echo ''                                     >> iso/boot/grub/grub.cfg
+echo 'menuentry "TomatOS" {'                >> iso/boot/grub/grub.cfg
+echo '  multiboot /boot/kernel.bin'         >> iso/boot/grub/grub.cfg
+echo '  boot'                               >> iso/boot/grub/grub.cfg
+echo '}'                                    >> iso/boot/grub/grub.cfg
+grub-mkrescue --output=kernel.iso iso --xorriso="$HOME"/xorriso/xorriso-1.4.6/xorriso/xorriso
+rm -rf iso
