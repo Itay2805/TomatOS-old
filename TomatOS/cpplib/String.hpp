@@ -6,9 +6,10 @@
 
 #include <Memory.hpp>
 #include <Typedefs.hpp>
+#include <Tmplate.hpp>
 
 namespace cpplib {
-
+	/*
 	class String {
 	private:
 		char* str;
@@ -124,7 +125,30 @@ namespace cpplib {
 			str[len] = '\0';
 		}
 
-		int Put() {
+		void Put(size_t at, CStr str, size_t f, size_t t) {
+			if (t < f || at + t - f >= size) {
+				// return error maybe
+				return;
+			}
+
+			memcpy(this->str + at, str + f, t - f);
+			len = Max(len, at + t - f);
+			End();
+		}
+
+		void Put(size_t at, CStr str) {
+			Put(at, str, 0, strlen(str));
+		}
+
+		void Put(size_t at, char c) {
+			Put(at, &c, 0, 1);
+		}
+
+		void Put(size_t at, const String& str) {
+			Put(at, str.str);
+		}
+
+		void Append(CStr str, size_t f, size_t t) {
 
 		}
 
@@ -149,7 +173,7 @@ namespace cpplib {
 	inline void Duplicate(String& to, const String& from) { to.Set(from.CStr(), from.Size()); }
 
 	DEFINE_INLINE_RELATIVE_OPERATORS(String);
-
+	*/
 }
 
 #endif

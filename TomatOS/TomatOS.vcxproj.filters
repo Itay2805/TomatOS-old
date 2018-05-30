@@ -138,6 +138,9 @@
     <ClInclude Include="cpplib\Memory.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cpplib\Pair.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\kernel\kernel.c">

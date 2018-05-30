@@ -7,9 +7,15 @@
 #include <apis/Window.hpp>
 #include <apis/Coroutine.hpp>
 
+#include <Pair.hpp>
+#include <Typedefs.hpp>
+
 using namespace Tomato;
+using namespace cpplib;
 
 void program(void*) {
+	Pair<CStr> test("test1", "test2");
+
 	Term::SetBackgroundColor(Colors::LIGHT_BLUE);
 	Term::SetTextColor(Colors::WHITE);
 	Term::Clear();
@@ -17,6 +23,12 @@ void program(void*) {
 	Term::Write(OS::Version());
 	Term::Write("\n");
 	Term::Write("!@#$%^&*()\n");
+
+	Term::Write("Pair: <");
+	Term::Write(test.X());
+	Term::Write(", ");
+	Term::Write(test.Y());
+	Term::Write(">\n");
 
 	while (true) {
 		char c = OS::PullEvent<CharEvent>(Event::CHAR).GetChar();
@@ -27,10 +39,7 @@ void program(void*) {
 	}
 }
 
-#include <String.hpp>
-
 extern "C" void startup() {
-	cpplib::String str = "This is a test";
 	Coroutine coro(program);
 	OS::RunBlockingEventLoop(&coro);
 }

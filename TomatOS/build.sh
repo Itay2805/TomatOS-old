@@ -1,5 +1,5 @@
 export C_INCLUDE_PATH=include:libc
-GCCPARAMS="-Wall -std=c++11 -fno-use-cxa-atexit -Iinclude -Ilibc -Wextra -m32 -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Wno-write-strings"
+GCCPARAMS="-Wall -std=c++11 -fno-use-cxa-atexit -Iinclude -Ilibc -Icpplib -Wextra -m32 -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Wno-write-strings"
 CCFLAGS="-Wall -Wextra -std=gnu99 -nostdinc -fno-builtin -fno-stack-protector -march=i386 -m32"
 NASMPARAMS="-f elf"
 LDPARAMS="-melf_i386"

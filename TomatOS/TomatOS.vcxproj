@@ -158,6 +158,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cpplib\Memory.hpp" />
+    <ClInclude Include="cpplib\Pair.hpp" />
     <ClInclude Include="cpplib\String.hpp" />
     <ClInclude Include="cpplib\Tmplate.hpp" />
     <ClInclude Include="cpplib\Typedefs.hpp" />
