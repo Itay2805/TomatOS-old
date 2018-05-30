@@ -162,6 +162,7 @@
     <ClInclude Include="cpplib\String.hpp" />
     <ClInclude Include="cpplib\Tmplate.hpp" />
     <ClInclude Include="cpplib\Typedefs.hpp" />
+    <ClInclude Include="cpplib\Vector.hpp" />
     <ClInclude Include="include\apis\Colors.h" />
     <ClInclude Include="include\apis\Colors.hpp" />
     <ClInclude Include="include\apis\Coroutine.hpp" />

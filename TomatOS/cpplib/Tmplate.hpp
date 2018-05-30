@@ -28,7 +28,7 @@ inline T Average(T t1, T t2) {
 
 template<typename T>
 inline T Average(T t1, T t2, T t3) {
-	return (t1 + t2 + t.) / 3;
+	return (t1 + t2 + t3) / 3;
 }
 
 template<typename T>
@@ -41,6 +41,11 @@ inline void Swap(T& a, T& b) {
 	T temp = a;
 	a = b;
 	b = temp;
+}
+
+template<class T>
+inline void Sort2(T& a, T& b) {
+	if (a > b) Swap(a, b);
 }
 
 #endif

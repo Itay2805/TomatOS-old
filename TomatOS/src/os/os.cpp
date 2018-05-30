@@ -9,26 +9,30 @@
 
 #include <Pair.hpp>
 #include <Typedefs.hpp>
+#include <Vector.hpp>
 
 using namespace Tomato;
 using namespace cpplib;
 
 void program(void*) {
-	Pair<CStr> test("test1", "test2");
-
 	Term::SetBackgroundColor(Colors::LIGHT_BLUE);
 	Term::SetTextColor(Colors::WHITE);
 	Term::Clear();
 	
 	Term::Write(OS::Version());
 	Term::Write("\n");
-	Term::Write("!@#$%^&*()\n");
+	
+	Vector<CStr> strings;
+	strings.Append("string 1");
+	strings.Append("string 2");
+	strings.Append("string 3");
 
-	Term::Write("Pair: <");
-	Term::Write(test.X());
-	Term::Write(", ");
-	Term::Write(test.Y());
-	Term::Write(">\n");
+	VectorCursor<CStr> cursor(strings);
+
+	for (; cursor.IsValid(); ++cursor) {
+		Term::Write(cursor.Item());
+		Term::Write("\n");
+	}
 
 	while (true) {
 		char c = OS::PullEvent<CharEvent>(Event::CHAR).GetChar();
