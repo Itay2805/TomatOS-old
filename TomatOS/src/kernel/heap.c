@@ -60,7 +60,7 @@ static memory_block_t* merge_empty_blocks(memory_block_t* from) {
 	
 	// if the block is valid and is not allocated, let's merge with it
 	if (valid && !next->allocated) {
-		from->size = sizeof(memory_block_t) + next->size;
+		from->size += sizeof(memory_block_t) + next->size;
 		// invalidate block, just incase
 		next->size = 0;
 		next->magic = 0;
