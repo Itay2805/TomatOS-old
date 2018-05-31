@@ -182,6 +182,11 @@ void* heap_reallocate(void* ptr, size_t newsize) {
 	// allocate the new block
 	void* newPtr = heap_allocate(newsize);
 
+	// did the allocation fail? if so return NULL
+	if (newPtr == NULL) {
+		return NULL;
+	}
+
 	// if it happen to be the same block no need to copy the data
 	if (newPtr == ptr) return newPtr;
 
