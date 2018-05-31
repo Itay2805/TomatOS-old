@@ -5,6 +5,7 @@
 
 #include "../port.h"
 #include "../interrupt.h"
+#include "../heap.h"
 
 #include <stddef.h>
 
@@ -27,7 +28,7 @@ static timer_node_t* base;
 static uint32_t lastid = 0;
 
 uint32_t driver_start_timer(uint32_t milis) {
-	timer_node_t* timer = (timer_node_t*)malloc(sizeof(timer_node_t));
+	timer_node_t* timer = (timer_node_t*)heap_allocate(sizeof(timer_node_t));
 	timer->id = lastid++;
 	timer->milis_left = milis;
 	timer->next = base;
@@ -40,6 +41,8 @@ void driver_cancel_timer(uint32_t id) {
 	timer_node_t* curr = base;
 	timer_node_t* before = NULL;
 	while (curr != NULL) {
+		timer_node_t* next = curr->next;
+
 		if (curr->id == id) {
 			if (before != NULL) {
 				before->next = curr->next;
@@ -47,12 +50,13 @@ void driver_cancel_timer(uint32_t id) {
 			else {
 				base = curr->next;
 			}
-			free(curr);
+			heap_free(curr);
 		}
 		else {
 			before = curr;
 		}
-		curr = curr->next;
+
+		curr = next;
 	}
 }
 
@@ -65,6 +69,8 @@ static void interrupt_timer_handle(registers_t* regs) {
 	timer_node_t* curr = base;
 	timer_node_t* before = NULL;
 	while (curr != NULL) {
+		timer_node_t* next = curr->next;
+
 		curr->milis_left -= DRIVER_TIMER_INTERVAL;
 		if (curr->milis_left <= 0) {
 			if (before != NULL) {
@@ -77,12 +83,13 @@ static void interrupt_timer_handle(registers_t* regs) {
 			event.type = TOMATO_EVENT_TIMER;
 			event.data[0] = curr->id;
 			os_kqueue_event(event);
-			free(curr);
+			heap_free(curr);
 		}
 		else {
 			before = curr;
 		}
-		curr = curr->next;
+
+		curr = next;
 	}
 }
 
