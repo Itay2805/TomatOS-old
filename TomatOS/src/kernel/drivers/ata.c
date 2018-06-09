@@ -24,7 +24,36 @@
 
 #include "../syscalls/term.h"
 
+#include <string.h>
+
+static uint32_t max_sectors;
+
+uint32_t driver_ata_sector_count(void) {
+	return max_sectors;
+}
+
+static bool wait_for_drive_or_error(bool flush) {
+	while (true) {
+		uint8_t status = inb(COMMAND_PORT);
+		if (status & 1 || status & (1 << 5)) {
+			return true;
+		}
+		if (flush) {
+			if (!(status & (1 << 7))) {
+				return false;
+			}
+		}
+		else {
+			if (!(status & (1 << 7)) && status & (1 << 3)) {
+				return false;
+			}
+		}
+	}
+}
+
 void driver_ata_init(void) {
+	term_kwrite("driver_ata_init: initing ata driver.\n");
+
 	outb(DEVICE_PORT, CURRENT_IDENTIFIER);
 	outb(CONTROL_PORT, 0);
 	outb(DEVICE_PORT, MASTER_IDENTIFIER);
@@ -42,24 +71,23 @@ void driver_ata_init(void) {
 	outb(COMMAND_PORT, 0xEC);
 
 	status = inb(COMMAND_PORT);
-
-	if (status == 0) {
+	
+	if (wait_for_drive_or_error(false)) {
 		term_kwrite("No HDD Found!\n");
 		return;
 	}
 
-	do {
-		status = inb(COMMAND_PORT);
-	} while (((status & 0x80) == 0x80) && (status & 0x1) != 0x01);
-
-	if (status & 0x1) {
-		term_kwrite("driver_ata_init: exception\n");
-		return;
-	}
+	uint16_t sectcount[2];
 
 	term_kwrite("Identifying HDD: ");
 	for (int i = 0; i < 256; i++) {
 		uint16_t data = inw(DATA_PORT);
+		if (i == 60) {
+			sectcount[0] = data;
+		}
+		else if (i == 61) {
+			sectcount[1] = data;
+		}
 		char text[3];
 		text[2] = 0;
 		text[0] = (data >> 8) & 0xFF;
@@ -67,9 +95,18 @@ void driver_ata_init(void) {
 		term_kwrite(text);
 	}
 	term_kwrite("\n");
+
+	max_sectors = *(uint32_t*)sectcount;
+	char buf[11];
+	itoa(max_sectors, buf, 10);
+	term_kwrite("Max sector count: ");
+	term_kwrite(buf);
+	term_kwrite("\n");
 }
 
-void driver_ata_write(size_t sector, uintptr_t data, int count) {
+void driver_ata_write(size_t sector, void* vpbuffer) {
+	uintptr_t buffer = (uintptr_t)vpbuffer;
+
 	outb(DEVICE_PORT, CURRENT | ((sector & 0x0F000000) >> 24));
 	outb(ERROR_PORT, 0);
 	outb(SECTOR_COUNT_PORT, 1);
@@ -78,20 +115,25 @@ void driver_ata_write(size_t sector, uintptr_t data, int count) {
 	outb(LBA_HI_PORT, (sector & 0xFF) >> 16);
 	outb(COMMAND_PORT, 0x30);
 
-	for (int i = 0; i < count; i += 2) {
-		uint16_t wdata = data[i];
-		if (i + 1 < count) {
-			wdata |= ((uint16_t)data[i + 1]) << 8;
+	// term_kwrite("driver_ata_write: waiting for disk...\n");
+	if (wait_for_drive_or_error(false)) {
+		term_kwrite("driver_ata_write: error");
+		return;
+	}
+	// term_kwrite("driver_ata_write: writing\n");
+
+	for (int i = 0; i < 512; i += 2) {
+		uint16_t wdata = buffer[i];
+		if (i + 1 < 512) {
+			wdata |= ((uint16_t)buffer[i + 1]) << 8;
 		}
 		outw(DATA_PORT, wdata);
 	}
-
-	for (int i = count + (count % 2); i < 512; i += 2) {
-		outw(DATA_PORT, 0);
-	}
 }
 
-void driver_ata_read(size_t sector, uintptr_t buffer, int count) {
+void driver_ata_read(size_t sector, void* vpbuffer) {
+	uintptr_t buffer = (uintptr_t)vpbuffer;
+
 	outb(DEVICE_PORT, CURRENT | ((sector & 0x0F000000) >> 24));
 	outb(ERROR_PORT, 0);
 	outb(SECTOR_COUNT_PORT, 1);
@@ -100,26 +142,23 @@ void driver_ata_read(size_t sector, uintptr_t buffer, int count) {
 	outb(LBA_HI_PORT, (sector & 0xFF) >> 16);
 	outb(COMMAND_PORT, 0x20);
 
-	uint8_t status;
-	do {
-		status = inb(COMMAND_PORT);
-	} while (((status & 0x80) == 0x80) && (status & 0x1) != 0x01);
-
-	if (status & 0x1) {
-		term_kwrite("driver_ata_read: exception\n");
+	// term_kwrite("driver_ata_read: waiting for disk...\n");
+	if (wait_for_drive_or_error(false)) {
+		term_kwrite("driver_ata_read: error (sector: ");
+		char buf[11];
+		itoa(sector, buf, 10);
+		term_kwrite(buf);
+		term_kwrite(")\n");
 		return;
 	}
+	// term_kwrite("driver_ata_read: reading\n");
 
-	for (int i = 0; i < count; i += 2) {
+	for (int i = 0; i < 512; i += 2) {
 		uint16_t wdata = inw(DATA_PORT);
 		buffer[i] = wdata & 0xFF;
-		if (i + 1 < count) {
+		if (i + 1 < 512) {
 			buffer[i + 1] = (wdata >> 8) & 0xFF;
 		}
-	}
-
-	for (int i = count + (count % 2); i < 512; i +=2 ) {
-		inw(DATA_PORT);
 	}
 }
 
@@ -127,19 +166,10 @@ void driver_ata_flush() {
 	outb(DEVICE_PORT, CURRENT);
 	outb(COMMAND_PORT, 0xE7);
 
-	uint8_t status = inb(COMMAND_PORT);
-
-	if (status == 0) {
-		term_kwrite("driver_ata_flush: exception - first\n");
+	// term_kwrite("driver_ata_flush: waiting for disk...\n");
+	if (wait_for_drive_or_error(true)) {
+		term_kwrite("driver_ata_flush: error\n");
 	}
+	// term_kwrite("driver_ata_flush: flushed!\n");
 
-	do {
-		status = inb(COMMAND_PORT);
-	} while (((status & 0x80) == 0x80) && (status & 0x1) != 0x01);
-	
-	if (status & 0x1) {
-		// add exception
-		term_kwrite("driver_ata_flush: exception - second\n");
-		return;
-	}
 }

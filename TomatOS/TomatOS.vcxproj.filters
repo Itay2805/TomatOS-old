@@ -153,6 +153,9 @@
     <ClInclude Include="cpplib\VectorSorted.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\kernel\drivers\disk.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\kernel\kernel.c">
@@ -218,7 +221,10 @@
     <ClCompile Include="cpplib\Status.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\api\parallel.c">
+    <ClCompile Include="src\kernel\syscalls\fs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kernel\drivers\disk.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

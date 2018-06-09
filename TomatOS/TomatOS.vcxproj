@@ -145,6 +145,7 @@
     <ClCompile Include="src\kernel\cpp\icxxabi.cpp" />
     <ClCompile Include="src\kernel\cpp\purevirtual.cpp" />
     <ClCompile Include="src\kernel\drivers\ata.c" />
+    <ClCompile Include="src\kernel\drivers\disk.c" />
     <ClCompile Include="src\kernel\drivers\keyboard.c" />
     <ClCompile Include="src\kernel\drivers\timer.c" />
     <ClCompile Include="src\kernel\gdt.c" />
@@ -153,6 +154,7 @@
     <ClCompile Include="src\kernel\kernel.c" />
     <ClCompile Include="src\kernel\port.c" />
     <ClCompile Include="src\kernel\syscalls.c" />
+    <ClCompile Include="src\kernel\syscalls\fs.c" />
     <ClCompile Include="src\kernel\syscalls\os.c" />
     <ClCompile Include="src\kernel\syscalls\term.c" />
     <ClCompile Include="src\os\os.cpp" />
@@ -188,6 +190,7 @@
     <ClInclude Include="include\cpp\memory.h" />
     <ClInclude Include="include\cpp\purevirtual.hpp" />
     <ClInclude Include="src\kernel\drivers\ata.h" />
+    <ClInclude Include="src\kernel\drivers\disk.h" />
     <ClInclude Include="src\kernel\drivers\keyboard.h" />
     <ClInclude Include="src\kernel\drivers\timer.h" />
     <ClInclude Include="src\kernel\gdt.h" />

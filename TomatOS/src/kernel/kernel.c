@@ -8,10 +8,11 @@
 
 #include "syscalls/term.h"
 #include "syscalls/os.h"
+#include "syscalls/fs.h"
 
 #include "drivers/timer.h"
 #include "drivers/keyboard.h"
-#include "drivers/ata.h"
+#include "drivers/disk.h"
 
 typedef void(*constructor)();
 constructor start_ctors;
@@ -44,11 +45,23 @@ void kmain(const void* multiboot_structure, uint32_t multiboot_magic) {
 	// initialize driver
 	driver_timer_init();
 	driver_keyboard_init();
-	driver_ata_init();
+	driver_disk_init();
+	
+	/*char buf[] = "Another Test";
+	term_kwrite("before write/read test: ");
+	term_kwrite(buf);
+	term_kwrite("\n");
+	driver_disk_write(512, buf, sizeof(buf));
+	driver_disk_read(512, buf, sizeof(buf));
+	term_kwrite("after write/read test: ");
+	term_kwrite(buf);
+	term_kwrite("\n");*/
+
+	syscall_fs_init();
 
 	// reset terminal
 	term_kreset();
 	
 	// call the os startup
-	startup();
+	// startup();
 }

@@ -13,12 +13,12 @@ typedef struct gdt_descriptor_t {
 
 void initialize_gdt() {
 	// @TODO: Fix the base and limit stuff
-	//uint32_t base = 0;
-	//uint32_t limit = 64 * 1024 * 1024;
+	uint32_t base = 0;
+	uint32_t limit = 0xFFFFF;
 
 	// set code sections
-	gdt.code.limit_low = 0xFFFF; // limit & 0xFFFF;
-	gdt.code.base_low = 0;       // base & 0xFFFFFF;
+	gdt.code.limit_low = limit & 0xFFFF;
+	gdt.code.base_low = base & 0xFFFFFF;
 
 	// type
 	gdt.code.accessed = 0;
@@ -34,8 +34,8 @@ void initialize_gdt() {
 	gdt.code.big = 1;
 	gdt.code.gran = 1;
 
-	gdt.code.limit_high = 0xF; //(limit >> 16) & 0xF;
-	gdt.code.base_high = 0;    //(base >> 24) & 0xFF;
+	gdt.code.limit_high = (limit >> 16) & 0xF;
+	gdt.code.base_high = (base >> 24) & 0xFF;
 	
 	// set data segment, copy from code and set code to false
 	gdt.data = gdt.code;
