@@ -41,13 +41,16 @@ char* itoa(int32_t v, char* buff, uint8_t radix_base) {
 }
 
 int strcmp(const char* vl, const char* vr) {
-	int32_t ret = 0;
-	const uint8_t* p1 = (const uint8_t*)vl;
-	const uint8_t* p2 = (const uint8_t*)vr;
-	while (!(ret == *p1 - *p2) && *p2) {
-		++p1, ++p2;
+	int l1 = strlen(vl);
+	int l2 = strlen(vr);
+	if (l1 == 0 && l2 != 0) {
+		return 1;
 	}
-	return ret;
+	else if (l1 != 0 && l2 == 0) {
+		return -1;
+	}
+	int min = l1 > l2 ? l2: l1;
+	return memcmp(vl, vr, min);
 }
 
 char* strcpy(char* dst, const char* src) {
@@ -70,16 +73,17 @@ size_t strlen(const char* str) {
 }
 
 int strncmp(const char* s1, const char* s2, size_t n) {
-	while (n && *s1 && (*s1 == *s2)) {
-		++s1;
-		++s2;
-		--n;
+	int l1 = strlen(s1);
+	int l2 = strlen(s2);
+	if (l1 == 0 && l2 != 0) {
+		return 1;
 	}
-	if (n == 0) {
-		return 0;
-	} else {
-		return (*(unsigned char *)s1 - *(unsigned char *)s2);
+	else if (l1 != 0 && l2 == 0) {
+		return -1;
 	}
+	int min = l1 > l2 ? l2 : l1;
+	min = min < n ? min : n;
+	return memcmp(s1, s2, min);
 }
 
 int memcmp(const void* vl, const void* vr, size_t n) {

@@ -78,6 +78,33 @@ extern "C" {
 	void* tomato_heap_reallocate(void* ptr, size_t newsize);
 	bool tomato_heap_free(void* ptr);
 
+	/////////////////////////////////////////////////////
+	//// fs syscalls
+	/////////////////////////////////////////////////////
+
+#define TOMATO_FS_FILE		0x454c4946
+#define TOMATO_FS_FOLDER	0x52444c46
+
+	typedef struct tomato_file_handle_t {
+		char* name;
+		size_t size;
+		uint32_t type;
+	} tomato_file_handle_t;
+
+	typedef struct tomato_list_entry_t {
+		char* name;
+	} tomato_list_entry_t;
+
+	tomato_list_entry_t* tomato_fs_list(const char* path, int* count);
+	void tomato_fs_list_release(tomato_list_entry_t* entries);
+	bool tomato_fs_exists(const char* path);
+	tomato_file_handle_t* tomato_fs_open(const char* path);
+	void tomato_fs_read_bytes(tomato_file_handle_t* handle, void* buffer, size_t count);
+	void tomato_fs_write_bytes(tomato_file_handle_t* handle, void* buffer, size_t count);
+	void tomato_fs_close(tomato_file_handle_t* handle);
+	void tomato_fs_make_dir(const char* path);
+	void tomato_fs_delete(const char* path);
+
 #ifdef __cplusplus
 }
 #endif

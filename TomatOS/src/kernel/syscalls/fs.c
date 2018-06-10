@@ -5,10 +5,12 @@
 #include "../heap.h"
 
 #include "../syscalls/term.h"
+#include "../syscalls.h"
 
 #include <string.h>
+#include <tomato.h>
 
-#define TOMATO_FS_MAGIC 0x544f4d41544f4f53
+#define TOMATO_FS_MAGIC 0x53466f74616d6f54
 
 #define NODE_SIZE(n) ((n).size + (n).name_size)
 #define TOTAL_NODE_SIZE(n) ((n).size + (n).name_size + sizeof(raw_node_t))
@@ -27,14 +29,12 @@ typedef struct {
 	uint64_t last_node;
 } header_t;
 
-typedef enum {
-	NODE_UNUSED,
-	NODE_FILE,
-	NODE_FOLDER,
-} node_type_t;
+#define NODE_UNUSED 0x53554e55
+#define NODE_FILE	0x454c4946 
+#define NODE_FOLDER 0x52444c46 
 
 typedef struct {
-	node_type_t type;
+	uint32_t type;
 	size_t size;
 	size_t name_size;
 	uint64_t parent_folder_address;
@@ -52,6 +52,17 @@ typedef struct {
 	bool is_new;
 	uint64_t address;
 } node_t;
+
+typedef struct {
+	char* name;
+	size_t size;
+
+	node_t node;
+} syscall_file_handle_t;
+
+typedef struct {
+	char* name;
+} syscall_list_entry_t;
 
 static header_t header;
 static bool header_changed = false;
@@ -319,8 +330,104 @@ static bool find_unused(node_t* node) {
 }
 
 //////////////////////////////////////////////////////////////
+//// node search
+//////////////////////////////////////////////////////////////
+
+static bool find_node(node_t* parent, node_t* node, char* name);
+static bool traverse_path(node_t* node, char* path);
+
+static bool traverse_path(node_t* node, char* path) {
+	char* path_orig = path;
+
+	if (*path_orig == '\\' || *path_orig == '/') {
+		path_orig++;
+	}
+
+	if (strlen(path_orig) == 0) {
+		node->address = header.root_folder_address;
+		read_node(node);
+		return true;
+	}
+
+	path = heap_allocate(strlen(path_orig) + 1);
+	char* path_start = path;
+
+	int count = 1;
+	while (*path_orig) {
+		if (*path_orig == '\\' || *path_orig == '/') {
+			*path = 0;
+			count++;
+		}
+		else {
+			*path = *path_orig;
+		}
+		*path++;
+		*path_orig++;
+	}
+	*path = 0;
+	path = path_start;
+
+	node_t current;
+	current.address = header.root_folder_address;
+	read_node(&current);
+
+	while (count--) {
+		char buf[256];
+		read_node_name(&current, buf);
+
+		if (!find_node(&current, &current, path)) {
+			heap_free(path_start);
+			return false;
+		}
+		// go to the next file
+		while (*path) {
+			path++;
+		}
+		path++;
+	}
+
+	*node = current;
+
+	heap_free(path);
+	return true;
+}
+
+static bool find_node(node_t* parent, node_t* node, char* name) {
+	if (parent->node.type != NODE_FOLDER) {
+		return false;
+	}
+
+	folder_node_entry_t* nodes = heap_allocate(parent->node.size);
+	read_node_data(parent, nodes);
+	node_t temp;
+	for (int i = 0; i < FOLDER_SIZE(parent); i++) {
+		if (nodes[i].file_address == 0) {
+			continue;
+		}
+		temp.address = nodes[i].file_address;
+		read_node(&temp);
+		char* temp_name = heap_allocate(temp.node.name_size);
+		read_node_name(&temp, temp_name);
+		if (strcmp(temp_name, name) == 0) {
+			heap_free(temp_name);
+			heap_free(nodes);
+			if (node != 0) *node = temp;
+			return true;
+		}
+		heap_free(temp_name);
+	}
+	heap_free(nodes);
+
+	return false;
+}
+
+//////////////////////////////////////////////////////////////
 //// folder manipulation
 //////////////////////////////////////////////////////////////
+
+static int count_folder_entries(folder_node_entry_t* nodes, int count);
+static bool add_folder_entry(node_t* folder, node_t* add);
+static bool create_folder(node_t* parent, node_t* new_folder, char* name);
 
 static int count_folder_entries(folder_node_entry_t* nodes, int count) {
 	int size = 0;
@@ -334,7 +441,6 @@ static int count_folder_entries(folder_node_entry_t* nodes, int count) {
 
 static bool add_folder_entry(node_t* folder, node_t* add) {
 	if (folder->node.type != NODE_FOLDER) {
-		term_kwrite("add_folder_entry: parent is not a folder\n");
 		return false;
 	}
 
@@ -342,6 +448,8 @@ static bool add_folder_entry(node_t* folder, node_t* add) {
 	read_node_data(folder, nodes);
 
 	if (FOLDER_SIZE(folder) <= count_folder_entries(nodes, FOLDER_SIZE(folder)) + 1) {
+		term_kwrite("grow\n");
+
 		uint64_t old_address = folder->address;
 		
 		// needs to grow folder
@@ -407,18 +515,20 @@ static bool add_folder_entry(node_t* folder, node_t* add) {
 
 static bool create_folder(node_t* parent, node_t* new_folder, char* name) {
 	if (parent->node.type != NODE_FOLDER) {
-		term_kwrite("create_folder: parent is not a folder\n");
+		return false;
+	}
+
+	if (find_node(parent, 0, name)) {
 		return false;
 	}
 	
 	new_folder->node.type = NODE_FOLDER;
 	new_folder->node.parent_folder_address = parent->address;
-	new_folder->node.name_size = strlen(name);
+	new_folder->node.name_size = strlen(name) + 1;
 	new_folder->node.size = sizeof(folder_node_entry_t) * 10; // automatically have enough space for 10 entries
 	if (!allocate_node(new_folder)) {
 		merge_nodes();
 		if (!allocate_node(new_folder)) {
-			term_kwrite("create_folder: failed to allocate\n");
 			return false;
 		}
 	}
@@ -437,41 +547,6 @@ static bool create_folder(node_t* parent, node_t* new_folder, char* name) {
 	}
 
 	return true;
-}
-
-//////////////////////////////////////////////////////////////
-//// node search
-//////////////////////////////////////////////////////////////
-
-static bool find_node(node_t* parent, node_t* node, char* name) {
-	if (parent->node.type != NODE_FOLDER) {
-		term_kwrite("find_node: parent is not a folder\n");
-		return false;
-	}
-
-	folder_node_entry_t* nodes = heap_allocate(parent->node.size);
-	read_node_data(parent, nodes);
-	node_t temp;
-	for (int i = 0; i < FOLDER_SIZE(parent); i++) {
-		if (nodes[i].file_address == 0) {
-			continue;
-		}
-		temp.address = nodes[i].file_address;
-		read_node(&temp);
-		char* temp_name = heap_allocate(temp.node.name_size);
-		read_node_name(&temp, temp_name);
-		if (strcmp(temp_name, name) == 0) {
-			heap_free(temp_name);
-			heap_free(nodes);
-			if(node != 0) *node = temp;
-			return true;
-		}
-		heap_free(temp_name);
-	}
-	heap_free(nodes);
-
-	term_kwrite("find_node: node was not found\n");
-	return false;
 }
 
 //////////////////////////////////////////////////////////////
@@ -497,7 +572,7 @@ static void reset_fs() {
 	root_folder.node.next_node_address = 0;
 
 	folder_node_entry_t* entries = heap_allocate(root_folder.node.size);
-	for (int i = 0; i < FOLDER_SIZE(&root_folder); i++) {
+	for (int i = 0; i < root_folder.node.size / sizeof(folder_node_entry_t); i++) {
 		entries[i].file_address = 0;
 	}
 	write_node(&root_folder);
@@ -507,9 +582,144 @@ static void reset_fs() {
 	update_header();
 }
 
+//////////////////////////////////////////////////////////////
+//// syscalls
+//////////////////////////////////////////////////////////////
+
+static void syscall_list(registers_t* regs) {
+	int* ret_count = regs->ecx;
+	node_t folder;
+	if (traverse_path(&folder, (char*)regs->ebx)) {
+		if (folder.node.type == NODE_FOLDER) {
+			
+			folder_node_entry_t* entries = heap_allocate(folder.node.size);
+			read_node_data(&folder, entries);
+			
+			int count = count_folder_entries(entries, folder.node.size / sizeof(folder_node_entry_t));
+			size_t* list_base = heap_allocate(sizeof(size_t) + sizeof(tomato_list_entry_t) * count);
+			*list_base = count;
+			list_base++;
+			tomato_list_entry_t* list = (tomato_list_entry_t*)list_base;
+			*ret_count = count;
+
+			for (int i = 0; i < folder.node.size / sizeof(folder_node_entry_t); i++) {
+				if (entries[i].file_address != 0) {
+					node_t file;
+					file.address = entries[i].file_address;
+					read_node(&file);
+
+					list->name = heap_allocate(file.node.name_size);
+					read_node_name(&file, list->name);
+					list++;
+				}
+			}
+
+			regs->eax = (uint32_t)list_base;
+			heap_free(entries);
+		}
+		else {
+			*ret_count = 0;
+		}
+	}
+	else {
+		*ret_count = 0;
+	}
+}
+
+static void syscall_list_release(registers_t* regs) {
+	tomato_list_entry_t* entries = regs->ebx;
+	size_t size = *(size_t*)(((uintptr_t*)entries) - sizeof(size_t));
+
+	for (int i = 0; i < size; i++) {
+		heap_free(entries[i].name);
+	}
+
+	heap_free(entries);
+}
+
+static void syscall_exists(registers_t* regs) {
+	node_t node;
+	regs->eax = traverse_path(&node, (char*)regs->ebx);
+}
+
+static void syscall_open(registers_t* regs) {
+	uintptr_t handle = heap_allocate(sizeof(tomato_file_handle_t) + sizeof(node_t));
+
+	node_t* node = handle;
+	tomato_file_handle_t* fh = (handle + sizeof(node_t));
+
+	if (traverse_path(node, regs->ebx)) {
+		fh->name = heap_allocate(node->node.name_size);
+		read_node_name(node, fh->name);
+		fh->size = node->node.size;
+		fh->type = node->node.type;
+	}
+
+	regs->eax = fh;
+}
+
+static void syscall_close(registers_t* regs) {
+	uintptr_t handle = regs->ebx;
+
+	node_t* node = handle - sizeof(node_t);
+	tomato_file_handle_t* fh = handle;
+
+	heap_free(fh->name);
+	heap_free(node);
+}
+
+static void syscall_make_dir(registers_t* regs) {
+	char* path = regs->ebx;
+	char* path_orig = path;
+
+	if (*path_orig == '\\' || *path_orig == '/') {
+		path_orig++;
+	}
+
+	if (strlen(path_orig) == 0) {
+		return;
+	}
+
+	path = heap_allocate(strlen(path_orig) + 1);
+	char* path_start = path;
+
+	int count = 1;
+	while (*path_orig) {
+		if (*path_orig == '\\' || *path_orig == '/') {
+			*path = 0;
+			count++;
+		}
+		else {
+			*path = *path_orig;
+		}
+		*path++;
+		*path_orig++;
+	}
+	*path = 0;
+	path = path_start;
+
+	node_t current;
+	current.address = header.root_folder_address;
+	read_node(&current);
+
+	while (count--) {
+		if (!find_node(&current, &current, path)) {
+			node_t parent = current;
+			create_folder(&parent, &current, path);
+		}
+		// go to the next file
+		while (*path) {
+			path++;
+		}
+		path++;
+	}
+	
+	heap_free(path);
+}
+
 void syscall_fs_init() {
 	disk_size = driver_disk_size();
-	term_kwrite("Disk size: ");
+	term_kwrite("syscall_fs_init: Disk size: ");
 	uint32_t size = (disk_size / (1024 * 1024 * 1024));
 	char buf[11];
 	itoa(size, buf, 10);
@@ -524,49 +734,9 @@ void syscall_fs_init() {
 		term_kwrite("syscall_fs_init: TomatoFS created\n");
 	//}
 
-	node_t root;
-	root.address = header.root_folder_address;
-	read_node(&root);
-
-	char* name = heap_allocate(root.node.name_size);
-	read_node_name(&root, name);
-	term_kwrite("root: ");
-	term_kwrite(name);
-	term_kwrite("\n");
-	heap_free(name);
-
-	term_kwrite("root address: ");
-	itoa(root.address, buf, 10);
-	term_kwrite(buf);
-	term_kwrite("\n");
-
-	node_t temp_folder;
-	if (!create_folder(&root, &temp_folder, "test")) {
-		term_kwrite("failed to create folder test\n");
-	}
-	else {
-		term_kwrite("Folder created\n");
-		term_kwrite("Folder address: ");
-		itoa(temp_folder.address, buf, 10);
-		term_kwrite(buf);
-		term_kwrite("\n");
-	}
-
-	term_kwrite("root address: ");
-	itoa(root.address, buf, 10);
-	term_kwrite(buf);
-	term_kwrite("\n");
-
-	node_t found;
-	if (find_node(&root, &found, "test")) {
-		term_kwrite("Found folder\n");
-		term_kwrite("Folder address: ");
-		itoa(found.address, buf, 10);
-		term_kwrite(buf);
-		term_kwrite("\n");
-	}
-	else {
-		term_kwrite("Did not find folder\n");
-	}
+	register_syscall(TOMATO_SYSCALL_FS_LIST, syscall_list);
+	register_syscall(TOMATO_SYSCALL_FS_LIST_RELEASE, syscall_list_release);
+	register_syscall(TOMATO_SYSCALL_FS_EXISTS, syscall_exists);
+	register_syscall(TOMATO_SYSCALL_FS_MAKE_DIR, syscall_make_dir);
 }
 

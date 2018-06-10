@@ -34,6 +34,18 @@
 #define TOMATO_SYSCALL_HEAP_REALLOCATE				0x21
 #define TOMATO_SYSCALL_HEAP_FREE					0x22
 
+// 0x30 - 0x3F - fs
+#define TOMATO_SYSCALL_FS_LIST						0x30
+#define TOMATO_SYSCALL_FS_LIST_RELEASE				0x31
+#define TOMATO_SYSCALL_FS_EXISTS					0x32
+#define TOMATO_SYSCALL_FS_OPEN						0x33
+#define TOMATO_SYSCALL_FS_WRITE_BYTES				0x34
+#define TOMATO_SYSCALL_FS_READ_BYTES				0x35
+#define TOMATO_SYSCALL_FS_CLOSE						0x36
+#define TOMATO_SYSCALL_FS_MAKE_DIR					0x37
+#define TOMATO_SYSCALL_FS_DELETE					0x38
+
+
 inline static uint32_t tomato_syscall(uint32_t id) {
 	uint32_t ret;
 	asm volatile("int $0x80" : "=a"(ret) : "a"(id));

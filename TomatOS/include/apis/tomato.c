@@ -105,6 +105,42 @@ bool tomato_heap_free(void* ptr) {
 	return (bool)tomato_syscall_1p(TOMATO_SYSCALL_HEAP_FREE, (uint32_t)ptr);
 }
 
+/////////////////////////////////////////////////////
+//// fs syscalls
+/////////////////////////////////////////////////////
+
+tomato_list_entry_t* tomato_fs_list(const char* path, int* count) {
+	return (tomato_list_entry_t*)tomato_syscall_2p(TOMATO_SYSCALL_FS_LIST, path, count);
+}
+
+void tomato_fs_list_release(tomato_list_entry_t* entries) {
+	tomato_syscall_1p(TOMATO_SYSCALL_FS_LIST_RELEASE, entries);
+}
+
+bool tomato_fs_exists(const char* path) {
+	return (bool)tomato_syscall_1p(TOMATO_SYSCALL_FS_EXISTS, (uint32_t)path);
+}
+
+tomato_file_handle_t* tomato_fs_open(const char* path) {
+	return (tomato_file_handle_t*)tomato_syscall_1p(TOMATO_SYSCALL_FS_OPEN, path);
+}
+
+void tomato_fs_read_bytes(tomato_file_handle_t* handle, void* buffer, size_t count) {}
+void tomato_fs_write_bytes(tomato_file_handle_t* handle, void* buffer, size_t count) {}
+
+void tomato_fs_close(tomato_file_handle_t* handle) {
+	tomato_syscall_1p(TOMATO_SYSCALL_FS_CLOSE, handle);
+}
+
+void tomato_fs_make_dir(const char* path) {
+	tomato_syscall_1p(TOMATO_SYSCALL_FS_MAKE_DIR, path);
+}
+
+void tomato_fs_delete(const char* path) {
+	tomato_syscall_1p(TOMATO_SYSCALL_FS_DELETE, path);
+}
+
+
 #ifdef __cplusplus
 }
 #endif

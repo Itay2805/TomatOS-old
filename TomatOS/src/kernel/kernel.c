@@ -46,22 +46,13 @@ void kmain(const void* multiboot_structure, uint32_t multiboot_magic) {
 	driver_timer_init();
 	driver_keyboard_init();
 	driver_disk_init();
-	
-	/*char buf[] = "Another Test";
-	term_kwrite("before write/read test: ");
-	term_kwrite(buf);
-	term_kwrite("\n");
-	driver_disk_write(512, buf, sizeof(buf));
-	driver_disk_read(512, buf, sizeof(buf));
-	term_kwrite("after write/read test: ");
-	term_kwrite(buf);
-	term_kwrite("\n");*/
 
+	// initialize syscalls that depend on drivers
 	syscall_fs_init();
 
 	// reset terminal
 	term_kreset();
 	
 	// call the os startup
-	// startup();
+	startup();
 }

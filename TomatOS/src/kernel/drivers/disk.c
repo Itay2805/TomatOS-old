@@ -15,7 +15,7 @@ void driver_disk_write(uint64_t address, void* vpbuffer, size_t size) {
 	int offset = OFFSET(address);
 	int sector_count = (offset + size) / 512 + 1;
 	uintptr_t buffer = (uintptr_t)vpbuffer;
-	uintptr_t tempbuffer[512];
+	uint8_t tempbuffer[512];
 	
 	driver_ata_read(sector, tempbuffer);
 	if (sector_count == 1) {
@@ -60,7 +60,7 @@ void driver_disk_read(uint64_t address, void* vpbuffer, size_t size) {
 	int offset = OFFSET(address);
 	int sector_count = (offset + size) / 512 + 1;
 	uintptr_t buffer = (uintptr_t)vpbuffer;
-	uintptr_t tempbuffer[512];
+	uint8_t tempbuffer[512];
 
 	driver_ata_read(sector, tempbuffer);
 	if (sector_count == 1) {

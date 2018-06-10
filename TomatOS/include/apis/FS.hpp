@@ -3,43 +3,46 @@
 
 #include <stdint.h>
 
+#include <tomato.h>
+
 namespace Tomato {
-
-	class File {
-	private:
-		uint32_t handle;
-		FS::Mode mode;
-
-	public:
-		
-		void Write(const char* text);
-		void Write(size_t count, uintptr_t buffer);
-		void Read(size_t count, uintptr_t buffer);
-		void Flush();
-		void Close();
-
-		inline uint32_t GetHandle() const { return handle; }
-		inline FS::Mode GetMode() const { return mode; }
-
-	};
 
 	class FS {
 	public:
 
-		enum Mode : uint8_t {
-			READ = 1 << 0,
-			WRITE = 1 << 1,
-			APPEND = 1 << 2,
+		class File {
+		private:
+			tomato_file_handle_t * file;
+
+		public:
+			File(const char* path);
+			~File();
+
+			inline size_t GetSize() { return file->size; }
+			inline const char* GetName() { return file->name; }
+			inline bool IsDir() const { return file->type == TOMATO_FS_FOLDER; }
+			
 		};
 
-		static File Open(const char* path, Mode mode = (Mode)(READ | WRITE));
+		class List {
+		private:
+			tomato_list_entry_t * entries;
+			int count;
+
+		public:
+
+			List(const char* path);
+			~List();
+
+			inline char* operator[](int index) {
+				return entries[0].name;
+			}
+
+			inline int Count() const { return count; }
+		};
+
 		static bool Exists(const char* path);
-		static bool IsDir(const char* path);
-		static size_t GetSize(const char* path);
 		static void MakeDir(const char* path);
-		static void Move(const char* from, const char* to);
-		static void Copy(const char* from, const char* to);
-		static void Delete(const char* path);
 
 	};
 
