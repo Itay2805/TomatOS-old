@@ -5,6 +5,8 @@
 
 #include <tomato.h>
 
+#include <apis/Term.hpp>
+
 namespace Tomato {
 
 	class FS {
@@ -21,6 +23,7 @@ namespace Tomato {
 			inline size_t GetSize() { return file->size; }
 			inline const char* GetName() { return file->name; }
 			inline bool IsDir() const { return file->type == TOMATO_FS_FOLDER; }
+			inline bool Exists() const { return file != nullptr; }
 			
 		};
 
@@ -35,7 +38,7 @@ namespace Tomato {
 			~List();
 
 			inline char* operator[](int index) {
-				return entries[0].name;
+				return entries[index].name;
 			}
 
 			inline int Count() const { return count; }

@@ -7,5 +7,6 @@ void syscall_term_init(void);
 // to avoid a syscall
 void term_kwrite(const char* text);
 void term_kreset(void);
+void term_kwrite_int(int number);
 
 #endif

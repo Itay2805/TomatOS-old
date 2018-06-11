@@ -2,6 +2,7 @@
 #include "ata.h"
 
 #include <string.h>
+#include "../syscalls/term.h"
 
 #define SECTOR(a) ((a) / (uint64_t)512)
 #define OFFSET(a) ((a) % (uint64_t)512)
@@ -11,12 +12,15 @@ void driver_disk_init(void) {
 }
 
 void driver_disk_write(uint64_t address, void* vpbuffer, size_t size) {
+
+	// TODO: check why we need to flush after every write instruction
+
 	int sector = SECTOR(address);
 	int offset = OFFSET(address);
 	int sector_count = (offset + size) / 512 + 1;
 	uintptr_t buffer = (uintptr_t)vpbuffer;
 	uint8_t tempbuffer[512];
-	
+
 	driver_ata_read(sector, tempbuffer);
 	if (sector_count == 1) {
 		
@@ -33,6 +37,7 @@ void driver_disk_write(uint64_t address, void* vpbuffer, size_t size) {
 		buffer += 512 - offset;
 		driver_ata_write(sector, tempbuffer);
 
+		driver_ata_flush();
 	}
 
 	sector++;
@@ -45,6 +50,8 @@ void driver_disk_write(uint64_t address, void* vpbuffer, size_t size) {
 		buffer += 512;
 
 		driver_ata_write(sector, tempbuffer);
+
+		driver_ata_flush();
 	}
 
 	// write to last sector
@@ -86,7 +93,7 @@ void driver_disk_read(uint64_t address, void* vpbuffer, size_t size) {
 
 	// read last sector, taking into account size
 	driver_ata_read(sector, tempbuffer);
-	memcpy(buffer, tempbuffer, size % 512);
+	memcpy(buffer, tempbuffer, (offset + size) % 512);
 }
 
 uint64_t driver_disk_size(void) {

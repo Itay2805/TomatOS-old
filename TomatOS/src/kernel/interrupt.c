@@ -141,6 +141,12 @@ void kernel_irq_handler(registers_t r) {
 void kernel_exception_handler(registers_t r) {
 	// @TODO: handling exceptions
 
+	if (r.int_no == EXCEPTION_BREAKPOINT) {
+		while (true) {
+			asm("nop");
+		}
+	}
+
 	int irqnum = r.int_no;
 	char buf[256];
 	itoa(irqnum, buf, 10);

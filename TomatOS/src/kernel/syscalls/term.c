@@ -77,6 +77,11 @@ void term_kreset(void) {
 	term_y = 0;
 }
 
+void term_kwrite_int(int number) {
+	char buf[11];
+	itoa(number, buf, 10);
+	term_kwrite(buf);
+}
 
 /////////////////////////////////////////////////
 //// helper functions

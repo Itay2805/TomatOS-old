@@ -20,6 +20,8 @@
 #define COMMAND_PORT			PRIMARY_ATA_PORT_BASE + 7
 #define CONTROL_PORT			PRIMARY_ATA_PORT_BASE + 518
 
+#define ATA_DEBUG 0
+
 #include "../port.h"
 
 #include "../syscalls/term.h"
@@ -115,12 +117,16 @@ void driver_ata_write(size_t sector, void* vpbuffer) {
 	outb(LBA_HI_PORT, (sector & 0xFF) >> 16);
 	outb(COMMAND_PORT, 0x30);
 
-	// term_kwrite("driver_ata_write: waiting for disk...\n");
+#if ATA_DEBUG
+	term_kwrite("driver_ata_write: waiting for disk...\n");
+#endif
 	if (wait_for_drive_or_error(false)) {
 		term_kwrite("driver_ata_write: error");
 		return;
 	}
-	// term_kwrite("driver_ata_write: writing\n");
+#if ATA_DEBUG
+	term_kwrite("driver_ata_write: writing\n");
+#endif
 
 	for (int i = 0; i < 512; i += 2) {
 		uint16_t wdata = buffer[i];
@@ -142,7 +148,9 @@ void driver_ata_read(size_t sector, void* vpbuffer) {
 	outb(LBA_HI_PORT, (sector & 0xFF) >> 16);
 	outb(COMMAND_PORT, 0x20);
 
-	// term_kwrite("driver_ata_read: waiting for disk...\n");
+#if ATA_DEBUG
+	term_kwrite("driver_ata_read: waiting for disk...\n");
+#endif
 	if (wait_for_drive_or_error(false)) {
 		term_kwrite("driver_ata_read: error (sector: ");
 		char buf[11];
@@ -151,7 +159,9 @@ void driver_ata_read(size_t sector, void* vpbuffer) {
 		term_kwrite(")\n");
 		return;
 	}
-	// term_kwrite("driver_ata_read: reading\n");
+#if ATA_DEBUG
+	term_kwrite("driver_ata_read: reading\n");
+#endif
 
 	for (int i = 0; i < 512; i += 2) {
 		uint16_t wdata = inw(DATA_PORT);
@@ -166,10 +176,14 @@ void driver_ata_flush() {
 	outb(DEVICE_PORT, CURRENT);
 	outb(COMMAND_PORT, 0xE7);
 
-	// term_kwrite("driver_ata_flush: waiting for disk...\n");
+#if ATA_DEBUG
+	term_kwrite("driver_ata_flush: waiting for disk...\n");
+#endif
 	if (wait_for_drive_or_error(true)) {
 		term_kwrite("driver_ata_flush: error\n");
 	}
-	// term_kwrite("driver_ata_flush: flushed!\n");
+#if ATA_DEBUG
+	term_kwrite("driver_ata_flush: flushed!\n");
+#endif
 
 }

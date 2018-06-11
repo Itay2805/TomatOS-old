@@ -18,28 +18,42 @@ void program(void*) {
 	Term::Write(OS::Version());
 	Term::Write("\n");
 
-	FS::MakeDir("folder1");
-	Term::Write("created folder1\n");
-
-	FS::MakeDir("folder1/subfolder1");
-	Term::Write("created folder1/subfolder1\n");
+	if (!FS::Exists("folder1")) {
+		FS::MakeDir("folder1");
+		Term::Write("created folder1\n");
+	}
 	
-	FS::MakeDir("folder1/subfolder2");
-	Term::Write("created folder1/subfolder2\n");
-	
-	FS::MakeDir("folder2");
-	Term::Write("created folder2\n");
+	if (!FS::Exists("folder1/subfolder1")) {
+		FS::MakeDir("folder1/subfolder1");
+		Term::Write("created folder1/subfolder1\n");
+	}
 
-	Term::Write("files under root: \n");
+	if (!FS::Exists("folder1/subfolder2")) {
+		FS::MakeDir("folder1/subfolder2");
+		Term::Write("created folder1/subfolder2\n");
+	}
+
+	if (!FS::Exists("folder2")) {
+		FS::MakeDir("folder2");
+		Term::Write("created folder2\n");
+	}
+
 	FS::List list = FS::List("");
+	Term::Write("files under root: \n");
 	for (int i = 0; i < list.Count(); i++) {
-		FS::File file = FS::File(list[i]);
+		Term::Write(i);
+		Term::Write(": ");
 		Term::Write(list[i]);
+
+		FS::File file = FS::File(list[i]);
+		
 		if (file.IsDir()) {
-			Term::Write(": \n");
+			Term::Write(":\n");
 			FS::List sublist = FS::List(list[i]);
-			for (int i = 0; i < sublist.Count(); i++) {
+			for (int j = 0; j < sublist.Count(); j++) {
 				Term::Write("\t");
+				Term::Write(j);
+				Term::Write(": ");
 				Term::Write(sublist[i]);
 				Term::Write("\n");
 			}

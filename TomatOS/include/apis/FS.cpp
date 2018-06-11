@@ -16,6 +16,7 @@ namespace Tomato {
 
 	FS::File::~File() {
 		tomato_fs_close(file);
+		file = nullptr;
 	}
 
 	FS::List::List(const char* path) {

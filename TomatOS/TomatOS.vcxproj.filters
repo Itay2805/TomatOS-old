@@ -227,5 +227,8 @@
     <ClCompile Include="src\kernel\drivers\disk.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="include\apis\FS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

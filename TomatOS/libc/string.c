@@ -95,8 +95,10 @@ int memcmp(const void* vl, const void* vr, size_t n) {
 void* memcpy(void* dst, const void* src, size_t length) {
 	const uint8_t* source = src;
 	uint8_t* dest = dst;
-	for (size_t i = 0; i < length; i++) {
-		*(dest + i) = *(source + i);
+	while (length--) {
+		*dest = *source;
+		dest++;
+		source++;
 	}
 	return dst;
 }

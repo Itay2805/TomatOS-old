@@ -132,21 +132,28 @@ namespace Tomato {
 
 		template<class E = Event>
 		static E PullEventBlocking(Event::EventType filter = Event::ALL) {
-			char buf[256];
-			
+			E event;
+			while (!PeekEvent(event, filter)) {
+				asm("nop");
+			}
+			return event;
+		}
+
+		template<class E = Event>
+		static bool PeekEvent(E& event, Event::EventType filter) {
 			event_t native_event;
 			native_event.type = 0;
 			native_event.data[0] = 0;
 			native_event.data[1] = 0;
 			native_event.data[2] = 0;
 			native_event.data[3] = 0;
-			while (!tomato_os_pull_event(&native_event, (uint32_t)filter)) {
-				asm("nop");
+			if (!tomato_os_pull_event(&native_event, (uint32_t)filter)) {
+				return false;
 			}
-
-			Event event(native_event.type, native_event.data);
-			E* casted = (E*)&event;
-			return *casted;
+			Event e(native_event.type, native_event.data);
+			E* casted = (E*)&e;
+			event = *casted;
+			return true;
 		}
 
 		// for now the pull event raw will be blocking 

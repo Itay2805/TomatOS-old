@@ -137,6 +137,7 @@
   <ItemGroup>
     <ClCompile Include="cpplib\Status.cpp" />
     <ClCompile Include="include\apis\Coroutine.cpp" />
+    <ClCompile Include="include\apis\FS.cpp" />
     <ClCompile Include="include\apis\OS.cpp" />
     <ClCompile Include="include\apis\Term.cpp" />
     <ClCompile Include="include\apis\tomato.c" />
