@@ -8,5 +8,6 @@ void syscall_term_init(void);
 void term_kwrite(const char* text);
 void term_kreset(void);
 void term_kwrite_int(int number);
+void kprintf(char* format, ...);
 
 #endif

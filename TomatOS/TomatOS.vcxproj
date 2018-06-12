@@ -179,12 +179,15 @@
     <ClInclude Include="include\apis\Window.hpp" />
     <ClInclude Include="include\cpp.hpp" />
     <ClInclude Include="include\syscall.h" />
+    <ClInclude Include="libc\stdio.c" />
     <ClInclude Include="libc\limits.h" />
     <ClInclude Include="libc\setjmp.h" />
+    <ClInclude Include="libc\stdarg.h" />
     <ClInclude Include="libc\stdbool.h" />
     <ClInclude Include="libc\stddef.h" />
     <ClInclude Include="libc\stdint.h" />
     <ClInclude Include="include\tomato.h" />
+    <ClInclude Include="libc\stdio.h" />
     <ClInclude Include="libc\string.h" />
     <ClInclude Include="src\kernel\common.h" />
     <ClInclude Include="include\cpp\icxxabi.h" />

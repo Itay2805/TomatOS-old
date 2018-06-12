@@ -26,31 +26,53 @@ char* strrev(char *str) {
 	return str;
 }
 
-char* itoa(int32_t v, char* buff, uint8_t radix_base) {
-	static char table[] = "0123456789abcdefghijklmnopqrstuvwxyz";
-	char *p = buff;
-	uint32_t n = (v < 0 && radix_base == 10) ? (uint32_t)(-v) : (uint32_t)v;
-	while (n >= radix_base) {
-		*p++ = table[n%radix_base];
-		n /= radix_base;
+static void reverse(char str[], int length) {
+	int start = 0;
+	int end = length - 1;
+	while (start < end) {
+		char c = *(str + start);
+		*(str + start) = *(str + end);
+		*(str + end) = c;
+		start++;
+		end--;
 	}
-	*p++ = table[n];
-	if (v < 0 && radix_base == 10) *p++ = '-';
-	*p = '\0';
-	return strrev(buff);
 }
 
-int strcmp(const char* vl, const char* vr) {
-	int l1 = strlen(vl);
-	int l2 = strlen(vr);
-	if (l1 == 0 && l2 != 0) {
-		return 1;
+
+char* itoa(int32_t num, char* str, uint8_t base) {
+	int i = 0;
+	bool isNegative = false;
+
+	if (num == 0) {
+		str[i++] = '0';
+		str[i] = '\0';
+		return str;
 	}
-	else if (l1 != 0 && l2 == 0) {
-		return -1;
+
+	if (num < 0 && base == 10) {
+		isNegative = true;
+		num = -num;
 	}
-	int min = l1 > l2 ? l2: l1;
-	return memcmp(vl, vr, min);
+
+	while (num != 0) {
+		int rem = num % base;
+		str[i++] = (rem > 9) ? (rem - 10) + 'a' : rem + '0';
+		num = num / base;
+	}
+
+	if (isNegative)
+		str[i++] = '-';
+
+	str[i] = '\0';
+	reverse(str, i);
+	return str;
+}
+
+int strcmp(const char * s1, const char * s2) {
+	for (; *s1 == *s2; ++s1, ++s2) {
+		if (*s1 == 0) return 0;
+	}
+	return *(const unsigned char *)s1 - *(const unsigned char *)s2;
 }
 
 char* strcpy(char* dst, const char* src) {

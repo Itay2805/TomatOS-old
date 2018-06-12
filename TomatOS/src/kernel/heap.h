@@ -9,5 +9,6 @@ void initialize_heap(size_t start, size_t size);
 void* heap_allocate(size_t size);
 void* heap_reallocate(void* ptr, size_t newsize);
 bool heap_free(void* ptr);
+bool heap_valid_block(void* ptr);
 
 #endif

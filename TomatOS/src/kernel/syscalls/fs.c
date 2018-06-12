@@ -33,7 +33,7 @@
 	#endif
 
 
-	#if 0
+	#if 1
 		#define FS_DEBUG_NODE_SEARCH(x) term_kwrite(x)
 	#else 
 		#define FS_DEBUG_NODE_SEARCH(x)
@@ -394,8 +394,8 @@ static bool traverse_path(node_t* node, char* path) {
 		return true;
 	}
 
-	path = heap_allocate(strlen(path_orig) + 1);
-	char* path_start = path;
+	char* path_start = heap_allocate(strlen(path_orig) + 1);
+	path = path_start;
 
 	int count = 1;
 	while (*path_orig) {
@@ -406,8 +406,8 @@ static bool traverse_path(node_t* node, char* path) {
 		else {
 			*path = *path_orig;
 		}
-		*path++;
-		*path_orig++;
+		path++;
+		path_orig++;
 	}
 	*path = 0;
 	path = path_start;
@@ -417,9 +417,6 @@ static bool traverse_path(node_t* node, char* path) {
 	read_node(&current);
 
 	while (count--) {
-		char buf[256];
-		read_node_name(&current, buf);
-
 		if (!find_node(&current, &current, path)) {
 			heap_free(path_start);
 			FS_DEBUG_NODE_SEARCH("traverse_path: was not found\n");
@@ -434,12 +431,12 @@ static bool traverse_path(node_t* node, char* path) {
 
 	*node = current;
 
-	heap_free(path);
+	heap_free(path_start);
 	FS_DEBUG_NODE_SEARCH("traverse_path: found\n");
 	return true;
 }
 
-static bool find_node(node_t* parent, node_t* node, char* name) {
+static bool find_node(node_t* parent, node_t* node, char* name) {	
 	FS_DEBUG_NODE_SEARCH("> find_node\n");
 	if (parent->node.type != NODE_FOLDER) {
 		return false;
@@ -701,7 +698,6 @@ static void syscall_exists(registers_t* regs) {
 
 static void syscall_open(registers_t* regs) {
 	uintptr_t handle = heap_allocate(sizeof(tomato_file_handle_t) + sizeof(node_t));
-
 	node_t* node = handle;
 	tomato_file_handle_t* fh = (handle + sizeof(node_t));
 
@@ -756,8 +752,8 @@ static void syscall_make_dir(registers_t* regs) {
 		else {
 			*path = *path_orig;
 		}
-		*path++;
-		*path_orig++;
+		path++;
+		path_orig++;
 	}
 	*path = 0;
 	path = path_start;
@@ -779,7 +775,7 @@ static void syscall_make_dir(registers_t* regs) {
 		path++;
 	}
 	
-	heap_free(path);
+	heap_free(path_start);
 }
 
 void syscall_fs_init() {

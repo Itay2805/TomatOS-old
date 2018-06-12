@@ -10,6 +10,8 @@
 
 #include "syscalls.h"
 
+#include "syscalls/term.h"
+
 #define MEMORY_MAGIC 0xFACC0FF
 
 typedef struct memory_block_t {
@@ -18,6 +20,15 @@ typedef struct memory_block_t {
 	bool allocated;
 	uint32_t magic;
 } memory_block_t;
+
+#define HEAP_DEBUG 1
+
+//////////////////////////////////////////////////////////////
+//// needed variables
+//////////////////////////////////////////////////////////////
+static uintptr_t heap_start_address;
+static size_t heap_size;
+static memory_block_t* first_free_block;
 
 //////////////////////////////////////////////////////////////
 //// internal functions
@@ -48,7 +59,7 @@ static memory_block_t* get_next_free_block(memory_block_t* from, uint8_t* valid)
 	*valid = from->magic == MEMORY_MAGIC;
 	do {
 		from = get_next_block(from, valid);
-	} while (*valid && !from->allocated);
+	} while (*valid && from->allocated);
 	return from;
 }
 
@@ -60,6 +71,12 @@ static memory_block_t* merge_empty_blocks(memory_block_t* from) {
 	
 	// if the block is valid and is not allocated, let's merge with it
 	if (valid && !next->allocated) {
+		// set the previous block of the next block after the delete
+		memory_block_t* n = get_next_block(next, &valid);
+		if (valid) {
+			n->before = from;
+		}
+
 		from->size += sizeof(memory_block_t) + next->size;
 		// invalidate block, just incase
 		next->size = 0;
@@ -131,7 +148,7 @@ void* heap_allocate(size_t size) {
 			// do we have enough space to divide the block into two blocks?
 			if ((block->size - size - sizeof(memory_block_t)) > 0) {
 				// divide the memory block
-				memory_block_t* newblock = (memory_block_t*)((uintptr_t)block + sizeof(memory_block_t) + size);
+				memory_block_t* newblock = (memory_block_t*)(((uintptr_t)block) + sizeof(memory_block_t) + size);
 				newblock->allocated = false;
 				newblock->size = block->size - size - sizeof(memory_block_t);
 				newblock->magic = MEMORY_MAGIC;
@@ -155,7 +172,8 @@ void* heap_allocate(size_t size) {
 
 			// block is now allocated! return the pointer to the data
 			block->allocated = true;
-			return (void*)((uintptr_t)block + sizeof(memory_block_t));
+
+			return (void*)(((uintptr_t)block) + sizeof(memory_block_t));
 		}
 
 		// this block isn't good, get the next free one
@@ -196,7 +214,17 @@ void* heap_reallocate(void* ptr, size_t newsize) {
 	return newPtr;
 }
 
+bool heap_valid_block(void* ptr) {
+	bool valid;
+	memory_block_t* block = get_block(ptr, &valid);
+	return valid;
+}
+
 bool heap_free(void* ptr) {
+	if (ptr == NULL) {
+		return false;
+	}
+
 	bool valid;
 	memory_block_t* block = get_block(ptr, &valid);
 	if (!valid) {

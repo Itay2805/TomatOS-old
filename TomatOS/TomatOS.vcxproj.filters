@@ -156,6 +156,15 @@
     <ClInclude Include="src\kernel\drivers\disk.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="libc\stdio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libc\stdarg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libc\stdio.c">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\kernel\kernel.c">
