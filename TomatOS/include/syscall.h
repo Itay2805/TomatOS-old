@@ -64,4 +64,10 @@ inline static uint32_t tomato_syscall_2p(uint32_t id, uint32_t p1, uint32_t p2) 
 	return ret;
 }
 
+inline static uint32_t tomato_syscall_3p(uint32_t id, uint32_t p1, uint32_t p2, uint32_t p3) {
+	uint32_t ret;
+	asm volatile("int $0x80" : "=a"(ret) : "a"(id), "b"(p1), "c"(p2), "d"(p3));
+	return ret;
+}
+
 #endif

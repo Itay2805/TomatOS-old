@@ -142,6 +142,7 @@
     <ClCompile Include="include\apis\Term.cpp" />
     <ClCompile Include="include\apis\tomato.c" />
     <ClCompile Include="include\apis\Window.cpp" />
+    <ClCompile Include="libc\stddef.c" />
     <ClCompile Include="libc\string.c" />
     <ClCompile Include="src\kernel\cpp\icxxabi.cpp" />
     <ClCompile Include="src\kernel\cpp\purevirtual.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="include\apis\OS.hpp" />
     <ClInclude Include="include\apis\Term.hpp" />
     <ClInclude Include="include\apis\Window.hpp" />
+    <ClInclude Include="include\buffer.h" />
     <ClInclude Include="include\cpp.hpp" />
     <ClInclude Include="include\syscall.h" />
     <ClInclude Include="libc\stdio.c" />

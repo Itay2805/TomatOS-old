@@ -82,8 +82,9 @@ extern "C" {
 	//// fs syscalls
 	/////////////////////////////////////////////////////
 
-#define TOMATO_FS_FILE		0x454c4946
-#define TOMATO_FS_FOLDER	0x52444c46
+#define TOMATO_FS_NOT_EXISTS	0
+#define TOMATO_FS_FILE			0x454c4946
+#define TOMATO_FS_FOLDER		0x52444c46
 
 	typedef struct tomato_file_handle_t {
 		char* name;

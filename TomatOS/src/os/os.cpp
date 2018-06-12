@@ -46,6 +46,7 @@ void program(void*) {
 		Term::Write(list[i]);
 
 		FS::File file = FS::File(list[i]);
+		Term::Write("opened file\n");
 		if (file.IsDir()) {
 			Term::Write(":\n");
 			FS::List sublist = FS::List(list[i]);

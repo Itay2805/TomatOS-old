@@ -3,7 +3,7 @@
 
 #ifdef __cplusplus
 
-#include <string.h>
+#include <stddef.h>
 
 inline void *operator new(size_t size)
 {

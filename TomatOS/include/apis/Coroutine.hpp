@@ -3,6 +3,7 @@
 
 #include <setjmp.h>
 #include <string.h>
+#include <stddef.h>
 
 namespace Tomato {
 
