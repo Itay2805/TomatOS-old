@@ -53,11 +53,13 @@ static void check_mouse_btn(uint8_t id, uint8_t now, uint8_t old) {
 #define VIDEO_ADDRESS 0xb8000
 static uint8_t* vram;
 static uint8_t before;
+static uint8_t before_color;
 static uint8_t* before_addr;
 
 void driver_mouse_restore_screen() {
 	if (before_addr != 0) {
 		*before_addr = before;
+		*(before_addr + 1) = before_color;
 	}
 }
 
@@ -65,7 +67,17 @@ void driver_mouse_draw() {
 	driver_mouse_restore_screen();
 	before_addr = &vram[((int8_t)mouse_x + (int8_t)mouse_y * 80) * 2];
 	before = *before_addr;
+	before_color = *(before_addr + 1);
 	*before_addr = 127;
+
+	uint8_t bg = (before_color >> 4) & 0xF;
+	if (bg >= 0 && bg <= 6 || bg == 8) {
+		*(before_addr + 1) = bg << 4 | 0xf;
+	}
+	else {
+		*(before_addr + 1) = bg << 4 | 0x0;
+	}
+
 }
 
 static void interrupt_mouse_handle(registers_t* regs) {

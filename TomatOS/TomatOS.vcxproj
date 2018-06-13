@@ -139,6 +139,7 @@
     <ClCompile Include="include\apis\Coroutine.cpp" />
     <ClCompile Include="include\apis\FS.cpp" />
     <ClCompile Include="include\apis\OS.cpp" />
+    <ClCompile Include="include\apis\PaintUtils.cpp" />
     <ClCompile Include="include\apis\Term.cpp" />
     <ClCompile Include="include\apis\tomato.c" />
     <ClCompile Include="include\apis\Window.cpp" />
@@ -149,6 +150,7 @@
     <ClCompile Include="src\kernel\drivers\ata.c" />
     <ClCompile Include="src\kernel\drivers\disk.c" />
     <ClCompile Include="src\kernel\drivers\keyboard.c" />
+    <ClCompile Include="src\kernel\drivers\mouse.c" />
     <ClCompile Include="src\kernel\drivers\timer.c" />
     <ClCompile Include="src\kernel\gdt.c" />
     <ClCompile Include="src\kernel\heap.c" />
@@ -176,6 +178,7 @@
     <ClInclude Include="include\apis\Coroutine.hpp" />
     <ClInclude Include="include\apis\FS.hpp" />
     <ClInclude Include="include\apis\OS.hpp" />
+    <ClInclude Include="include\apis\PaintUtils.hpp" />
     <ClInclude Include="include\apis\Term.hpp" />
     <ClInclude Include="include\apis\Window.hpp" />
     <ClInclude Include="include\buffer.h" />
@@ -198,6 +201,7 @@
     <ClInclude Include="src\kernel\drivers\ata.h" />
     <ClInclude Include="src\kernel\drivers\disk.h" />
     <ClInclude Include="src\kernel\drivers\keyboard.h" />
+    <ClInclude Include="src\kernel\drivers\mouse.h" />
     <ClInclude Include="src\kernel\drivers\timer.h" />
     <ClInclude Include="src\kernel\gdt.h" />
     <ClInclude Include="src\kernel\heap.h" />
@@ -207,7 +211,7 @@
     <ClInclude Include="src\kernel\syscalls\fs.h" />
     <ClInclude Include="src\kernel\syscalls\os.h" />
     <ClInclude Include="src\kernel\syscalls\term.h" />
-    <ClInclude Include="src\os\Log.h" />
+    <ClInclude Include="src\os\programs\Paint.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

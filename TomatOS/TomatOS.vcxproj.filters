@@ -123,9 +123,6 @@
     <ClInclude Include="include\apis\FS.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\os\Log.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="cpplib\String.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -166,6 +163,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\apis\PaintUtils.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\os\programs\Paint.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kernel\drivers\mouse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -243,6 +249,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="libc\stddef.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\apis\PaintUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kernel\drivers\mouse.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -18,9 +18,8 @@ void program(void*) {
 	Term::SetTextColor(Colors::WHITE);
 	Term::Clear();
 	
-	//Paint paint = Paint();
-
-	//paint.Run();
+	Paint paint = Paint();
+	paint.Run();
 
 	while (true) {
 		MouseClickEvent e = OS::PullEvent<MouseClickEvent>(Event::MOUSE_CLICK);
