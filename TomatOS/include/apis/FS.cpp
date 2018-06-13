@@ -10,6 +10,48 @@ namespace Tomato {
 		tomato_fs_make_dir(path);
 	}
 
+	int FS::GetParentPathLength(const char* path) {
+		if (*path == '/' || *path == '\\') {
+			path++;
+		}
+		int total_length = 0;
+		int current_length = 0;
+		while (*path) {
+			if (*path == '/' || *path == '\\') {
+				total_length += current_length + 1;
+			}
+			else {
+				current_length++;
+			}
+			path++;
+		}
+
+		return total_length;
+	}
+
+	int FS::GetNameLength(const char* path) {
+		int length_total = strlen(path);
+		int length = GetParentPathLength(path);
+		return length_total - length;
+	}
+
+	void FS::GetParentPath(const char* path, char* dest, bool nullterminator) {
+		int length = GetParentPathLength(path);
+		memcpy(dest, path, length);
+		if (nullterminator) {
+			dest[length] = 0;
+		}
+	}
+	
+	void FS::GetName(const char* path, char* dest, bool nullterminator) {
+		int length_total = strlen(path);
+		int length = GetParentPathLength(path);
+		memcpy(dest, path + length, length_total - length);
+		if (nullterminator) {
+			dest[length_total - length] = 0;
+		}
+	}
+
 	FS::File::File(const char* path, Mode mode, bool autoclose)
 		: autoclose(autoclose)
 		, buffer(nullptr)
@@ -23,7 +65,7 @@ namespace Tomato {
 	}
 
 	FS::File::~File() {
-		if (autoclose && file != nullptr) {
+		if (autoclose && IsValid()) {
 			Close();
 		}
 	}
@@ -44,20 +86,25 @@ namespace Tomato {
 
 	void FS::File::Write(const char* text, bool appendnull) {
 		if (CanWrite()) {
-			int size = strlen(text) + (appendnull ? 1 : 0);
-			GrowBuffer(pos + size);
-			memcpy(buffer + pos, text, strlen(text));
+			int textlen = strlen(text);
+			int size = textlen + (appendnull ? 1 : 0);
+			if (textlen == 0) {
+				return;
+			}
+			GrowBuffer(len + size);
+			memcpy(buffer + len, text, textlen);
 			len += size;
-			pos += size;
+			if (appendnull) {
+				Write((char)0);
+			}
 		}
 	}
 
 	void FS::File::Write(const char* bytes, int length) {
 		if (CanWrite()) {
-			GrowBuffer(pos + length);
-			memcpy(buffer + pos, bytes, length);
+			GrowBuffer(len + length);
+			memcpy(buffer + len, bytes, length);
 			len += length;
-			pos += length;
 		}
 	}
 
@@ -73,37 +120,35 @@ namespace Tomato {
 
 	void FS::File::Flush() {
 		if (CanWrite()) {
-			tomato_fs_write_bytes(file, buffer, len);
+			if (len == 0) return;
+			if (mode == APPEND) {
+				tomato_fs_write_bytes(file, buffer, len, GetSize());
+				len = 0;
+			}
+			else if (mode == WRITE) {
+				tomato_fs_write_bytes(file, buffer, len, 0);
+			}
 		}
 	}
 
 	void FS::File::Write(char byte) {
 		if (CanWrite()) {
-			buffer[pos++] = byte;
+			GrowBuffer(len + 1);
+			buffer[len++] = byte;
 		}
 	}
 
 	void FS::File::InitBuffer() {
-		if (!(mode & STAT)) {
-			if (mode & READ || mode & APPEND) {
+		if (mode != STAT) {
+			if (mode == READ) {
 				len = GetSize();
-
-				if (mode & APPEND) {
-					mode = (Mode)(mode | WRITE); // to make sure write is enabled
-					buffer = (char*)malloc(GetSize() + 64);
-					cap = GetSize() + 64;
-					pos = len;
-				}
-				else {
-					buffer = (char*)malloc(GetSize());
-					cap = GetSize();
-				}
-
-				tomato_fs_read_bytes(file, buffer, GetSize());
+				buffer = (char*)malloc(GetSize());
+				tomato_fs_read_bytes(file, buffer, GetSize(), 0);
 			}
-			else if (mode & WRITE) {
+			else {
 				buffer = (char*)malloc(64);
 				cap = 64;
+				len = 0;
 			}
 		}
 	}
@@ -124,11 +169,13 @@ namespace Tomato {
 				free(buffer);
 				cap = 0;
 				len = 0;
+				pos = 0;
 				buffer = nullptr;
 			}
 
 			tomato_fs_close(file);
 			file = nullptr;
+			autoclose = false;
 		}
 	}
 

@@ -4,6 +4,7 @@
 #include <tomato.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <stdio.h>
 
 namespace Tomato {
 
@@ -31,8 +32,7 @@ namespace Tomato {
 
 	public:
 
-		static inline void Write(const char* text)				{ current->Write(text); }
-		static inline void Write(uint32_t number)				{ char buf[11]; itoa(number, buf, 10); current->Write(buf); }
+		static inline void Write(const char* format, ...)		{	va_list va; va_start(va, format); vprintf(format, va); va_end(va); }
 		static inline void Clear()								{ current->Clear(); }
 		static inline void SetTextColor(uint8_t color)			{ current->SetTextColor(color); }
 		static inline void SetBackgroundColor(uint8_t color)	{ current->SetBackgroundColor(color); }

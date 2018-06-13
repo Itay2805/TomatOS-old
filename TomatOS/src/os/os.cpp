@@ -18,49 +18,25 @@ void program(void*) {
 	Term::Write(OS::Version());
 	Term::Write("\n");
 
-	if (!FS::Exists("folder1")) {
-		FS::MakeDir("folder1");
-		Term::Write("created folder1\n");
-	}
-	
-	if (!FS::Exists("folder1/subfolder1")) {
-		FS::MakeDir("folder1/subfolder1");
-		Term::Write("created folder1/subfolder1\n");
-	}
+	Term::Write("write:\n");
+	FS::File file = FS::File("test.txt", FS::File::WRITE, false);
+	file.Write("some text", true);
+	file.Close();
+	Term::Write("finished write\n");
 
-	if (!FS::Exists("folder1/subfolder2")) {
-		FS::MakeDir("folder1/subfolder2");
-		Term::Write("created folder1/subfolder2\n");
-	}
+	Term::Write("overwrite:\n");
+	file = FS::File("test.txt", FS::File::WRITE, false);
+	Term::Write("Size: %i\n", file.GetSize());
+	file.Write("this should replace the text in the file", true);
+	file.Close();
+	Term::Write("finished overwrite\n");
 
-	if (!FS::Exists("folder2")) {
-		FS::MakeDir("folder2");
-		Term::Write("created folder2\n");
-	}
-
-	FS::List list = FS::List("");
-	Term::Write("files under root: \n");
-	for (int i = 0; i < list.Count(); i++) {
-		Term::Write(i);
-		Term::Write(": ");
-		Term::Write(list[i]);
-
-		FS::File file = FS::File(list[i]);
-		Term::Write("opened file\n");
-		if (file.IsDir()) {
-			Term::Write(":\n");
-			FS::List sublist = FS::List(list[i]);
-			for (int j = 0; j < sublist.Count(); j++) {
-				Term::Write("\t");
-				Term::Write(j);
-				Term::Write(": ");
-				Term::Write(sublist[i]);
-				Term::Write("\n");
-			}
-		} else {
-			Term::Write("\n");
-		}
-	}
+	Term::Write("overwrite smaller:\n");
+	file = FS::File("test.txt", FS::File::WRITE, false);
+	Term::Write("Size: %i\n", file.GetSize());
+	file.Write("OVERRIDED!!!", true);
+	file.Close();
+	Term::Write("finished overwrite smaller");
 
 	while (true) {
 		char c = OS::PullEvent<CharEvent>(Event::CHAR).GetChar();

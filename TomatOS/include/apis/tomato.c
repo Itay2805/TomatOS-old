@@ -125,12 +125,12 @@ tomato_file_handle_t* tomato_fs_open(const char* path) {
 	return (tomato_file_handle_t*)tomato_syscall_1p(TOMATO_SYSCALL_FS_OPEN, path);
 }
 
-void tomato_fs_read_bytes(tomato_file_handle_t* handle, void* buffer, size_t count) {
-	tomato_syscall_3p(TOMATO_SYSCALL_FS_READ_BYTES, handle, buffer, count);
+void tomato_fs_read_bytes(tomato_file_handle_t* handle, void* buffer, size_t count, size_t offset) {
+	tomato_syscall_4p(TOMATO_SYSCALL_FS_READ_BYTES, handle, buffer, count, offset);
 }
 
-void tomato_fs_write_bytes(tomato_file_handle_t* handle, void* buffer, size_t count) {
-	tomato_syscall_3p(TOMATO_SYSCALL_FS_WRITE_BYTES, handle, buffer, count);
+void tomato_fs_write_bytes(tomato_file_handle_t* handle, void* buffer, size_t count, size_t offset) {
+	tomato_syscall_4p(TOMATO_SYSCALL_FS_WRITE_BYTES, handle, buffer, count, offset);
 }
 
 void tomato_fs_close(tomato_file_handle_t* handle) {

@@ -142,6 +142,12 @@ void* heap_allocate(size_t size) {
 	bool valid = true; // assume the first block is valid
 	memory_block_t* block = first_free_block;
 	do {
+		if (block->allocated) {
+			kprintf("heap_allocate: already allocated - allocated=%i / valid=%i!\n", block->allocated, valid);
+			block = get_next_free_block(block, &valid);
+			continue;
+		}
+
 		// do we have enough space
 		if (block->size >= size) {
 
@@ -167,6 +173,13 @@ void* heap_allocate(size_t size) {
 				if (first_free_block == block) {
 					// now the first allocated block is the newly created one
 					first_free_block = newblock;
+				}
+			}
+			else if(first_free_block == block) {
+				bool valid;
+				first_free_block = get_next_free_block(block, &valid);
+				if (!valid) {
+					kprintf("heap_allocate: first free block is invalid!\n");
 				}
 			}
 

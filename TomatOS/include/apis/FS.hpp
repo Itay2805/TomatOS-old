@@ -16,11 +16,10 @@ namespace Tomato {
 		class File {
 		public:
 			enum Mode {
-				STAT	= 0,
-
-				READ	= 1,
-				WRITE	= 4,
-				APPEND	= 8,
+				STAT,
+				READ,
+				WRITE,
+				APPEND,
 			};
 
 		private:
@@ -54,9 +53,9 @@ namespace Tomato {
 			inline size_t GetSize() { return file->size; }
 			inline const char* GetName() { return file->name; }
 			inline bool IsDir() const { return file->type == TOMATO_FS_FOLDER; }
-			inline bool Exists() const { return file != nullptr; }
-			inline bool CanRead() const { return mode & READ; }
-			inline bool CanWrite() const { return mode & WRITE || mode & APPEND; }
+			inline bool IsValid() const { return file->type != TOMATO_FS_NOT_EXISTS; }
+			inline bool CanRead() const { return IsValid() && mode == READ; }
+			inline bool CanWrite() const { return mode == WRITE || mode == APPEND; }
 
 		private:
 
@@ -81,6 +80,12 @@ namespace Tomato {
 
 			inline int Count() const { return count; }
 		};
+
+		static int GetParentPathLength(const char* path);
+		static int GetNameLength(const char* path);
+
+		static void GetParentPath(const char* path, char* dest, bool nullterminator = true);
+		static void GetName(const char* path, char* dest, bool nullterminator = true);
 
 		static bool Exists(const char* path);
 		static void MakeDir(const char* path);

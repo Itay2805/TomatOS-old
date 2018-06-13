@@ -14,11 +14,11 @@
 
 #define NODE_SIZE(n) ((n).size + (n).name_size)
 #define TOTAL_NODE_SIZE(n) ((n).size + (n).name_size + sizeof(raw_node_t))
-#define REAL_SIZE(n) ((n).next_node_address - (n).address  + sizeof(raw_node_t))
+#define REAL_SIZE(n) ((n).node.next_node_address - (n).address + sizeof(raw_node_t))
 #define TOTAL_REAL_SIZE(n) ((n).node.next_node_address - (n).address)
 #define FOLDER_SIZE(folder) ((folder)->node.size / sizeof(folder_node_entry_t))
 
-#if 0
+#if 1
 	#if 0
 		#define FS_DEBUG_NODE_IO(x) term_kwrite(x)
 	#else 
@@ -33,7 +33,7 @@
 	#endif
 
 
-	#if 1
+	#if 0
 		#define FS_DEBUG_NODE_SEARCH(x) term_kwrite(x)
 	#else 
 		#define FS_DEBUG_NODE_SEARCH(x)
@@ -135,6 +135,10 @@ static void write_node_name(node_t* node, char* str) {
 	driver_disk_write(node->address + sizeof(raw_node_t), str, node->node.name_size);
 }
 
+static void write_node_data_offset(node_t* node, uintptr_t data, size_t size, size_t offset) {
+	driver_disk_write(node->address + sizeof(raw_node_t) + node->node.name_size + offset, data, size);
+}
+
 static void write_node_data(node_t* node, uintptr_t data) {
 	driver_disk_write(node->address + sizeof(raw_node_t) + node->node.name_size, data, node->node.size);
 }
@@ -168,19 +172,30 @@ static void merge_nodes(void);
 static void resize_node_data(node_t* node, size_t newsize) {
 	FS_DEBUG_NODE_ALLOCATION("> resize_node_data\n");
 
-	uintptr_t old_address = node->address;
-
-	size_t size = NODE_SIZE(node->node) > newsize ? NODE_SIZE(node->node) : newsize;
+	if (node->node.size >= newsize) {
+		node->node.size = newsize;
+		write_node(node);
+		return;
+	}
 
 	// save the old data
-	uintptr_t buffer = heap_allocate(size);
+	uintptr_t buffer = heap_allocate(newsize + node->node.name_size);
 	read_node_name(node, buffer);
 	read_node_data(node, buffer + node->node.name_size);
-	
+	memset(buffer + NODE_SIZE(node->node), 0, newsize - NODE_SIZE(node->node));
+
 	// free and reallocate the node
-	free_node(node);
+	node_t old_node = *node;	// so we won't override the node type
+	free_node(&old_node);
+
 	node->node.size = newsize;
-	allocate_node(node);
+	if (!allocate_node(node)) {
+		kprintf("<<allocate node failed>>");
+		merge_nodes();
+		if (!allocate_node(node)) {
+			kprintf("<<allocate node failed>>");
+		}
+	}
 
 	// copy back the data
 	write_node_full(node, buffer, buffer + node->node.name_size);
@@ -190,71 +205,7 @@ static void resize_node_data(node_t* node, size_t newsize) {
 }
 
 static void merge_nodes(void) {
-	node_t cur;
-	cur.address = 0;
-	while (cur.address < disk_size) {
-		if (cur.node.type != NODE_UNUSED) {
-			// this is a used node, just read the next one
-			if (read_next_node(&cur)) {
-				if (cur.is_new) {
-					// this is a new node, it means we have no more nodes
-					if (cur.node.prev_node_address != header.last_node) {
-						// update last node
-						header.last_node = cur.node.prev_node_address;
-						header_changed = true;
-					}
-					break; 
-				}
-				continue;
-			}
-			else {
-				// this was the last node
-				// we can exit the merge
-				return;
-			}
-		}
-		else {
-			node_t temp;
-			temp.address = cur.address;
-			while (read_next_node(&temp)) {
-				if (temp.is_new) {
-					// this is a new node, meaning we can simply delete
-					// the current free one by setting the prev's node
-					// next to 0
-					cur.address = cur.node.prev_node_address;
-					read_node(&cur);
-					cur.node.next_node_address = 0;
-					write_node(&cur);
-
-					// update last node
-					if (cur.address != header.last_node) {
-						header.last_node = cur.address;
-						header_changed = true;
-					}
-					return;
-				}
-				if (temp.node.type != NODE_UNUSED) {
-					// this is a used one, we can exit the loop
-					break;
-				}
-				cur.node.size += TOTAL_REAL_SIZE(temp);
-				cur.node.next_node_address = temp.node.next_node_address;
-				cur.is_new = true;
-			}
-
-			if (cur.is_new) {
-				// update the node after all the merged ones
-				temp.node.prev_node_address = cur.address;
-				write_node(&temp);
-
-				// update the new merged node
-				write_node(&cur);
-			}
-
-			// the next node is stored in temp
-			cur = temp;
-		}
-	}
+	// TODO: Merge nodes
 }
 
 static bool allocate_node(node_t* node) {
@@ -283,20 +234,20 @@ static bool allocate_node(node_t* node) {
 			header.last_node = cur.address;
 			header_changed = true;
 		}
-		else if (NODE_SIZE(node->node) < NODE_SIZE(cur.node)) {
+		else if (NODE_SIZE(node->node) < REAL_SIZE(cur)) {
 			// we have enough space for this node
 
 			// check if we can split this node
-			if (NODE_SIZE(cur.node) - TOTAL_NODE_SIZE(node->node) > sizeof(raw_node_t)) {
+			if (cur.node.next_node_address != 0 && REAL_SIZE(cur) - TOTAL_NODE_SIZE(node->node) > sizeof(raw_node_t)) {
 				// create and write the new node
 				node_t new_node;
 				new_node.node.name_size = 0;
-				new_node.node.size = NODE_SIZE(cur.node) - TOTAL_NODE_SIZE(node->node);
+				new_node.node.size = REAL_SIZE(cur) - TOTAL_NODE_SIZE(node->node);
 				new_node.node.next_node_address = cur.node.next_node_address;
 				new_node.node.prev_node_address = cur.address;
 				new_node.node.parent_folder_address = 0;
 				new_node.node.type = NODE_UNUSED;
-				new_node.address = cur.address + TOTAL_NODE_SIZE(new_node.node);
+				new_node.address = cur.address + TOTAL_NODE_SIZE(node->node);
 				write_node(&new_node);
 
 				cur.node.next_node_address = new_node.address;
@@ -304,6 +255,7 @@ static bool allocate_node(node_t* node) {
 		}
 		else {
 			// not enough space, continue searching
+			read_next_node(&cur);
 			continue;
 		}
 
@@ -388,6 +340,26 @@ static bool traverse_make_dirs(node_t* node, char* path, bool ignore_last);
 static int count_folder_entries(folder_node_entry_t* nodes, int count);
 static bool add_folder_entry(node_t* folder, node_t* add);
 static bool create_folder(node_t* parent, node_t* new_folder, char* name);
+static int parent_path_length(char* path);
+
+static int parent_path_length(char* path) {
+	if (*path == '/' || *path == '\\') {
+		path++;
+	}
+	int total_length = 0;
+	int current_length = 0;
+	while (*path) {
+		if (*path == '/' || *path == '\\') {
+			total_length += current_length + 1;
+		}
+		else {
+			current_length++;
+		}
+		path++;
+	}
+
+	return total_length;
+}
 
 static int count_folder_entries(folder_node_entry_t* nodes, int count) {
 	int size = 0;
@@ -539,7 +511,7 @@ static bool create_file(node_t* parent, node_t* new_file, char* name, char* data
 			return false;
 		}
 	}
-
+	
 	write_node_full(new_file, name, data);
 	
 	add_folder_entry(parent, new_file);
@@ -581,6 +553,8 @@ static void reset_fs() {
 	write_node(&root_folder);
 	write_node_full(&root_folder, "<root>", entries);
 	heap_free(entries);
+
+	header_changed = true;
 
 	update_header();
 }
@@ -658,8 +632,10 @@ static void syscall_open(registers_t* regs) {
 		fh->type = node->node.type;
 	}
 	else {
-		node->name_cache = heap_allocate(strlen(path) + 1);
-		strcpy(node->name_cache, path);
+		int len = strlen(path);
+		node->name_cache = heap_allocate(len + 1);
+		memcpy(node->name_cache, path, len);
+		node->name_cache[len] = 0;
 		fh->name = 0;
 		fh->size = 0;
 		fh->type = 0;
@@ -672,18 +648,49 @@ static void syscall_write_bytes(registers_t* regs) {
 	uintptr_t handle = regs->ebx;
 	node_t* node = (handle - sizeof(node_t));
 	tomato_file_handle_t* fh = handle;
+
+	char* buffer = regs->ecx;
+	size_t size = regs->edx;
+	size_t offset = regs->esi;
+
 	if (fh->name == 0) {
+		if (node->name_cache == 0) {
+			kprintf("syscall_write_bytes: name cache is null!\n");
+			return;
+		}
 		node_t parent;
 		if (traverse_path(&parent, node->name_cache, true)) {
-			if (create_file(&parent, node, node->name_cache, regs->ecx, regs->edx)) {
+			int length = parent_path_length(node->name_cache);
+			if (create_file(&parent, node, node->name_cache + length, buffer, size)) {
 				heap_free(node->name_cache);
 				node->name_cache = 0;
 			}
 		}
 	}
 	else {
-		resize_node_data(node, regs->edx);
-		write_node_data(node, regs->ecx);
+		uint64_t old_address = node->address;
+		
+		// write data
+		resize_node_data(node, size + offset);
+		write_node_data_offset(node, buffer, size, offset);
+
+		// update parent for the new address
+		if (node->address != old_address) {
+			node_t parent;
+			parent.address = node->node.parent_folder_address;
+			read_node(&parent);
+
+			folder_node_entry_t* nodes = heap_allocate(parent.node.size);
+			read_node_data(&parent, nodes);
+			for (int i = 0; i < parent.node.size / sizeof(folder_node_entry_t); i++) {
+				if (nodes[i].file_address == old_address) {
+					nodes[i].file_address = node->address;
+					break;
+				}
+			}
+			write_node_data(&parent, nodes);
+			heap_free(nodes);
+		}
 	}
 }
 
@@ -695,7 +702,7 @@ static void syscall_close(registers_t* regs) {
 		heap_free(fh->name);
 		heap_free(node);
 	}
-	else {
+	else if(node->name_cache != 0) {
 		heap_free(node->name_cache);
 	}
 }
@@ -706,12 +713,8 @@ static void syscall_make_dir(registers_t* regs) {
 
 void syscall_fs_init() {
 	disk_size = driver_disk_size();
-	term_kwrite("syscall_fs_init: Disk size: ");
 	uint32_t size = (disk_size / (1024 * 1024 * 1024));
-	char buf[11];
-	itoa(size, buf, 10);
-	term_kwrite(buf);
-	term_kwrite("GB\n");
+	kprintf("syscall_fs_init: Disk size: %i GB\n", size);
 
 	//driver_disk_read(0, &header, sizeof(header_t));
 

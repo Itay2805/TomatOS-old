@@ -3,7 +3,16 @@
 
 #include <stdarg.h>
 
-int vprintf(const char* format, va_list arg);
-int printf(const char* format, ...);
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+	int vprintf(const char* format, va_list arg);
+	int printf(const char* format, ...);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -100,8 +100,8 @@ extern "C" {
 	void tomato_fs_list_release(tomato_list_entry_t* entries);
 	bool tomato_fs_exists(const char* path);
 	tomato_file_handle_t* tomato_fs_open(const char* path);
-	void tomato_fs_read_bytes(tomato_file_handle_t* handle, void* buffer, size_t count);
-	void tomato_fs_write_bytes(tomato_file_handle_t* handle, void* buffer, size_t count);
+	void tomato_fs_read_bytes(tomato_file_handle_t* handle, void* buffer, size_t count, size_t offset);
+	void tomato_fs_write_bytes(tomato_file_handle_t* handle, void* buffer, size_t count, size_t offset);
 	void tomato_fs_close(tomato_file_handle_t* handle);
 	void tomato_fs_make_dir(const char* path);
 	void tomato_fs_delete(const char* path);
