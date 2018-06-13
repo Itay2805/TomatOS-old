@@ -17,26 +17,16 @@ void program(void*) {
 	
 	Term::Write(OS::Version());
 	Term::Write("\n");
-
-	Term::Write("write:\n");
+	
 	FS::File file = FS::File("test.txt", FS::File::WRITE, false);
 	file.Write("some text", true);
 	file.Close();
-	Term::Write("finished write\n");
 
-	Term::Write("overwrite:\n");
-	file = FS::File("test.txt", FS::File::WRITE, false);
-	Term::Write("Size: %i\n", file.GetSize());
-	file.Write("this should replace the text in the file", true);
-	file.Close();
-	Term::Write("finished overwrite\n");
-
-	Term::Write("overwrite smaller:\n");
-	file = FS::File("test.txt", FS::File::WRITE, false);
-	Term::Write("Size: %i\n", file.GetSize());
-	file.Write("OVERRIDED!!!", true);
-	file.Close();
-	Term::Write("finished overwrite smaller");
+	file = FS::File("test.txt", FS::File::READ);
+	char* buffer = new char[file.GetSize()];
+	file.ReadAll(buffer, file.GetSize());
+	Term::Write("content: %s\n", buffer);
+	delete[] buffer;
 
 	while (true) {
 		char c = OS::PullEvent<CharEvent>(Event::CHAR).GetChar();

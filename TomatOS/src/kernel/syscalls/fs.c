@@ -108,9 +108,11 @@ static void write_node_full(node_t* node, char* name, uintptr_t data);
 static void write_node(node_t* node);
 static void write_node_name(node_t* node, char* str);
 static void write_node_data(node_t* node, uintptr_t data);
+static void write_node_data_offset(node_t* node, uintptr_t data, size_t size, size_t offset);
 
 static void read_node(node_t* node);
 static void read_node_data(node_t* node, uintptr_t buffer);
+static void read_node_data_offset(node_t* node, uintptr_t data, size_t size, size_t offset);
 static void read_node_name(node_t* node, char* str);
 
 static void read_node_data(node_t* node, uintptr_t buffer) {
@@ -124,6 +126,10 @@ static void read_node_name(node_t* node, char* str) {
 static void read_node(node_t* node) {
 	driver_disk_read(node->address, &node->node, sizeof(raw_node_t));
 	node->is_new = false;
+}
+
+static void read_node_data_offset(node_t* node, uintptr_t data, size_t size, size_t offset) {
+	driver_disk_read(node->address + sizeof(raw_node_t) + node->node.name_size + offset, data, size);
 }
 
 static void write_node(node_t* node) {
@@ -644,6 +650,20 @@ static void syscall_open(registers_t* regs) {
 	regs->eax = fh;
 }
 
+static void syscall_read_bytes(registers_t* regs) {
+	uintptr_t handle = regs->ebx;
+	node_t* node = (handle - sizeof(node_t));
+	tomato_file_handle_t* fh = handle;
+
+	char* buffer = regs->ecx;
+	size_t size = regs->edx;
+	size_t offset = regs->esi;
+	
+	if (fh->name != 0) {
+		read_node_data_offset(node, buffer, size, offset);
+	}
+}
+
 static void syscall_write_bytes(registers_t* regs) {
 	uintptr_t handle = regs->ebx;
 	node_t* node = (handle - sizeof(node_t));
@@ -655,7 +675,6 @@ static void syscall_write_bytes(registers_t* regs) {
 
 	if (fh->name == 0) {
 		if (node->name_cache == 0) {
-			kprintf("syscall_write_bytes: name cache is null!\n");
 			return;
 		}
 		node_t parent;
@@ -701,9 +720,11 @@ static void syscall_close(registers_t* regs) {
 	if (fh->name != 0) {
 		heap_free(fh->name);
 		heap_free(node);
+		fh->name = 0;
 	}
 	else if(node->name_cache != 0) {
 		heap_free(node->name_cache);
+		node->name_cache = 0;
 	}
 }
 
@@ -731,6 +752,7 @@ void syscall_fs_init() {
 	register_syscall(TOMATO_SYSCALL_FS_MAKE_DIR, syscall_make_dir);
 	register_syscall(TOMATO_SYSCALL_FS_OPEN, syscall_open);
 	register_syscall(TOMATO_SYSCALL_FS_WRITE_BYTES, syscall_write_bytes);
+	register_syscall(TOMATO_SYSCALL_FS_READ_BYTES, syscall_read_bytes);
 	register_syscall(TOMATO_SYSCALL_FS_CLOSE, syscall_close);
 }
 
