@@ -70,7 +70,7 @@ uint16_t tomato_term_get_cursor_x(void) {
 }
 
 uint16_t tomato_term_get_cursor_y(void) {
-	return (uint16_t)tomato_syscall(TOMATO_SYSCALL_TERM_WRITE);
+	return (uint16_t)tomato_syscall(TOMATO_SYSCALL_TERM_GET_CURSOR_Y);
 }
 
 uint16_t tomato_term_get_width(void) {

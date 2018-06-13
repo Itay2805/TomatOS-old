@@ -45,6 +45,7 @@ namespace Tomato {
 		static inline uint16_t GetHeight()						{ return current->GetHeight(); }
 		static inline void Scroll(uint16_t n)					{ current->Scroll(n); }
 		static inline void ClearLine(uint16_t n)				{ current->ClearLine(n); }
+		static inline void ClearLine()							{ current->ClearLine(GetCursorY()); }
 
 		static inline ITerm* Redirect(ITerm* term) { ITerm* old = current;  current = term; return old; }
 		static inline ITerm* Current() { return current; }

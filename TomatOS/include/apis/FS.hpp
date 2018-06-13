@@ -10,8 +10,7 @@
 
 namespace Tomato {
 
-	class FS {
-	public:
+	namespace FS {
 
 		class File {
 		public:
@@ -40,14 +39,39 @@ namespace Tomato {
 
 			void Close();
 
+			template<typename T>
+			T Read(bool* eof = nullptr) {
+				T def = {};
+				if (CanRead()) {
+					char buf[sizeof(T)];
+					for (int i = 0; i < sizeof(T); i++) {
+						int read = Read();
+						if (read == -1) {
+							if (eof != nullptr) *eof = true;
+							return def;
+						}
+						buf[i] = read;
+					}
+					if (eof != nullptr) *eof = false;
+					return *(T*)buf;
+				}
+				if (eof != nullptr) *eof = true;
+				return def;
+			}
+
 			int Read();
 			bool ReadAll(char* buffer, int length);
 
 			void Write(const char* text, bool appendnull = false);
-			void Write(const char* bytes, int length);
 			void Write(char byte);
 			void WriteLine(const char* text, bool appendnull = false);
-			
+			void WriteBytes(const char* bytes, int length);
+
+			template<typename T>
+			void Write(const T t) {
+				WriteBytes((char*)&t, sizeof(T));
+			}
+
 			void Flush();
 
 			inline size_t GetSize() { return file->size; }
@@ -81,16 +105,16 @@ namespace Tomato {
 			inline int Count() const { return count; }
 		};
 
-		static int GetParentPathLength(const char* path);
-		static int GetNameLength(const char* path);
+		int GetParentPathLength(const char* path);
+		int GetNameLength(const char* path);
 
-		static void GetParentPath(const char* path, char* dest, bool nullterminator = true);
-		static void GetName(const char* path, char* dest, bool nullterminator = true);
+		void GetParentPath(const char* path, char* dest, bool nullterminator = true);
+		void GetName(const char* path, char* dest, bool nullterminator = true);
 
-		static bool Exists(const char* path);
-		static void MakeDir(const char* path);
+		bool Exists(const char* path);
+		void MakeDir(const char* path);
 
-	};
+	}
 
 }
 

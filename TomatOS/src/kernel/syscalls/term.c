@@ -66,7 +66,7 @@ void syscall_term_init(void) {
 	register_syscall(TOMATO_SYSCALL_TERM_GET_BACKGROUND_COLOR, syscall_term_get_background_color);
 	register_syscall(TOMATO_SYSCALL_TERM_SET_CURSOR_POS, syscall_term_set_cursor_pos);
 	register_syscall(TOMATO_SYSCALL_TERM_GET_CURSOR_X, syscall_term_get_cursor_x);
-	register_syscall(TOMATO_SYSCALL_TERM_GET_CUSROR_Y, syscall_term_get_cursor_y);
+	register_syscall(TOMATO_SYSCALL_TERM_GET_CURSOR_Y, syscall_term_get_cursor_y);
 	register_syscall(TOMATO_SYSCALL_TERM_GET_WIDTH, syscall_term_get_width);
 	register_syscall(TOMATO_SYSCALL_TERM_GET_HEIGHT, syscall_term_get_height);
 	register_syscall(TOMATO_SYSCALL_TERM_SCROLL, syscall_term_scroll);
@@ -280,6 +280,8 @@ static void syscall_term_scroll(registers_t* regs) {
 
 static void syscall_term_clear_line(registers_t* regs) {
 	uint16_t n = (uint16_t)regs->ebx;
+
+
 
 	size_t offset = (n * NATIVE_TERM_WIDTH) * 2;
 	for (size_t i = offset; i < NATIVE_TERM_WIDTH * 2 + offset; i += 2) {
