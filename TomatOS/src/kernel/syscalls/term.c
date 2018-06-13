@@ -10,6 +10,8 @@
 #include "../syscalls.h"
 #include "../port.h"
 
+#include "../drivers/mouse.h"
+
 static uint8_t     bg_color;
 static uint8_t     fg_color;
 static uint16_t    term_x, term_y;
@@ -159,6 +161,8 @@ static void update_cursor() {
 }
 
 static void native_term_scroll(uint16_t n) {
+	driver_mouse_restore_screen();
+
 	size_t length_copy = ((NATIVE_TERM_HEIGHT - n) * NATIVE_TERM_WIDTH) * 2;
 	size_t length_remove = (n * NATIVE_TERM_WIDTH) * 2;
 	for (size_t i = 0; i < length_copy; i++) {
@@ -168,6 +172,8 @@ static void native_term_scroll(uint16_t n) {
 		vmemory[i + length_copy] = 0;
 		vmemory[i + 1 + length_copy] = bg_color << 4 | fg_color;
 	}
+
+	driver_mouse_draw();
 }
 
 /////////////////////////////////////////////////
@@ -175,6 +181,8 @@ static void native_term_scroll(uint16_t n) {
 /////////////////////////////////////////////////
 
 void term_kwrite(const char* text) {
+	driver_mouse_restore_screen();
+
 	while (*text != 0) {
 		char c = *text;
 		if (c == '\n') {
@@ -209,6 +217,8 @@ void term_kwrite(const char* text) {
 		}
 	}
 	update_cursor();
+
+	driver_mouse_draw();
 }
 
 static void syscall_term_write(registers_t* regs) {
@@ -220,10 +230,14 @@ static void syscall_term_write(registers_t* regs) {
 static void syscall_term_clear(registers_t* regs) {
 	UNUSED(regs);
 	
+	driver_mouse_restore_screen();
+
 	for (size_t i = 0; i < NATIVE_TERM_HEIGHT * NATIVE_TERM_WIDTH * 2; i += 2) {
 		vmemory[i + 0] = 0;
 		vmemory[i + 1] = bg_color << 4 | fg_color;
 	}
+
+	driver_mouse_draw();
 }
 
 static void syscall_term_set_text_color(registers_t* regs) {
@@ -281,11 +295,13 @@ static void syscall_term_scroll(registers_t* regs) {
 static void syscall_term_clear_line(registers_t* regs) {
 	uint16_t n = (uint16_t)regs->ebx;
 
-
+	driver_mouse_restore_screen();
 
 	size_t offset = (n * NATIVE_TERM_WIDTH) * 2;
 	for (size_t i = offset; i < NATIVE_TERM_WIDTH * 2 + offset; i += 2) {
 		vmemory[i + 0] = 0;
 		vmemory[i + 1] = bg_color << 4 | fg_color;
 	}
+
+	driver_mouse_draw();
 }

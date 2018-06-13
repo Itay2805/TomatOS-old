@@ -18,16 +18,13 @@ void program(void*) {
 	Term::SetTextColor(Colors::WHITE);
 	Term::Clear();
 	
-	Paint paint = Paint();
+	//Paint paint = Paint();
 
-	paint.Run();
+	//paint.Run();
 
 	while (true) {
-		char c = OS::PullEvent<CharEvent>(Event::CHAR).GetChar();
-		char buf[2];
-		buf[0] = c;
-		buf[1] = 0;
-		Term::Write(buf);
+		MouseClickEvent e = OS::PullEvent<MouseClickEvent>(Event::MOUSE_CLICK);
+		Term::Write("button: %i, x: %i, y: %i\n", (uint32_t)e.GetMouseButton(), (uint32_t)e.GetX(), (uint32_t)e.GetY());
 	}
 
 }

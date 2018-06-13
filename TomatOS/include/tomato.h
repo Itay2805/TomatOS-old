@@ -40,6 +40,13 @@ extern "C" {
 #define TOMATO_EVENT_KEY			4
 #define TOMATO_EVENT_KEY_UP			5
 #define TOMATO_EVENT_EXCEPTION		6
+#define TOMATO_EVENT_MOUSE_CLICK	7
+#define TOMATO_EVENT_MOUSE_UP		8
+#define TOMATO_EVENT_MOUSE_SCROLL	9
+
+#define TOMATO_MOUSE_LEFT			0
+#define TOMATO_MOUSE_RIGHT			1
+#define TOMATO_MOUSE_MIDDLE			2
 
 	typedef struct event_t {
 		uint32_t type;

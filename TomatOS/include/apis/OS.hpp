@@ -23,7 +23,10 @@ namespace Tomato {
 			CHAR			= TOMATO_EVENT_CHAR,
 			KEY				= TOMATO_EVENT_KEY,
 			KEY_UP			= TOMATO_EVENT_KEY_UP,
-			EXCEPTION		= TOMATO_EVENT_EXCEPTION
+			EXCEPTION		= TOMATO_EVENT_EXCEPTION,
+			MOUSE_CLICK		= TOMATO_EVENT_MOUSE_CLICK,
+			MOUSE_UP		= TOMATO_EVENT_MOUSE_UP,
+			MOUSE_SCROLL	= TOMATO_EVENT_MOUSE_SCROLL
 		};
 
 		Event() {}
@@ -121,6 +124,27 @@ namespace Tomato {
 
 		static Event::EventType GetStaticEventType() {
 			return EventType::KEY_UP;
+		}
+	};
+
+	class MouseClickEvent : public Event {
+	public:
+		uint8_t GetMouseButton() {
+			return (uint8_t)data[0];
+		}
+
+
+		uint8_t GetX() {
+			return (uint8_t)data[1];
+		}
+
+
+		uint8_t GetY() {
+			return (uint8_t)data[2];
+		}
+
+		static Event::EventType GetStaticEventType() {
+			return EventType::MOUSE_CLICK;
 		}
 	};
 
