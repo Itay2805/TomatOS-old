@@ -14,46 +14,34 @@ char* strrev(char *str) {
 	return str;
 }
 
-static void reverse(char str[], int length) {
-	int start = 0;
-	int end = length - 1;
-	while (start < end) {
-		char c = *(str + start);
-		*(str + start) = *(str + end);
-		*(str + end) = c;
-		start++;
-		end--;
+size_t itoa(int32_t v, char* buffer, uint8_t base) {
+	if (v == 0 && base != 16 && base != 2) {
+		buffer[0] = '0';
+		buffer[1] = 0;
+		return 1;
 	}
+	size_t count = 0;
+	if (v < 0) {
+		count++;
+		buffer[0] = '-';
+		v = -v;
+	}
+	return count + uitoa((uint32_t)v, buffer + count, base);
 }
 
-
-char* itoa(int32_t num, char* str, uint8_t base) {
-	int i = 0;
-	bool isNegative = false;
-
-	if (num == 0) {
-		str[i++] = '0';
-		str[i] = '\0';
-		return str;
+size_t uitoa(uint32_t v, char* buffer, uint8_t base) {
+	if (v == 0 && base != 16 && base != 2) {
+		buffer[0] = '0';
+		buffer[1] = 0;
+		return 1;
 	}
-
-	if (num < 0 && base == 10) {
-		isNegative = true;
-		num = -num;
+	size_t num = 0;
+	while (v > 0) {
+		buffer[num++] = '0' + (v % base);
+		v /= base;
 	}
-
-	while (num != 0) {
-		int rem = num % base;
-		str[i++] = (rem > 9) ? (rem - 10) + 'a' : rem + '0';
-		num = num / base;
-	}
-
-	if (isNegative)
-		str[i++] = '-';
-
-	str[i] = '\0';
-	reverse(str, i);
-	return str;
+	strrev(buffer);
+	return num;
 }
 
 int strcmp(const char * s1, const char * s2) {

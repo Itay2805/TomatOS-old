@@ -32,17 +32,6 @@ namespace Tomato {
 		return (Timer)tomato_os_start_timer(millis);
 	}
 
-	void OS::RunBlockingEventLoop(Coroutine* coro) {
-		Event event;
-		while (true) {
-			Event::EventType filter = (Event::EventType)coro->Resume<uint32_t, Event*>(&event);
-			if (coro->GetStatus() == Coroutine::DEAD) {
-				break;
-			}
-			event = PullEventBlocking(filter);
-		}
-	}
-
 	void OS::CancelTimer(Timer t) {
 		tomato_os_cancel_timer((uint32_t)t);
 	}

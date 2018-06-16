@@ -99,35 +99,34 @@ void kprintf(char* format, ...) {
 	while (*format) {
 		if (specifier) {
 			switch (*format) {
-			case 'x': {
-				uint32_t num = va_arg(arg, uint32_t);
-				itoa(num, numbuf, 16);
-				count += strlen(numbuf);
-				tomato_term_write(numbuf);
-			} break;
-			case 'i':
-			case 'd': {
-				int32_t num = va_arg(arg, int32_t);
-				itoa(num, numbuf, 10);
-				count += strlen(numbuf);
-				tomato_term_write(numbuf);
-			} break;
-			case 's': {
-				char* str = va_arg(arg, char*);
-				count += strlen(str);
-				tomato_term_write(str);
-			} break;
-			case 'p': {
-				uint32_t ptr = va_arg(arg, uint32_t);
-				itoa(ptr, numbuf, 16);
-				count += strlen(numbuf);
-				tomato_term_write(numbuf);
-			} break;
-			case '%': {
-				charbuf[0] = '%';
-				tomato_term_write(charbuf);
-				count++;
-			} break;
+				case 'c': {
+					charbuf[0] = va_arg(arg, char);
+					count++;
+					term_kwrite(numbuf);
+				} break;
+				case 'p':
+				case 'u':
+				case 'x': {
+					uint32_t num = va_arg(arg, uint32_t);
+					count += uitoa(num, numbuf, 16);
+					term_kwrite(numbuf);
+				} break;
+				case 'i':
+				case 'd': {
+					int32_t num = va_arg(arg, int32_t);
+					count += itoa(num, numbuf, 10);
+					term_kwrite(numbuf);
+				} break;
+				case 's': {
+					char* str = va_arg(arg, char*);
+					count += strlen(str);
+					term_kwrite(str);
+				} break;
+				case '%': {
+					charbuf[0] = '%';
+					term_kwrite(charbuf);
+					count++;
+				} break;
 			}
 			specifier = false;
 		}
@@ -137,7 +136,7 @@ void kprintf(char* format, ...) {
 			}
 			else {
 				charbuf[0] = *format;
-				tomato_term_write(charbuf);
+				term_kwrite(charbuf);
 				count++;
 			}
 		}

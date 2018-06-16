@@ -48,6 +48,14 @@ static void check_mouse_btn(uint8_t id, uint8_t now, uint8_t old) {
 			os_kqueue_event(e);
 		}
 	}
+	else if(old) {
+		event_t e;
+		e.type = TOMATO_EVENT_MOUSE_DRAG;
+		e.data[0] = id;
+		e.data[1] = (int8_t)mouse_x;
+		e.data[2] = (int8_t)mouse_y;
+		e.data[3] = 0;
+	}
 }
 
 #define VIDEO_ADDRESS 0xb8000
@@ -64,6 +72,8 @@ void driver_mouse_restore_screen() {
 }
 
 void driver_mouse_draw() {
+	return;
+
 	driver_mouse_restore_screen();
 	before_addr = &vram[((int8_t)mouse_x + (int8_t)mouse_y * 80) * 2];
 	before = *before_addr;

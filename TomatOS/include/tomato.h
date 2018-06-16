@@ -15,8 +15,12 @@ extern "C" {
 	//// keys
 	/////////////////////////////////////////////////////
 
+#define TOMATO_KEYS_ENTER			13	
+
 #define TOMATO_KEYS_SHIFT_LEFT		160
 #define TOMATO_KEYS_SHIFT_RIGHT		161
+#define TOMATO_KEYS_LEFT_CTRL		162
+#define TOMATO_KEYS_RIGHT_CTRL		163
 
 #define TOMATO_KEYS_NUMPAD0			96
 #define TOMATO_KEYS_NUMPAD1			97
@@ -28,6 +32,11 @@ extern "C" {
 #define TOMATO_KEYS_NUMPAD7			103
 #define TOMATO_KEYS_NUMPAD8			104
 #define TOMATO_KEYS_NUMPAD9			105
+
+#define TOMATO_KEYS_LEFT			37
+#define TOMATO_KEYS_UP				38
+#define TOMATO_KEYS_RIGHT			39
+#define TOMATO_KEYS_DOWN			40
 
 	/////////////////////////////////////////////////////
 	//// os syscalls
@@ -43,6 +52,7 @@ extern "C" {
 #define TOMATO_EVENT_MOUSE_CLICK	7
 #define TOMATO_EVENT_MOUSE_UP		8
 #define TOMATO_EVENT_MOUSE_SCROLL	9
+#define TOMATO_EVENT_MOUSE_DRAG		10
 
 #define TOMATO_MOUSE_LEFT			0
 #define TOMATO_MOUSE_RIGHT			1

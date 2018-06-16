@@ -55,6 +55,8 @@ void kmain(const void* multiboot_structure, uint32_t multiboot_magic) {
 	// reset terminal
 	term_kreset();
 
+	driver_mouse_draw();
+
 	// call the os startup
 	startup();
 }

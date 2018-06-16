@@ -7,7 +7,8 @@
 extern "C" {
 #endif
 
-	char* itoa(int32_t n, char* str, uint8_t radix);
+	size_t itoa(int32_t n, char* str, uint8_t radix);
+	size_t uitoa(uint32_t n, char* str, uint8_t radix);
 
 	char* strrev(char *str);
 	int strcmp(const char* src, const char* dst);

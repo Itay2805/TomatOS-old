@@ -21,29 +21,28 @@ int vprintf(const char* format, va_list arg) {
 	while(*format) {
 		if (specifier) {
 			switch (*format) {
+				case 'c': {
+					charbuf[0] = va_arg(arg, char);
+					count++;
+					tomato_term_write(charbuf);
+				} break;
+				case 'p':
+				case 'u':
 				case 'x': {
-					int32_t num = va_arg(arg, int32_t);
-					itoa(num, numbuf, 16);
-					count += strlen(numbuf);
+					uint32_t num = va_arg(arg, uint32_t);
+					count += uitoa(num, numbuf, 16);
 					tomato_term_write(numbuf);
 				} break;
 				case 'i':
 				case 'd': {
 					int32_t num = va_arg(arg, int32_t);
-					itoa(num, numbuf, 10);
-					count += strlen(numbuf);
+					count += itoa(num, numbuf, 10);
 					tomato_term_write(numbuf);
 				} break;
 				case 's': {
 					char* str = va_arg(arg, char*);
 					count += strlen(str);
 					tomato_term_write(str);
-				} break;
-				case 'p': {
-					uint32_t ptr = va_arg(arg, uint32_t);
-					itoa(ptr, numbuf, 16);
-					count += strlen(numbuf);
-					tomato_term_write(numbuf);
 				} break;
 				case '%': {
 					charbuf[0] = '%';

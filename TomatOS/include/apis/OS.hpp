@@ -26,7 +26,8 @@ namespace Tomato {
 			EXCEPTION		= TOMATO_EVENT_EXCEPTION,
 			MOUSE_CLICK		= TOMATO_EVENT_MOUSE_CLICK,
 			MOUSE_UP		= TOMATO_EVENT_MOUSE_UP,
-			MOUSE_SCROLL	= TOMATO_EVENT_MOUSE_SCROLL
+			MOUSE_SCROLL	= TOMATO_EVENT_MOUSE_SCROLL,
+			MOUSE_DRAG		= TOMATO_EVENT_MOUSE_DRAG
 		};
 
 		Event() {}
@@ -127,7 +128,7 @@ namespace Tomato {
 		}
 	};
 
-	class MouseClickEvent : public Event {
+	class MouseEvent : public Event {
 	public:
 		uint8_t GetMouseButton() {
 			return (uint8_t)data[0];
@@ -141,10 +142,6 @@ namespace Tomato {
 
 		uint8_t GetY() {
 			return (uint8_t)data[2];
-		}
-
-		static Event::EventType GetStaticEventType() {
-			return EventType::MOUSE_CLICK;
 		}
 	};
 
@@ -192,10 +189,12 @@ namespace Tomato {
 		static E PullEvent(Event::EventType filter = Event::ALL) {
 			// TODO: make so this will terminate on exception or event
 			// will only be able to do it when we have a process or something
-			return PullEventRaw<E>(filter);
+			E e = PullEventRaw<E>(filter);
+			if (e.GetEventType() == Event::EXCEPTION || e.GetEventType() == Event::TERMINATE) {
+				
+			}
+			return e;
 		}
-
-		static void RunBlockingEventLoop(Coroutine* coro);
 
 		static void QueueEvent(uint32_t type, uint32_t p1 = 0, uint32_t p2 = 0, uint32_t p3 = 0, uint32_t p4 = 0);
 

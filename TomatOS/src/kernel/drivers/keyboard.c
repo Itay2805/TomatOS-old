@@ -76,7 +76,7 @@ void driver_keyboard_init(void) {
 	register_interrupt_handler(IRQ_KEYBOARD, interrupt_keyboard_handle);
 	
 	// clear the memory
-	memset(chars, 0, 256);
+	memset(chars, 0, sizeof(chars));
 
 	// 0 - 9
 	chars[2] = '1';
@@ -122,7 +122,8 @@ void driver_keyboard_init(void) {
 
 	// these keys have the same virtual key code as their value
 	memcpy(vkcodes, chars, 256);
-
+	
+	/* collides with arrow keys
 	// numpad
 	chars[82] = '0';
 	vkcodes[82] = TOMATO_KEYS_NUMPAD0;
@@ -153,6 +154,7 @@ void driver_keyboard_init(void) {
 	
 	chars[73] = '9';
 	vkcodes[73] = TOMATO_KEYS_NUMPAD9;
+	*/
 
 	// special characters are offseted
 	chars[SCANCODE_LIMIT + 2] = '!';
@@ -170,6 +172,19 @@ void driver_keyboard_init(void) {
 	vkcodes[42] = TOMATO_KEYS_SHIFT_LEFT;
 	vkcodes[54] = TOMATO_KEYS_SHIFT_RIGHT;
 	
+	// ctrl keys
+	vkcodes[29] = TOMATO_KEYS_LEFT_CTRL;
+	//vkcodes[] = TOMATO_KEYS_RIGHT_CTRL;
+
+	// enter
+	vkcodes[28] = TOMATO_KEYS_ENTER;
+
+	// arrow keys
+	vkcodes[72] = TOMATO_KEYS_UP;
+	vkcodes[75] = TOMATO_KEYS_LEFT;
+	vkcodes[80] = TOMATO_KEYS_DOWN;
+	vkcodes[77] = TOMATO_KEYS_RIGHT;
+
 	// TODO: backspace - 14
 }
 
