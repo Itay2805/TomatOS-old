@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="boot\gdt\gdt.asm">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="boot\interrupts\isr.asm">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="boot\bootloader.asm">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="core\memory\paging.asm">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="linker.ld" />
+    <None Include="klibc\setjmp.asm">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="kernel.asm">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="boot\gdt\gdt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="boot\interrupts\idt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="boot\interrupts\isr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="boot\interrupts\pic.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\term.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="klibc\string.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kernel.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kernel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="boot\kernel_boot.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="klibc\math.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\memory\paging.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\disk\ata.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\fs\TomatoFS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\cpp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\icxxabi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="klibc\stdlib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\memory\heap.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\process\process.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\process\event.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="boot\gdt\gdt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="boot\interrupts\idt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="boot\interrupts\isr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="boot\interrupts\pic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\term.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kernel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\memory\paging.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\disk\ata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\fs\TomatoFS.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\cpp.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\icxxabi.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\memory\heap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\process\process.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\process\thread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\process\event.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

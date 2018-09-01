@@ -14,4 +14,30 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="limits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdbool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stddef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdlib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="string.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="setjmp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>

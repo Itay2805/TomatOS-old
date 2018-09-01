@@ -18,10 +18,57 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="boot\bootloader.asm" />
+    <None Include="boot\gdt\gdt.asm" />
+    <None Include="boot\interrupts\isr.asm" />
+    <None Include="kernel.asm" />
+    <None Include="core\memory\paging.asm" />
+    <None Include="klibc\setjmp.asm" />
+    <None Include="linker.ld" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="boot\gdt\gdt.c" />
+    <ClCompile Include="boot\interrupts\idt.c" />
+    <ClCompile Include="boot\interrupts\isr.c" />
+    <ClCompile Include="boot\interrupts\pic.c" />
+    <ClCompile Include="boot\kernel_boot.c" />
+    <ClCompile Include="core\cpp.cpp" />
+    <ClCompile Include="core\disk\ata.c" />
+    <ClCompile Include="core\fs\TomatoFS.cpp" />
+    <ClCompile Include="core\icxxabi.cpp" />
+    <ClCompile Include="core\memory\heap.c" />
+    <ClCompile Include="core\memory\paging.c" />
+    <ClCompile Include="core\process\event.c" />
+    <ClCompile Include="core\process\process.c" />
+    <ClCompile Include="core\term.c" />
+    <ClCompile Include="kernel.c" />
+    <ClCompile Include="kernel.cpp" />
+    <ClCompile Include="klibc\math.c" />
+    <ClCompile Include="klibc\stdlib.c" />
+    <ClCompile Include="klibc\string.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="boot\gdt\gdt.h" />
+    <ClInclude Include="boot\interrupts\idt.h" />
+    <ClInclude Include="boot\interrupts\isr.h" />
+    <ClInclude Include="boot\interrupts\pic.h" />
+    <ClInclude Include="core\cpp.hpp" />
+    <ClInclude Include="core\disk\ata.h" />
+    <ClInclude Include="core\fs\TomatoFS.hpp" />
+    <ClInclude Include="core\icxxabi.hpp" />
+    <ClInclude Include="core\memory\heap.h" />
+    <ClInclude Include="core\memory\paging.h" />
+    <ClInclude Include="core\process\event.h" />
+    <ClInclude Include="core\process\process.h" />
+    <ClInclude Include="core\process\thread.h" />
+    <ClInclude Include="core\term.h" />
+    <ClInclude Include="kernel.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{B62AD8C8-EB3A-4390-BD5D-EB93C90E5A37}</ProjectGuid>
-    <RootNamespace>TomatOS</RootNamespace>
+    <ProjectGuid>{500B973B-BE62-4212-8B39-3EAA9454908B}</ProjectGuid>
+    <RootNamespace>TomatKernel</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -69,13 +116,25 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(SolutionDir)libc;$(ProjectDir)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(SolutionDir)libc;$(ProjectDir)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(SolutionDir)libc;$(ProjectDir)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(SolutionDir)libc;$(ProjectDir)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <ShowIncludes>true</ShowIncludes>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -84,6 +143,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <ShowIncludes>true</ShowIncludes>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -94,6 +154,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <ShowIncludes>true</ShowIncludes>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -108,14 +169,13 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <ShowIncludes>true</ShowIncludes>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
