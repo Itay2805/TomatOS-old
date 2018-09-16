@@ -26,6 +26,7 @@ extern "C" {
 
 
     void term_init();
+	void term_init_syscalls();
 
     void term_write(const char* str);
     void term_clear();

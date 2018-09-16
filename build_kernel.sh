@@ -59,7 +59,7 @@ if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo '  multiboot /boot/kernel.bin'         >> iso/boot/grub/grub.cfg
     echo '  boot'                               >> iso/boot/grub/grub.cfg
     echo '}'                                    >> iso/boot/grub/grub.cfg
-    grub-mkrescue --output=kernel.iso iso --xorriso="$HOME"/xorriso/xorriso-1.4.6/xorriso/xorriso
+    grub-mkrescue --output=kernel.iso iso
     rm -rf iso
 
 elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then

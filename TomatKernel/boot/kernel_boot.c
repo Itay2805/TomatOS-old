@@ -8,6 +8,8 @@
 #include <core/term.h>
 #include <core/memory/paging.h>
 #include <core/memory/heap.h>
+#include <core/process/syscall.h>
+#include <core/process/process.h>
 
 extern void kmain();
 
@@ -25,14 +27,20 @@ void kernel_boot(const void* multiboot_structure, uint32_t multiboot_magic) {
 	// initialize gdt and idt
     gdt_init();
     idt_init();
+	syscall_init();
+
+	// initialize syscalls for term
+	term_init_syscalls();
 
 	// initialize kernel heap
 	heap_init();
-	
+	process_init_alive();
+
 	term_clear();
 
 	term_write("Welcome to TomatKernel!");
 	
-	// go into C++
-	kmain();
+	process_get(0)->main();
+
+	// start a process, idk how right now
 }

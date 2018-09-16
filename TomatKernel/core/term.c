@@ -98,19 +98,21 @@ static void syscall_clear_line(registers_t* regs) {
 }
 
 void term_init() {
-    vmemory = (cell_t*)NATIVE_TERM_VIDEO_ADDRESS;
+	vmemory = (cell_t*)NATIVE_TERM_VIDEO_ADDRESS;
 
-    // set default colors
-    bg_color = COLOR_BLACK;
-    fg_color = COLOR_WHITE;
+	// set default colors
+	bg_color = COLOR_BLACK;
+	fg_color = COLOR_WHITE;
 
-    // disable blink
-    inb(0x03DA);
+	// disable blink
+	inb(0x03DA);
 	outb(0x03C0, 0x30);
 	int reg = inb(0x03C1);
 	reg &= 0xF7;
 	outb(0x03C0, reg);
+}
 
+void term_init_syscalls() {
 	syscall_register(SYSCALL_TERM_WRITE, syscall_write);
 	syscall_register(SYSCALL_TERM_CLEAR, syscall_clear);
 	syscall_register(SYSCALL_TERM_SET_TEXT_COLOR, syscall_set_text_color);
