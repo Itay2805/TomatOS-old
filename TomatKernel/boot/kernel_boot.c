@@ -7,6 +7,7 @@
 
 #include <core/term.h>
 #include <core/memory/paging.h>
+#include <core/memory/heap.h>
 
 extern void kmain();
 
@@ -26,16 +27,12 @@ void kernel_boot(const void* multiboot_structure, uint32_t multiboot_magic) {
     idt_init();
 
 	// initialize kernel heap
-	term_write("[kheap] Initializing\n");
-	uintptr_t kernelHeapStart = (((size_t)&tomatkernel_end + 1024 * 1024) >> 12) << 12;
-	heap_create(kheap(), kernelHeapStart);
+	heap_init();
 	
 	term_clear();
 
 	term_write("Welcome to TomatKernel!");
-
-	bool running = true;
-	while (running) {
-		
-	}
+	
+	// go into C++
+	kmain();
 }

@@ -3,6 +3,9 @@
 #include <stddef.h>
 #include <kernel.h>
 
+#include <core/process/process.h>
+#include <core/process/syscall.h>
+
 //////////////////////////////////////////////////////////////
 //// internal functions
 //////////////////////////////////////////////////////////////
@@ -89,8 +92,33 @@ static void expand(heap_context_t* context, size_t size) {
 }
 
 //////////////////////////////////////////////////////////////
+//// syscalls
+//////////////////////////////////////////////////////////////
+
+static void syscall_allocate(registers_t* regs) {
+	size_t size = (size_t)regs->ebx;
+	regs->eax = heap_allocate(&process_current()->heap, size);
+}
+
+static void syscall_free(registers_t* regs) {
+	uintptr_t ptr = (uintptr_t)regs->ebx;
+	heap_free(&process_current()->heap, ptr);
+}
+
+static void syscall_get_used_size(registers_t* regs) {
+	regs->eax = process_current()->heap.used_size;
+}
+
+//////////////////////////////////////////////////////////////
 //// the implementation
 //////////////////////////////////////////////////////////////
+
+void heap_init(void) {
+	term_write("[heap] Initializing\n");
+	syscall_register(SYSCALL_HEAP_ALLOCATE, syscall_allocate);
+	syscall_register(SYSCALL_HEAP_FREE, syscall_free);
+	syscall_register(SYSCALL_HEAP_GET_USED_SIZE, syscall_get_used_size);
+}
 
 void heap_create(heap_context_t* context, uintptr_t start_address) {
 	context->size = PAGE_SIZE;

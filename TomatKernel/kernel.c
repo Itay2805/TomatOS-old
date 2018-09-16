@@ -4,6 +4,7 @@
 
 #include <core/term.h>
 #include <core/memory/heap.h>
+#include <core/process/process.h>
 
 void kpanic(char* error) {
 	term_set_text_color(0xf);
@@ -21,10 +22,8 @@ void kpanic(char* error) {
 static heap_context_t kernel_heap;
 
 heap_context_t* kheap(void) {
-	return &kernel_heap;
+	return process_create();
 }
-
-
 
 void outb(uint16_t port, uint8_t data) {
 #ifndef _MBCS

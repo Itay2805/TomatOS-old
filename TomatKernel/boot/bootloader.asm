@@ -14,9 +14,10 @@ CHECKSUM equ -(MAGIC + FLAGS)
 	[extern __cxa_finalize]
 
     [global bootloader]
+	[global tomatokernel_stack]
 
     bootloader:
-        mov esp, kernel_stack
+        mov esp, tomatokernel_stack
         push eax
         push ebx
         call kernel_boot
@@ -33,4 +34,4 @@ CHECKSUM equ -(MAGIC + FLAGS)
 
 [section .bss]
     resb 2 * 1024 * 1024
-    kernel_stack:
+    tomatokernel_stack:

@@ -66,7 +66,7 @@ void paging_free_page(uintptr_t physAddr) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
-// Tomat Kernel Memory Mapping
+// Tomat Kernel Memory Mapping - Physical
 //////////////////////////////////////////////////////////////////////////////////////
 // Physically on RAM:
 //
@@ -81,14 +81,13 @@ void paging_free_page(uintptr_t physAddr) {
 //		the reason we have a ? is because idk the actual size of the kernel
 //		and the kernel will determine how many pages it needs
 // 
-// Pages ?-1048576
+// Pages kernel_end-1048576
 //		Free to be used by whatever
 //
 // Special Pages:
 //	
 //		Page 184 (Address: 0xb8000):
-//			This is the VGA text buffer, it is identity mapped only to the kernel
-//			Maybe Programs should also have direct access to it?
+//			This is the VGA text buffer, only the kernel can access it directly
 //
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -125,7 +124,6 @@ void paging_init(void) {
 void paging_init_directory(page_directory_t pageDirectory) {
 	memset(pageDirectory, 0, 4096);
 
-
 	// identity map the kernel
 	int kernelPageCount = (((size_t)(&tomatkernel_size) - 1) / 4096) + 1;
 	for (int i = 0; i < kernelPageCount; i++) {
@@ -140,7 +138,7 @@ void paging_init_directory(page_directory_t pageDirectory) {
 	}
 
 	// identity map the VGA video address
-	paging_map_identity(pageDirectory, (uintptr_t)0xb8000, true, true);
+	paging_map_identity(pageDirectory, (uintptr_t)0xb8000, true, false);
 }
 
 void paging_map_identity(page_directory_t pageDirectory, uintptr_t addr, bool user, bool read_write) {

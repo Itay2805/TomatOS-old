@@ -2,6 +2,9 @@
 
 #include <kernel.h>
 
+#include <core/process/syscall.h>
+#include <core/process/process.h>
+
 #define NATIVE_TERM_VIDEO_ADDRESS 0xb8000
 
 #define NATIVE_TERM_WIDTH 80
@@ -23,12 +26,83 @@ static cell_t* vmemory;
 
 static void update_cursor();
 
+/////////////////////
+// SYSCALLS
+/////////////////////
+
+static void syscall_write(registers_t* regs) {
+	char* text = regs->ebx;
+
+	if (!CHECK_POINTER(text)) {
+		// Outside of range, do not print it
+		return;
+	}
+	if (!process_current()->foreground) {
+		// only foreground process can use the term syscalls
+		return;
+	}
+
+	term_write(text);
+}
+
+static void syscall_clear(registers_t* regs) {
+	term_clear();
+}
+
+static void syscall_set_text_color(registers_t* regs) {
+	fg_color = (uint8_t)regs->ebx;
+}
+
+static void syscall_get_text_color(registers_t* regs) {
+	regs->eax = fg_color;
+}
+
+static void syscall_set_background_color(registers_t* regs) {
+	bg_color = (uint8_t)regs->ebx;
+}
+
+static void syscall_get_background_color(registers_t* regs) {
+	regs->eax = bg_color;
+}
+
+static void syscall_get_cursor_x(registers_t* regs) {
+	regs->eax = term_x;
+}
+
+static void syscall_get_cursor_y(registers_t* regs) {
+	regs->eax = term_y;
+}
+
+static void syscall_set_cursor_pos(registers_t* regs) {
+	uint8_t x = regs->ebx;
+	uint8_t y = regs->ecx;
+	term_set_cursor_pos(x, y);
+}
+
+static void syscall_scroll(registers_t* regs) {
+	uint8_t n = (uint8_t)regs->ebx;
+	term_scroll(n);
+}
+
+static void syscall_width(registers_t* regs) {
+	regs->eax = NATIVE_TERM_WIDTH;
+}
+
+static void syscall_height(registers_t* regs) {
+	regs->eax = NATIVE_TERM_HEIGHT;
+}
+
+static void syscall_clear_line(registers_t* regs) {
+	uint8_t n = (uint8_t)regs->ebx;
+	term_clear_line(n);
+}
+
 void term_init() {
     vmemory = (cell_t*)NATIVE_TERM_VIDEO_ADDRESS;
 
     // set default colors
-    bg_color = 0;
-    fg_color = 0xf;
+    bg_color = COLOR_BLACK;
+    fg_color = COLOR_WHITE;
 
     // disable blink
     inb(0x03DA);
@@ -36,6 +110,20 @@ void term_init() {
 	int reg = inb(0x03C1);
 	reg &= 0xF7;
 	outb(0x03C0, reg);
+
+	syscall_register(SYSCALL_TERM_WRITE, syscall_write);
+	syscall_register(SYSCALL_TERM_CLEAR, syscall_clear);
+	syscall_register(SYSCALL_TERM_SET_TEXT_COLOR, syscall_set_text_color);
+	syscall_register(SYSCALL_TERM_SET_BACKGROUND_COLOR, syscall_set_background_color);
+	syscall_register(SYSCALL_TERM_GET_TEXT_COLOR, syscall_get_text_color);
+	syscall_register(SYSCALL_TERM_GET_BACKGROUND_COLOR, syscall_get_background_color);
+	syscall_register(SYSCALL_TERM_GET_CURSOR_X, syscall_get_cursor_x);
+	syscall_register(SYSCALL_TERM_GET_CURSOR_Y, syscall_get_cursor_y);
+	syscall_register(SYSCALL_TERM_SET_CURSOR_POS, syscall_set_cursor_pos);
+	syscall_register(SYSCALL_TERM_SCROLL, syscall_scroll);
+	syscall_register(SYSCALL_TERM_WIDTH, syscall_width);
+	syscall_register(SYSCALL_TERM_HEIGHT, syscall_height);
+	syscall_register(SYSCALL_TERM_CLEAR_LINE, syscall_clear_line);
 }
 
 void term_write(const char* text){

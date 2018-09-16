@@ -30,6 +30,8 @@ typedef struct heap_context {
 extern "C" {
 #endif
 
+	void heap_init(void);
+
 	void heap_create(heap_context_t* context, uintptr_t start_address);
 	uintptr_t heap_allocate(heap_context_t* context, size_t size);
 	void heap_free(heap_context_t* context, uintptr_t ptr);

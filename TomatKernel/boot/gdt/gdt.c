@@ -17,9 +17,8 @@ void gdt_init() {
     gdt_entry_t entry = {0};
     gdt_entry_set(GDT_SEGMENT_NULL, 0, 0, entry);
 
-	// TODO: set up the limits and bases currectly according to the paging
-
     // kernel sections
+	// the kernel as write access and read access on all the CPU
     entry.accessed = 0;
     entry.read_write = 1;
     entry.conforming_expand_down = 0;
@@ -30,15 +29,21 @@ void gdt_init() {
     entry.big = 1;
     entry.gran = 1;
     gdt_entry_set(GDT_SEGMENT_CODE, 0, 0xFFFFFFFF, entry);
-    entry.code = 0;
-    gdt_entry_set(GDT_SEGMENT_DATA, 0, 0xFFFFFFFF, entry);
+	entry.code = 0;
+	gdt_entry_set(GDT_SEGMENT_DATA, 0, 0xFFFFFFFF, entry);
     
     // user sections - ring3
-    entry.DPL = 3;
-    gdt_entry_set(GDT_SEGMENT_USER_CODE, 0, 0xFFFFFFFF, entry);
-    entry.code = 1;
-    gdt_entry_set(GDT_SEGMENT_USER_DATA, 0, 0xFFFFFFFF, entry);
+	// the user sections will run under ring3
+	// also, it can only run in the procee, heap, and stack area of the process
+	// so it can not access any of the rest
 
+	uintptr_t kernel_end = &tomatkernel_end + 1024 * 1024 * 50;
+
+    entry.DPL = 3;
+    gdt_entry_set(GDT_SEGMENT_USER_CODE, kernel_end, 0xFFFFFFFF, entry);
+    entry.code = 1;
+    gdt_entry_set(GDT_SEGMENT_USER_DATA, kernel_end, 0xFFFFFFFF, entry);
+	
     gdt_t* gdtptr = &gdt;
     // flush gdt
 
