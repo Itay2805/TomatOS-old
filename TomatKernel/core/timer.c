@@ -69,9 +69,9 @@ uint32_t timer_start(uint32_t uid, uint32_t millis) {
 	return newTimer.id;
 }
 
-void timer_cancel(uint32_t timer) {
+void timer_cancel(uint32_t id) {
 	for (timer_t* timer = timers; timer < buf_end(timers); timer++) {
-		if (timer->id == timer) {
+		if (timer->id == id) {
 			timer->finished = true;
 		}
 	}

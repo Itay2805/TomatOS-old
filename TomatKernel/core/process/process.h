@@ -5,8 +5,6 @@
 #include <core/memory/heap.h>
 #include <core/sbuf.h>
 
-#include <core/process/event.h>
-
 #include <kernel.h>
 
 #include <stdbool.h>

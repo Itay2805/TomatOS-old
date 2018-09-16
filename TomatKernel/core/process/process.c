@@ -169,7 +169,7 @@ void process_start(process_t* newprocess) {
 
 void process_kill(registers_t* regs, uint32_t uid) {
 	can_update = false;
-	process_t* process = process_get_all(uid);
+	process_t* process = process_get(uid);
 	bool wasRunning = false;
 	if (process->status == PROCESS_RUNNING) {
 		wasRunning = true;

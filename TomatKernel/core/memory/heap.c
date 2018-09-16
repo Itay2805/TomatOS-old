@@ -97,16 +97,16 @@ static void expand(heap_context_t* context, size_t size) {
 
 static void syscall_allocate(registers_t* regs) {
 	size_t size = (size_t)regs->ebx;
-	regs->eax = heap_allocate(&process_current()->heap, size);
+	regs->eax = heap_allocate(&process_get_running()->heap, size);
 }
 
 static void syscall_free(registers_t* regs) {
 	uintptr_t ptr = (uintptr_t)regs->ebx;
-	heap_free(&process_current()->heap, ptr);
+	heap_free(&process_get_running()->heap, ptr);
 }
 
 static void syscall_get_used_size(registers_t* regs) {
-	regs->eax = process_current()->heap.used_size;
+	regs->eax = (uint32_t)process_get_running()->heap.used_size;
 }
 
 //////////////////////////////////////////////////////////////

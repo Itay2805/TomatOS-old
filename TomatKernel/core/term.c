@@ -37,7 +37,7 @@ static void syscall_write(registers_t* regs) {
 		// Outside of range, do not print it
 		return;
 	}
-	if (!process_current()->foreground) {
+	if (!process_get_running()->foreground) {
 		// only foreground process can use the term syscalls
 		return;
 	}
