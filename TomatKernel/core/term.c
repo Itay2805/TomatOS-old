@@ -33,10 +33,12 @@ static void update_cursor();
 static void syscall_write(registers_t* regs) {
 	char* text = regs->ebx;
 
-	if (!CHECK_POINTER(text)) {
-		// Outside of range, do not print it
-		return;
-	}
+	// for right now all the strings in here are in the kernel area, so doing this check will make so we can't print anything
+	// maybe in the future make so it will do the check depending on the process?
+	//if (!CHECK_POINTER(text)) {
+	//	// Outside of range, do not print it
+	//	return;
+	//}
 	if (!process_get_running()->foreground) {
 		// only foreground process can use the term syscalls
 		return;

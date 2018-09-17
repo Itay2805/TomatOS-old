@@ -15,6 +15,9 @@ extern void kmain();
 
 // the kernel boot is for initializing core drivers
 void kernel_boot(const void* multiboot_structure, uint32_t multiboot_magic) {
+	UNUSED(multiboot_structure);
+	UNUSED(multiboot_magic);
+
 	// initialize terminal
 	term_init();
 
@@ -34,13 +37,24 @@ void kernel_boot(const void* multiboot_structure, uint32_t multiboot_magic) {
 
 	// initialize kernel heap
 	heap_init();
-	process_init_alive();
+	process_init();
 
 	term_clear();
 
 	term_write("Welcome to TomatKernel!");
 	
-	process_get(0)->main();
+	// initialize a foreground process
+	process_t foreground;
+	foreground.foreground = true;
+	foreground.main = kmain;
+	process_create(&foreground);
+	process_start(&foreground);
 
-	// start a process, idk how right now
+	asm volatile
+		("int $0x80"
+			:
+			: "a"(SYSCALL_START_ALIVE)
+			);
+
+	kpanic("SHOULD NOT HAVE REACHED HERE!!!");
 }

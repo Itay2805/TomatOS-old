@@ -10,6 +10,8 @@ extern "C" {
 #endif
 
 	typedef enum syscall_kind {
+		SYSCALL_START_ALIVE,
+
 		SYSCALL_TERM_WRITE,
 		SYSCALL_TERM_CLEAR,
 		SYSCALL_TERM_SET_TEXT_COLOR,

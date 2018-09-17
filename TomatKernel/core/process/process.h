@@ -60,12 +60,12 @@ typedef struct process {
 extern "C" {
 #endif
 	
-	void process_init_alive(void);
+	void process_init(void);
 
 	void process_create(process_t* process);
 	
 	void process_start(process_t* process);
-	
+		
 	void process_kill(registers_t* regs, uint32_t uid);
 
 	process_t* process_get(uint32_t uid);

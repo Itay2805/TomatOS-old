@@ -12,14 +12,15 @@ static int uid = 0;
 static bool can_update = false;
 static process_t* processes = NULL;
 static int updates;
+static bool enabled = false;
 
 void alive_wait_for_events(void) {
 	asm volatile
-		( "int $0x80" 
-		: "=a"(ret) 
-		: "a"(SYSCALL_TERM_WRITE)
-		, "b"("alive_wait_for_events")
-		)
+		("int $0x80"
+			:
+			: "a"(SYSCALL_TERM_WRITE)
+			, "b"("alive_wait_for_events")
+			);
 
 	// reset the status of the alive process, just in case
 	processes[ALIVE].status = PROCESS_SUSPENDED;
@@ -29,7 +30,16 @@ void alive_wait_for_events(void) {
 	}
 }
 
-void process_init_alive(void) {
+
+static void syscall_start_alive(registers_t* regs) {
+	if (enabled) return; // only runs once after everything is ready to run
+	enabled = true;
+	scheduler_update(regs, false);
+}
+
+void process_init(void) {
+	syscall_register(SYSCALL_START_ALIVE, syscall_start_alive);
+
 	process_t alive_process;
 
 	// the paging is only used when alive is waiting for events
@@ -213,6 +223,8 @@ static void process_switch(registers_t* currentregs, process_t* current, process
 		memset(&newprocess->registers, 0, sizeof(registers_t));
 
 		// this should set everything for running the process for the first time
+		// there is a problem tho, right now when the process exited there is no return address...
+		// maybe make it so the program must calls exit when finishing to run?
 		newprocess->registers.esp = newprocess->stack;
 		newprocess->registers.ebp = newprocess->stack;
 		newprocess->registers.useresp = newprocess->stack;
@@ -239,6 +251,7 @@ void process_pull_event(registers_t* regs, event_t* event) {
 }
 
 void scheduler_update(registers_t* regs, bool fromTimer) {
+	if (!enabled) return;
 	if (!can_update) {
 		// this should not matter since we disable interrupts
 		if(fromTimer) updates++;

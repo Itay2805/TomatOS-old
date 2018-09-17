@@ -19,8 +19,6 @@ void kpanic(char* error) {
 	}
 }
 
-static heap_context_t kernel_heap;
-
 heap_context_t* kheap(void) {
 	return &process_get(0)->heap;
 }

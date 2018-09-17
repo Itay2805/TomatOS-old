@@ -35,7 +35,6 @@
     <ClCompile Include="boot\kernel_boot.c" />
     <ClCompile Include="core\cpp.cpp" />
     <ClCompile Include="core\disk\ata.c" />
-    <ClCompile Include="core\fs\TomatoFS.cpp" />
     <ClCompile Include="core\icxxabi.cpp" />
     <ClCompile Include="core\memory\heap.c" />
     <ClCompile Include="core\memory\paging.c" />
@@ -57,7 +56,6 @@
     <ClInclude Include="boot\interrupts\pic.h" />
     <ClInclude Include="core\cpp.hpp" />
     <ClInclude Include="core\disk\ata.h" />
-    <ClInclude Include="core\fs\TomatoFS.hpp" />
     <ClInclude Include="core\icxxabi.hpp" />
     <ClInclude Include="core\memory\heap.h" />
     <ClInclude Include="core\memory\paging.h" />

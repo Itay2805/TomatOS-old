@@ -6,30 +6,24 @@
 #include <string.h>
 #include <setjmp.h>
 
-#include <core/process/process.h>
-
-void printError(const char* status, const char* message) {
-	uint8_t c = term_get_text_color();
-	term_set_text_color(COLOR_RED);
-	term_write("[");
-	term_write(status);
-	term_write("] ");
-	term_write(message);
-	term_write("\n");
-	term_set_text_color(c);
-}
+#include <core/process/syscall.h>
 
 extern "C" void kmain() {
-	term_clear();
+	asm volatile
+		("int $0x80"
+			:
+			: "a"(SYSCALL_TERM_CLEAR)
+			);
 
-	term_write("Welcome to TomatOS!\n");
+	asm volatile
+		("int $0x80"
+			:
+			: "a"(SYSCALL_TERM_WRITE)
+			, "b"("We are now in the main process!\n")
+		);
 
-	process_t process;
-	process.process_size = 0;
-	process_create(&process);
-
-	paging_set(process.pd);
-	paging_enable();
-
-	term_write("we are using paging now \\o/\n");
+	while (true) {
+		// do not exit
+		asm("nop");
+	}
 }

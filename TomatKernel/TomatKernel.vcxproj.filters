@@ -72,9 +72,6 @@
     <ClCompile Include="core\disk\ata.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\fs\TomatoFS.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="core\cpp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -123,9 +120,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="core\disk\ata.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\fs\TomatoFS.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="core\cpp.hpp">
