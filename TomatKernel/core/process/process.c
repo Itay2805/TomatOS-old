@@ -3,6 +3,8 @@
 #include <stddef.h>
 #include <string.h>
 
+#include <core/process/syscall.h>
+
 #define PROCESS_MAX_STACK_SIZE (1024 * 1024 * 20)
 #define ALIVE 0
 
@@ -12,6 +14,13 @@ static process_t* processes = NULL;
 static int updates;
 
 void alive_wait_for_events(void) {
+	asm volatile
+		( "int $0x80" 
+		: "=a"(ret) 
+		: "a"(SYSCALL_TERM_WRITE)
+		, "b"("alive_wait_for_events")
+		)
+
 	// reset the status of the alive process, just in case
 	processes[ALIVE].status = PROCESS_SUSPENDED;
 	processes[ALIVE].started = true;
@@ -73,6 +82,7 @@ process_t* process_get(uint32_t uid) {
 	return NULL;
 }
 
+// may want to optimize this so it won't iterate over the running process over and over again....
 process_t* process_get_running(void) {
 	for (process_t* process = processes; process < buf_end(processes); process++) {
 		if (process->status == PROCESS_RUNNING) return process;

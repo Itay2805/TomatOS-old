@@ -90,7 +90,13 @@
     <ClCompile Include="core\process\process.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\process\event.c">
+    <ClCompile Include="core\process\syscall.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\sbuf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\timer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -137,7 +143,13 @@
     <ClInclude Include="core\process\thread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="core\process\event.h">
+    <ClInclude Include="core\process\syscall.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sbuf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

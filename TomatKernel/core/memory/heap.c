@@ -97,16 +97,28 @@ static void expand(heap_context_t* context, size_t size) {
 
 static void syscall_allocate(registers_t* regs) {
 	size_t size = (size_t)regs->ebx;
-	regs->eax = heap_allocate(&process_get_running()->heap, size);
+	process_t* process = process_get_running();
+	if (process == NULL) {
+		kpanic("[heap] attempted to call allocate with no running process");
+	}
+	regs->eax = heap_allocate(&process->heap, size);
 }
 
 static void syscall_free(registers_t* regs) {
 	uintptr_t ptr = (uintptr_t)regs->ebx;
-	heap_free(&process_get_running()->heap, ptr);
+	process_t* process = process_get_running();
+	if (process == NULL) {
+		kpanic("[heap] attempted to call free with no running process");
+	}
+	heap_free(&process->heap, ptr);
 }
 
 static void syscall_get_used_size(registers_t* regs) {
-	regs->eax = (uint32_t)process_get_running()->heap.used_size;
+	process_t* process = process_get_running();
+	if (process == NULL) {
+		kpanic("[heap] attempted to call get_used_size with no running process");
+	}
+	regs->eax = (uint32_t)process->heap.used_size;
 }
 
 //////////////////////////////////////////////////////////////

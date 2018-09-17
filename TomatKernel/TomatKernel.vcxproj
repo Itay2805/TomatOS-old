@@ -39,9 +39,11 @@
     <ClCompile Include="core\icxxabi.cpp" />
     <ClCompile Include="core\memory\heap.c" />
     <ClCompile Include="core\memory\paging.c" />
-    <ClCompile Include="core\process\event.c" />
     <ClCompile Include="core\process\process.c" />
+    <ClCompile Include="core\process\syscall.c" />
+    <ClCompile Include="core\sbuf.c" />
     <ClCompile Include="core\term.c" />
+    <ClCompile Include="core\timer.c" />
     <ClCompile Include="kernel.c" />
     <ClCompile Include="kernel.cpp" />
     <ClCompile Include="klibc\math.c" />
@@ -59,10 +61,12 @@
     <ClInclude Include="core\icxxabi.hpp" />
     <ClInclude Include="core\memory\heap.h" />
     <ClInclude Include="core\memory\paging.h" />
-    <ClInclude Include="core\process\event.h" />
     <ClInclude Include="core\process\process.h" />
+    <ClInclude Include="core\process\syscall.h" />
     <ClInclude Include="core\process\thread.h" />
+    <ClInclude Include="core\sbuf.h" />
     <ClInclude Include="core\term.h" />
+    <ClInclude Include="core\timer.h" />
     <ClInclude Include="kernel.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
