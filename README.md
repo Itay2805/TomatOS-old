@@ -3,20 +3,16 @@
 Rewrite number idk
 
 Already got working:
-* GDT and IDT (will have to visit it again to properly set it)
+* GDT and IDT
 * Paging
 * Heap
 * libc
 * kernel terminal library
 * some stuff that are needed for C++ to work
-* ATA with custom File System
+* ATA driver
 
-The goal is to get two processes running in context switching, one for background and one for foreground.
+Working on currently:
+* Processes - most of the code is finished, just needs testing
+* FileSystem - I have some plan on how it will be but still needs implementing
 
-the difference is that Foregroud process will receive events from the user (like keyboard) and that background process won't be able to access the terminal
-
-The background process will manage tasks using co-op multitasking
-
-The foreground process will most likely only have one process which would either be a GUI or a Shell
-
-I also want to have a user and permission system and have some kind of package manager
+The current goals are to get the proesses fully working and get some basic shell process working, Then I would like to start working on some exe format and allow to start binary files as processes, and then have a compiler that will generate and link an assembly that will be able to run, and once that is finished maybe get the OS to self host (long long future)
