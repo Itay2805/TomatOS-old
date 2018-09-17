@@ -1,1 +1,1 @@
-qemu-system-i386 -boot d -cdrom kernel.iso -m 4096 -monitor stdio
+qemu-system-i386 -s -S -kernel kernel.debug.elf -m 4096 -monitor stdio

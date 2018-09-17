@@ -104,6 +104,16 @@ static void syscall_allocate(registers_t* regs) {
 	regs->eax = heap_allocate(&process->heap, size);
 }
 
+static void syscall_reallocate(registers_t* regs) {
+	process_t* process = process_get_running();
+	if (process == NULL) {
+		kpanic("[heap] attempted to call reallocate with no running process");
+	}
+	uintptr_t ptr = (uintptr_t)regs->ebx;
+	size_t size = (size_t)regs->ecx;
+	regs->eax = heap_reallocate(&process->heap, ptr, size);
+}
+
 static void syscall_free(registers_t* regs) {
 	uintptr_t ptr = (uintptr_t)regs->ebx;
 	process_t* process = process_get_running();
@@ -121,14 +131,32 @@ static void syscall_get_used_size(registers_t* regs) {
 	regs->eax = (uint32_t)process->heap.used_size;
 }
 
+static void syscall_get_ptr_size(registers_t* regs) {
+	process_t* process = process_get_running();
+	if(process == NULL) {
+		kpanic("[heap] attempted to call get_ptr_size with no running process");
+	}
+	uintptr_t ptr = (uintptr_t)regs->ebx;
+	bool valid;
+	heap_block_t* block = get_block(&process->heap, ptr, &valid);
+	if(!valid) {
+		regs->eax = 0;
+	}else {
+		regs->eax = block->size;
+	}
+}
+
 //////////////////////////////////////////////////////////////
 //// the implementation
 //////////////////////////////////////////////////////////////
 
 void heap_init(void) {
 	term_write("[heap] Initializing\n");
+
 	syscall_register(SYSCALL_HEAP_ALLOCATE, syscall_allocate);
+	syscall_register(SYSCALL_HEAP_REALLOCATE, syscall_reallocate);
 	syscall_register(SYSCALL_HEAP_FREE, syscall_free);
+	syscall_register(SYSCALL_HEAP_GET_PTR_SIZE, syscall_get_ptr_size);
 	syscall_register(SYSCALL_HEAP_GET_USED_SIZE, syscall_get_used_size);
 }
 
@@ -265,4 +293,34 @@ void heap_free(heap_context_t* context, uintptr_t ptr) {
 		// if so this is now the first free block
 		context->first_free = block;
 	}
+}
+
+uintptr_t heap_reallocate(heap_context_t* context, uintptr_t ptr, size_t newSize) {
+	if(ptr == NULL) {
+		// if no pointer, treat it as a normal allocate
+		return heap_allocate(context, newSize);
+	}
+
+	bool valid;
+	heap_block_t* block = get_block(context, ptr, &valid);
+	if(!valid) {
+		// Maybe this is not the correct behaviour...
+		return heap_allocate(context, newSize);
+	}
+
+	size_t copySize = newSize > block->size ? block->size : newSize;
+
+	// OPTIMIZATION: if the newsize is smaller and not that different maybe just allow it stay with
+	// 				 the same pointer
+
+	// allocate new space
+	uintptr_t newptr = heap_allocate(context, newSize);
+
+	// copy the data to the new space
+	memcpy(newptr, ptr, copySize);
+
+	// free the old pointer
+	heap_free(context, ptr);
+
+	return newptr;
 }

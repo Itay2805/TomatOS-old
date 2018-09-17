@@ -19,12 +19,8 @@ void* calloc(size_t num, size_t size) {
 	return NULL;
 }
 
-// TODO: Implement heap_size or something to get the size of a pointer
 void* realloc(void* ptr, size_t newsize) {
-	UNUSED(ptr);
-	UNUSED(newsize);
-
-	return NULL;
+	return heap_reallocate(kheap(), ptr, newsize);
 }
 
 void free(void* ptr) {
