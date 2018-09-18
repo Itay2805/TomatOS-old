@@ -15,33 +15,30 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="limits.h">
+    <ClInclude Include="tomato\syscalls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="stdbool.h">
+    <ClInclude Include="tomato\term.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="stddef.h">
+    <ClInclude Include="tomato\heap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="stdint.h">
+    <ClInclude Include="tomato\Term.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="stdlib.h">
+    <ClInclude Include="tomato\Heap.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="string.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="math.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="setjmp.h">
+    <ClInclude Include="icxxabi.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="string.c">
+    <ClCompile Include="icxxabi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

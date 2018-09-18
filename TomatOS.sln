@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TomatBoot", "TomatBoot\Toma
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libc", "libc\libc.vcxproj", "{C4E84039-4D45-45D2-A2E0-217A3DD32889}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TomatLib", "TomatLib\TomatLib.vcxproj", "{2CCACA02-8147-47E4-BF45-D6397977AF30}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -51,6 +53,14 @@ Global
 		{C4E84039-4D45-45D2-A2E0-217A3DD32889}.Release|x64.Build.0 = Release|x64
 		{C4E84039-4D45-45D2-A2E0-217A3DD32889}.Release|x86.ActiveCfg = Release|Win32
 		{C4E84039-4D45-45D2-A2E0-217A3DD32889}.Release|x86.Build.0 = Release|Win32
+		{2CCACA02-8147-47E4-BF45-D6397977AF30}.Debug|x64.ActiveCfg = Debug|x64
+		{2CCACA02-8147-47E4-BF45-D6397977AF30}.Debug|x64.Build.0 = Debug|x64
+		{2CCACA02-8147-47E4-BF45-D6397977AF30}.Debug|x86.ActiveCfg = Debug|Win32
+		{2CCACA02-8147-47E4-BF45-D6397977AF30}.Debug|x86.Build.0 = Debug|Win32
+		{2CCACA02-8147-47E4-BF45-D6397977AF30}.Release|x64.ActiveCfg = Release|x64
+		{2CCACA02-8147-47E4-BF45-D6397977AF30}.Release|x64.Build.0 = Release|x64
+		{2CCACA02-8147-47E4-BF45-D6397977AF30}.Release|x86.ActiveCfg = Release|Win32
+		{2CCACA02-8147-47E4-BF45-D6397977AF30}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
