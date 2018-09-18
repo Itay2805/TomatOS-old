@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include <core/process/syscall.h>
+#include <boot/gdt/gdt.h>
 
 #define PROCESS_MAX_STACK_SIZE (1024 * 1024 * 20)
 #define ALIVE 0
@@ -34,6 +35,11 @@ void alive_wait_for_events(void) {
 static void syscall_start_alive(registers_t* regs) {
 	if (enabled) return; // only runs once after everything is ready to run
 	enabled = true;
+
+	// enable paging (using the alive process for starters)
+	paging_set(processes[ALIVE].pd);
+	paging_enable();
+	
 	scheduler_update(regs, false);
 }
 
@@ -43,12 +49,15 @@ void process_init(void) {
 	process_t alive_process;
 
 	// the paging is only used when alive is waiting for events
-	alive_process.pd  = (page_directory_t)paging_allocate_new_page();
-	paging_init_directory(alive_process.pd);
+	page_directory_t pd  = (page_directory_t)paging_allocate_new_page();
+	paging_init_directory(pd);
 
 	// init the heap to use the kernel heap
 	uintptr_t kernelHeapStart = (((size_t)&tomatkernel_end + 1024 * 1024) >> 12) << 12;
 	heap_create(&alive_process.heap, kernelHeapStart);
+	
+	// only after we inited the heap we want to init the pd on the alive process
+	alive_process.pd = pd;
 
 	// this will be set to suspended since it is waiting for events technically
 	alive_process.status = PROCESS_SUSPENDED;
@@ -82,7 +91,14 @@ void process_init(void) {
 
 	alive_process.started = true;
 
-	buf_push(processes, alive_process);
+	// allocate the sbuf manually (because currently there is still no alive process so the malloc will have no heap)
+	size_t newCap = 16;
+	size_t newSize = offsetof(BufHdr, buf) + newCap * sizeof(process_t);
+	BufHdr* newHdr = heap_allocate(&alive_process.heap, newSize);
+	newHdr->len = 1;
+	newHdr->cap = newCap;
+	processes = (process_t*)newHdr->buf;
+	processes[0] = alive_process;
 }
 
 process_t* process_get(uint32_t uid) {
@@ -137,7 +153,7 @@ process_t* process_get_running(void) {
 //
 //////////////////////////////////////////////////////////////////////////////////////
 
-void process_create(process_t* context)
+void process_create(process_t* context, process_main_t main,  bool foreground)
 {
 	memset(context, NULL, sizeof(process_t));
 
@@ -168,6 +184,9 @@ void process_create(process_t* context)
 	context->stack = process_stack_top;
 	context->events = NULL;
 	context->started = false;
+
+	context->main = main;
+	context->foreground = foreground;
 }
 
 void process_start(process_t* newprocess) {
@@ -218,7 +237,6 @@ static void process_switch(registers_t* currentregs, process_t* current, process
 	if (!newprocess->started) {
 		newprocess->started = true;
 		newprocess->status = PROCESS_RUNNING;
-		paging_set(newprocess->pd);
 		
 		memset(&newprocess->registers, 0, sizeof(registers_t));
 
@@ -229,6 +247,11 @@ static void process_switch(registers_t* currentregs, process_t* current, process
 		newprocess->registers.ebp = newprocess->stack;
 		newprocess->registers.useresp = newprocess->stack;
 		newprocess->registers.eip = newprocess->main;
+
+		// set segments
+		newprocess->registers.ds = GDT_SEGMENT_USER_DATA;
+		newprocess->registers.cs = GDT_SEGMENT_USER_CODE;
+		newprocess->registers.eflags = 0x202;
 	}
 
 	// set the registers of the new process

@@ -45,9 +45,7 @@ void kernel_boot(const void* multiboot_structure, uint32_t multiboot_magic) {
 	
 	// initialize a foreground process
 	process_t foreground;
-	foreground.foreground = true;
-	foreground.main = kmain;
-	process_create(&foreground);
+	process_create(&foreground, kmain, true);
 	process_start(&foreground);
 
 	asm volatile
