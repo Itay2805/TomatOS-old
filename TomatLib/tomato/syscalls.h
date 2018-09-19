@@ -22,3 +22,5 @@ typedef enum tomato_syscall_kind {
 	SYSCALL_HEAP_GET_PTR_SIZE,
 	SYSCALL_HEAP_GET_USED_SIZE
 } tomato_syscall_kind_t;
+
+#endif
