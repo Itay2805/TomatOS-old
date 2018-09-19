@@ -8,8 +8,10 @@
 #include <core/term.h>
 #include <core/memory/paging.h>
 #include <core/memory/heap.h>
+
 #include <core/process/syscall.h>
 #include <core/process/process.h>
+#include <core/process/perm.h>
 
 extern void kmain();
 
@@ -45,7 +47,7 @@ void kernel_boot(const void* multiboot_structure, uint32_t multiboot_magic) {
 	
 	// initialize a foreground process
 	process_t foreground;
-	process_create(&foreground, kmain, true);
+	process_create(&foreground, kmain, USER_ALIVE, true); // this will run as alive just because it must have the kernel segments
 	process_start(&foreground);
 
 	asm volatile

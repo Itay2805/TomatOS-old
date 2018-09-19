@@ -62,7 +62,7 @@ extern "C" {
 	
 	void process_init(void);
 
-	void process_create(process_t* context, process_main_t main, bool foreground);
+	void process_create(process_t* context, process_main_t main, int user, bool foreground);
 
 	void process_start(process_t* process);
 		

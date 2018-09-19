@@ -4,6 +4,8 @@
 #include <string.h>
 
 #include <core/process/syscall.h>
+#include <core/process/perm.h>
+
 #include <boot/gdt/gdt.h>
 
 #define PROCESS_MAX_STACK_SIZE (1024 * 1024 * 20)
@@ -78,7 +80,7 @@ void process_init(void) {
 	alive_process.events = NULL;
 
 	// alive always runs as root
-	alive_process.user = 0;
+	alive_process.user = USER_ALIVE;
 
 	// alive always has uid 0
 	alive_process.uid = ALIVE;
@@ -153,40 +155,42 @@ process_t* process_get_running(void) {
 //
 //////////////////////////////////////////////////////////////////////////////////////
 
-void process_create(process_t* context, process_main_t main,  bool foreground)
+void process_create(process_t* process, process_main_t main, int user,  bool foreground)
 {
-	memset(context, NULL, sizeof(process_t));
+	memset(process, NULL, sizeof(process_t));
 
-	context->uid = ++uid;
+	process->uid = ++uid;
 
 	// init paging
-	context->pd = (page_directory_t)paging_allocate_new_page();
-	paging_init_directory(context->pd);
+	process->pd = (page_directory_t)paging_allocate_new_page();
+	paging_init_directory(process->pd);
 	
 	// the process will be located after the kernel and kernel heap (50MB)
-	uintptr_t process_end = (uintptr_t)((size_t)&tomatkernel_end + 1024 * 1024 * 50 + context->process_size);
+	uintptr_t process_end = (uintptr_t)((size_t)&tomatkernel_end + 1024 * 1024 * 50 + process->process_size);
 	
 	// the stack will start 1MB after the process end
 	// the stack will take a total of 20MB at max (to maybe allow the stack to grow in the future)
 	uintptr_t process_stack = process_end + 1024 * 1024;
 	uintptr_t process_stack_top = process_stack + PROCESS_MAX_STACK_SIZE;
-	paging_map_range(context->pd, process_stack_top - PROCESS_STACK_SIZE, PROCESS_STACK_SIZE);
+	paging_map_range(process->pd, process_stack_top - PROCESS_STACK_SIZE, PROCESS_STACK_SIZE);
 	
 	// the heap will be 1MB after the stack
 	uintptr_t process_heap_start = process_stack_top + 1024 * 1024;
 
 	// init heap
 	size_t from = ((size_t)(process_heap_start) >> 12) << 12;
-	context->heap.pd = context->pd;
-	heap_create(&context->heap, (uintptr_t)from);
+	process->heap.pd = process->pd;
+	heap_create(&process->heap, (uintptr_t)from);
 	
-	context->status = PROCESS_SUSPENDED;
-	context->stack = process_stack_top;
-	context->events = NULL;
-	context->started = false;
+	process->status = PROCESS_SUSPENDED;
+	process->stack = process_stack_top;
+	process->events = NULL;
+	process->started = false;
 
-	context->main = main;
-	context->foreground = foreground;
+	process->user = user;
+
+	process->main = main;
+	process->foreground = foreground;
 }
 
 void process_start(process_t* newprocess) {
@@ -214,6 +218,10 @@ void process_kill(registers_t* regs, uint32_t uid) {
 		wasRunning = true;
 	}
 	process->status = PROCESS_DEAD;
+
+	// free all pages allocated for the process
+	paging_free_directory(process->pd);
+
 	can_update = true;
 	if (wasRunning) {
 		scheduler_update(regs, false);
@@ -248,10 +256,17 @@ static void process_switch(registers_t* currentregs, process_t* current, process
 		newprocess->registers.useresp = newprocess->stack;
 		newprocess->registers.eip = newprocess->main;
 
-		// set segments
+		newprocess->registers.eflags = 0x202;
+	}
+
+	// set segments
+	if (newprocess->user == USER_ALIVE) {
+		newprocess->registers.ds = GDT_SEGMENT_DATA;
+		newprocess->registers.cs = GDT_SEGMENT_CODE;
+	}
+	else {
 		newprocess->registers.ds = GDT_SEGMENT_USER_DATA;
 		newprocess->registers.cs = GDT_SEGMENT_USER_CODE;
-		newprocess->registers.eflags = 0x202;
 	}
 
 	// set the registers of the new process
