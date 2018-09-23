@@ -1,6 +1,7 @@
 #include "window.h"
 
 #include <stddef.h>
+#include <stdlib.h>
 
 #include <core/process/syscall.h>
 
@@ -12,43 +13,43 @@
 
 static void syscall_create(registers_t* regs) {
 	// TODO: validate parent
-	window_t* parent = regs->ebx;
+	window_t* parent = (window_t*)regs->ebx;
 
 	uint16_t x = regs->ecx;
 	uint16_t y = regs->edx;
 	uint16_t width = regs->esi;
 	uint16_t height = regs->edi;
 
-	regs->eax = window_create(parent, x, y, width, height, true);
+	regs->eax = (uint32_t)window_create(parent, x, y, width, height, true);
 }
 
 static void syscall_delete(registers_t* regs) {
 	// TODO: validate parent
-	window_t* window = regs->ebx;
+	window_t* window = (window_t*)regs->ebx;
 
 	window_delete(window);
 }
 
 static void syscall_write(registers_t* regs) {
 	// TODO: validate parent
-	window_t* window = regs->ebx;
+	window_t* window = (window_t*)regs->ebx;
 
 	// TODO: validate string pointer
-	char* text = regs->ecx;
+	char* text = (char*)regs->ecx;
 
 	window_write(window, text);
 }
 
 static void syscall_clear(registers_t* regs) {
 	// TODO: validate parent
-	window_t* window = regs->ebx;
+	window_t* window = (window_t*)regs->ebx;
 
 	window_clear(window);
 }
 
 static void syscall_set_text_color(registers_t* regs) {
 	// TODO: validate parent
-	window_t* window = regs->ebx;
+	window_t* window = (window_t*)regs->ebx;
 
 	uint8_t color = regs->ecx;
 
@@ -57,7 +58,7 @@ static void syscall_set_text_color(registers_t* regs) {
 
 static void syscall_set_background_color(registers_t* regs) {
 	// TODO: validate parent
-	window_t* window = regs->ebx;
+	window_t* window = (window_t*)regs->ebx;
 
 	uint8_t color = regs->ecx;
 
@@ -66,35 +67,35 @@ static void syscall_set_background_color(registers_t* regs) {
 
 static void syscall_get_text_color(registers_t* regs) {
 	// TODO: validate parent
-	window_t* window = regs->ebx;
+	window_t* window = (window_t*)regs->ebx;
 
 	regs->eax = window_get_text_color(window);
 }
 
 static void syscall_get_background_color(registers_t* regs) {
 	// TODO: validate parent
-	window_t* window = regs->ebx;
+	window_t* window = (window_t*)regs->ebx;
 
 	regs->eax = window_get_background_color(window);
 }
 
 static void syscall_get_cursor_x(registers_t* regs) {
 	// TODO: validate parent
-	window_t* window = regs->ebx;
+	window_t* window = (window_t*)regs->ebx;
 
 	regs->eax = window_get_cursor_x(window);
 }
 
 static void syscall_get_cursor_y(registers_t* regs) {
 	// TODO: validate parent
-	window_t* window = regs->ebx;
+	window_t* window = (window_t*)regs->ebx;
 
 	regs->eax = window_get_cursor_y(window);
 }
 
 static void syscall_set_cursor_pos(registers_t* regs) {
 	// TODO: validate parent
-	window_t* window = regs->ebx;
+	window_t* window = (window_t*)regs->ebx;
 
 	uint16_t x = regs->ecx;
 	uint16_t y = regs->edx;
@@ -104,7 +105,7 @@ static void syscall_set_cursor_pos(registers_t* regs) {
 
 static void syscall_scroll(registers_t* regs) {
 	// TODO: validate parent
-	window_t* window = regs->ebx;
+	window_t* window = (window_t*)regs->ebx;
 
 	uint16_t n = regs->ecx;
 
@@ -113,21 +114,21 @@ static void syscall_scroll(registers_t* regs) {
 
 static void syscall_width(registers_t* regs) {
 	// TODO: validate parent
-	window_t* window = regs->ebx;
+	window_t* window = (window_t*)regs->ebx;
 
 	regs->eax = window_get_width(window);
 }
 
 static void syscall_height(registers_t* regs) {
 	// TODO: validate parent
-	window_t* window = regs->ebx;
+	window_t* window = (window_t*)regs->ebx;
 
 	regs->eax = window_get_height(window);
 }
 
 static void syscall_clear_line(registers_t* regs) {
 	// TODO: validate parent
-	window_t* window = regs->ebx;
+	window_t* window = (window_t*)regs->ebx;
 
 	uint16_t n = regs->ecx;
 
@@ -136,7 +137,7 @@ static void syscall_clear_line(registers_t* regs) {
 
 static void syscall_set_visible(registers_t* regs) {
 	// TODO: validate parent
-	window_t* window = regs->ebx;
+	window_t* window = (window_t*)regs->ebx;
 
 	bool vis = regs->ecx;
 
@@ -145,35 +146,35 @@ static void syscall_set_visible(registers_t* regs) {
 
 static void syscall_redraw(registers_t* regs) {
 	// TODO: validate parent
-	window_t* window = regs->ebx;
+	window_t* window = (window_t*)regs->ebx;
 
 	window_redraw(window);
 }
 
 static void syscall_get_x(registers_t* regs) {
 	// TODO: validate parent
-	window_t* window = regs->ebx;
+	window_t* window = (window_t*)regs->ebx;
 	
 	regs->eax = window_get_x(window);
 }
 
 static void syscall_get_y(registers_t* regs) {
 	// TODO: validate parent
-	window_t* window = regs->ebx;
+	window_t* window = (window_t*)regs->ebx;
 
 	regs->eax = window_get_y(window);
 }
 
 static void syscall_restore_cursor(registers_t* regs) {
 	// TODO: validate parent
-	window_t* window = regs->ebx;
+	window_t* window = (window_t*)regs->ebx;
 
 	window_restore_cursor(window);
 }
 
 static void syscall_reposition(registers_t* regs) {
 	// TODO: validate parent
-	window_t* window = regs->ebx;
+	window_t* window = (window_t*)regs->ebx;
 
 	uint16_t x = regs->ecx;
 	uint16_t y = regs->edx;
@@ -214,7 +215,7 @@ void window_register_syscalls() {
 // TODO: check for native terminal on some of these functions
 
 window_t* window_create(window_t* parent, uint16_t x, uint16_t y, uint16_t width, uint16_t height, bool visible) {
-	window_t* window = malloc(sizeof(window_t));
+	window_t* window = (window_t*)malloc(sizeof(window_t));
 
 	// TODO: assert(parent == null)
 
@@ -226,7 +227,7 @@ window_t* window_create(window_t* parent, uint16_t x, uint16_t y, uint16_t width
 	window->fg_col = 0x0;
 	window->bg_col = 0xf;
 	window->visible = visible;
-	window->screen_buffer = malloc(sizeof(cell_t) * width * height);
+	window->screen_buffer = (cell_t*)malloc(sizeof(cell_t) * width * height);
 
 	return window;
 }

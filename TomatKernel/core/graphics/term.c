@@ -33,7 +33,7 @@ void term_init() {
 	native.parent = 0;
 	native.x = 0;
 	native.y = 0;
-	native.screen_buffer = NATIVE_TERM_VIDEO_ADDRESS;
+	native.screen_buffer = (cell_t*)NATIVE_TERM_VIDEO_ADDRESS;
 	native.cursor_x = 0;
 	native.cursor_y = 0;
 	native.bg_col = 0x0;
