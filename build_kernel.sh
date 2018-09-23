@@ -6,8 +6,9 @@ LDPARAMS="-melf_i386"
 
 echo "Preparing kernel compilation"
 
-echo "  Removing old binary"
-rm kernel.bin
+echo "  Removing old binaries"
+rm kernel.elf 2> /dev/null
+rm kernel.debug.elf 2> /dev/null
 
 echo "  Removing old build folder"
 rm -rf build
@@ -50,20 +51,21 @@ if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
 	echo "Removing debug symbols (for non debug version)"
 	objcopy --strip-debug kernel.debug.elf kernel.elf
 	
-	echo "Building ISO"
-	mkdir iso
-	mkdir iso/boot
-	mkdir iso/boot/grub
-	cp kernel.elf iso/boot/kernel.elf
-	echo 'set timeout=0'						>> iso/boot/grub/grub.cfg
-	echo 'set default=0'						>> iso/boot/grub/grub.cfg
-	echo ''									 >> iso/boot/grub/grub.cfg
-	echo 'menuentry "TomatOS" {'				>> iso/boot/grub/grub.cfg
-	echo '  multiboot /boot/kernel.elf'		 >> iso/boot/grub/grub.cfg
-	echo '  boot'							   >> iso/boot/grub/grub.cfg
-	echo '}'									>> iso/boot/grub/grub.cfg
-	grub-mkrescue --output=kernel.iso iso
-	rm -rf iso
+	# for now we don't care about iso
+	#echo "Building ISO"
+	#mkdir iso
+	#mkdir iso/boot
+	#mkdir iso/boot/grub
+	#cp kernel.elf iso/boot/kernel.elf
+	##echo 'set timeout=0'						>> iso/boot/grub/grub.cfg
+	#echo 'set default=0'						>> iso/boot/grub/grub.cfg
+	#echo ''									 >> iso/boot/grub/grub.cfg
+	##echo 'menuentry "TomatOS" {'				>> iso/boot/grub/grub.cfg
+	#echo '  multiboot /boot/kernel.elf'		 >> iso/boot/grub/grub.cfg
+	#echo '  boot'							   >> iso/boot/grub/grub.cfg
+	#echo '}'									>> iso/boot/grub/grub.cfg
+	#grub-mkrescue --output=kernel.iso iso
+	#rm -rf iso
 
 elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
 	echo "Skipping link (can't link on windows)"
