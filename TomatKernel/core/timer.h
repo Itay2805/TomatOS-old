@@ -10,7 +10,7 @@ extern "C" {
 	void timer_init(void);
 
 	uint32_t timer_start(uint32_t uid, uint32_t millis);
-	void timer_cancel(uint32_t timer);
+	void timer_cancel(uint32_t uid, uint32_t timer);
 
 #ifdef __cplusplus
 }

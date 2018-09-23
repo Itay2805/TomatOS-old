@@ -4,10 +4,7 @@
 #include <stdint.h>
 
 // This makes
-#define USER_GUEST ((uint8_t)0)
-// GUEST user can only read, write and execute files that are set to GUEST user, nothing else
-
-#define USER_ROOT ((uint8_t)0xFE)
+#define USER_ROOT ((uint8_t)0)
 // ROOT can read, write and execute any files
 
 #define USER_ALIVE ((uint8_t)0xFF)

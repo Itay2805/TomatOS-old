@@ -118,6 +118,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="icxxabi.hpp" />
+    <ClInclude Include="tomato\Color.hpp" />
     <ClInclude Include="tomato\heap.h" />
     <ClInclude Include="tomato\Heap.hpp" />
     <ClInclude Include="tomato\os.h" />
@@ -125,6 +126,7 @@
     <ClInclude Include="tomato\syscalls.h" />
     <ClInclude Include="tomato\term.h" />
     <ClInclude Include="tomato\Term.hpp" />
+    <ClInclude Include="tomato\Window.hpp" />
     <ClInclude Include="tomato\windows.h" />
   </ItemGroup>
   <ItemGroup>

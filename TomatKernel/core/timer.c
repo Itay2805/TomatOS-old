@@ -3,6 +3,7 @@
 #include <boot/interrupts/pic.h>
 #include <boot/interrupts/isr.h>
 #include <core/process/process.h>
+#include <core/process/syscall.h>
 
 #include <stdbool.h>
 #include <core/sbuf.h>
@@ -40,9 +41,37 @@ static void handle_timer_irq(registers_t* regs) {
 	scheduler_update(regs, true);
 }
 
+static void syscall_timer_start(registers_t* regs) {
+	uint32_t millis = regs->ebx;
+
+	process_t* process = process_get_running();
+	if (process == NULL) {
+		kpanic("[timer] Called timer_start without a running process");
+		return;
+	}
+
+	timer_start(process->uid, millis);
+}
+
+static void syscall_timer_cancel(registers_t* regs) {
+	uint32_t id = regs->ebx;
+
+	process_t* process = process_get_running();
+	if (process == NULL) {
+		kpanic("[timer] Called timer_cancel without a running process");
+		return;
+	}
+
+	timer_cancel(process->uid, id);
+}
+
 void timer_init(void) {
 	// set interrupt handler
 	register_irq_handler(IRQ_TIMER, handle_timer_irq);
+
+	// register syscalls
+	syscall_register(SYSCALL_OS_START_TIMER, syscall_timer_start);
+	syscall_register(SYSCALL_OS_CANCEL_TIMER, syscall_timer_cancel);
 
 	// initialize pit
 	uint32_t divisor = 1193180 / (1000 / 10);
@@ -69,9 +98,9 @@ uint32_t timer_start(uint32_t uid, uint32_t millis) {
 	return newTimer.id;
 }
 
-void timer_cancel(uint32_t id) {
+void timer_cancel(uint32_t uid, uint32_t id) {
 	for (timer_t* timer = timers; timer < buf_end(timers); timer++) {
-		if (timer->id == id) {
+		if (timer->id == id && timer->uid == uid) {
 			timer->finished = true;
 		}
 	}

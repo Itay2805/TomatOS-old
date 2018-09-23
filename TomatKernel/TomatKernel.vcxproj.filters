@@ -93,10 +93,10 @@
     <ClCompile Include="core\timer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\term-old.c">
+    <ClCompile Include="core\graphics\term.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\graphics\term.c">
+    <ClCompile Include="core\graphics\window.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -149,10 +149,10 @@
     <ClInclude Include="core\process\perm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="core\term-old.h">
+    <ClInclude Include="core\graphics\term.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="core\graphics\term.h">
+    <ClInclude Include="core\graphics\window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

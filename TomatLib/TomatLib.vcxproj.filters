@@ -42,6 +42,12 @@
     <ClInclude Include="tomato\windows.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="tomato\Window.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tomato\Color.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="icxxabi.cpp">

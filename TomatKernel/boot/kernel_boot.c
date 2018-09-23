@@ -13,6 +13,8 @@
 #include <core/process/process.h>
 #include <core/process/perm.h>
 
+#include <core/timer.h>
+
 extern void kmain();
 
 void kernel_boot(const void* multiboot_structure, uint32_t multiboot_magic) {
@@ -46,6 +48,9 @@ void kernel_boot(const void* multiboot_structure, uint32_t multiboot_magic) {
 	term_write("[TomatoBoot] registering process syscalls and initializing alive\n");
 	process_init();
 
+	term_write("[TomatoBoot] registering and initializing timer\n");
+	timer_init();
+
 	// from here we are technically done with boot and should
 	// only focus on loading libraries and such
 	term_clear();
@@ -58,11 +63,7 @@ void kernel_boot(const void* multiboot_structure, uint32_t multiboot_magic) {
 	process_start(&foreground);
 
 	term_write("[TomatoKernel] Starting alive\n");
-	asm volatile
-		("int $0x80"
-			:
-			: "a"(SYSCALL_START_ALIVE)
-			);
+	asm("int $0x80" : : "a"(SYSCALL_START_ALIVE));
 
 	kpanic("SHOULD NOT HAVE REACHED HERE!!!");
 }

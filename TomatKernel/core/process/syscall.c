@@ -4,6 +4,8 @@
 
 #include <string.h>
 
+// TODO: configure SYSENTER/SYSEXIT for this instead of using interrupts (maybe allow for both)
+
 static syscall_handler_t handlers[SYSCALL_END];
 
 static void syscall_handler(registers_t* regs) {
