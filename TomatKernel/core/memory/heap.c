@@ -1,6 +1,8 @@
 #include "heap.h"
 
 #include <stddef.h>
+#include <string.h>
+
 #include <kernel.h>
 
 #include <core/process/process.h>
@@ -101,7 +103,7 @@ static void syscall_allocate(registers_t* regs) {
 	if (process == NULL) {
 		kpanic("[heap] attempted to call allocate with no running process");
 	}
-	regs->eax = heap_allocate(&process->heap, size);
+	regs->eax = (uint32_t)heap_allocate(&process->heap, size);
 }
 
 static void syscall_reallocate(registers_t* regs) {
@@ -111,7 +113,7 @@ static void syscall_reallocate(registers_t* regs) {
 	}
 	uintptr_t ptr = (uintptr_t)regs->ebx;
 	size_t size = (size_t)regs->ecx;
-	regs->eax = heap_reallocate(&process->heap, ptr, size);
+	regs->eax = (uint32_t)heap_reallocate(&process->heap, ptr, size);
 }
 
 static void syscall_free(registers_t* regs) {
