@@ -91,7 +91,6 @@ void paging_free_page(uintptr_t physAddr) {
 
 void paging_init(void) {
 	// all the pages from 0 to the end of the kernel size are always identity pages
-	int identityPageCount = ceil((size_t)(&tomatkernel_size) / 4096.0);
 
 	// prepare page bitmap 
 	first_free = 0;
@@ -103,18 +102,18 @@ void paging_init(void) {
 	// make sure the kernel pages are already set as used
 	int kernelPageCount = (((size_t)&tomatkernel_size - 1) / 4096) + 1;
 	for (int i = 0; i < kernelPageCount; i++) {
-		paging_allocate_page((size_t)&tomatkernel_start + i * 4096);
+		paging_allocate_page((uintptr_t)&tomatkernel_start + i * 4096);
 	}
 
 	// make sure the kernel heap is allocated
-	uintptr_t kernelHeapStart = (((size_t)&tomatkernel_end + 1024 * 1024) >> 12) << 12;
+	uintptr_t kernelHeapStart = (uintptr_t)((((size_t)&tomatkernel_end + 1024 * 1024) >> 12) << 12);
 	int kernelHeapPageCount = (((1024 * 1024 * 45) - 1) / 4096) + 1;
 	for (int i = 0; i < kernelHeapPageCount; i++) {
-		paging_allocate_page((size_t)(kernelHeapStart) + i * 4096);
+		paging_allocate_page((uintptr_t)(kernelHeapStart) + i * 4096);
 	}
 
 	// make sure the VGA text buffer is already set as used
-	paging_allocate_page(0xb8000);
+	paging_allocate_page((uintptr_t)0xb8000);
 }
 
 void paging_init_directory(page_directory_t pageDirectory) {
@@ -127,7 +126,7 @@ void paging_init_directory(page_directory_t pageDirectory) {
 	}
 
 	// identity map the kernel heap
-	uintptr_t kernelHeapStart = (((size_t)&tomatkernel_end + 1024 * 1024) >> 12) << 12;
+	uintptr_t kernelHeapStart = (uintptr_t)((((size_t)&tomatkernel_end + 1024 * 1024) >> 12) << 12);
 	int kernelHeapPageCount = (((1024 * 1024 * 45) - 1) / 4096) + 1;
 	for (int i = 0; i < kernelHeapPageCount; i++) {
 		paging_map_identity(pageDirectory, (uintptr_t)(kernelHeapStart) + i * 4096, true, false);
