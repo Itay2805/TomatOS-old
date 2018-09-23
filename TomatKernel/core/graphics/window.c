@@ -1,5 +1,7 @@
 #include "window.h"
 
+#include <stddef.h>
+
 #include <core/process/syscall.h>
 
 //////////////////////////////////////////////////////////////
