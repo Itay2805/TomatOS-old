@@ -49,7 +49,7 @@ void process_init(void) {
 	paging_init_directory(pd);
 
 	// init the heap to use the kernel heap
-	uintptr_t kernelHeapStart = (((size_t)&tomatkernel_end + 1024 * 1024) >> 12) << 12;
+	uintptr_t kernelHeapStart = (uintptr_t)((((size_t)&tomatkernel_end + 1024 * 1024) >> 12) << 12);
 	heap_create(&alive_process.heap, kernelHeapStart);
 	
 	// only after we inited the heap we want to init the pd on the alive process
@@ -68,7 +68,7 @@ void process_init(void) {
 
 	// set the stack to be the kernel stack
 	// we will never really used it tbh
-	alive_process.stack = tomatokernel_stack;
+	alive_process.stack = (uintptr_t)(&tomatokernel_stack);
 
 	// alive doesn't need events
 	alive_process.events = NULL;
@@ -90,7 +90,7 @@ void process_init(void) {
 	// allocate the sbuf manually (because currently there is still no alive process so the malloc will have no heap)
 	size_t newCap = 16;
 	size_t newSize = offsetof(BufHdr, buf) + newCap * sizeof(process_t);
-	BufHdr* newHdr = heap_allocate(&alive_process.heap, newSize);
+	BufHdr* newHdr = (BufHdr*)heap_allocate(&alive_process.heap, newSize);
 	newHdr->len = 1;
 	newHdr->cap = newCap;
 	processes = (process_t*)newHdr->buf;
@@ -245,11 +245,11 @@ static void process_switch(registers_t* currentregs, process_t* current, process
 		// this should set everything for running the process for the first time
 		// there is a problem tho, right now when the process exited there is no return address...
 		// maybe make it so the program must calls exit when finishing to run?
-		newprocess->registers.esp = newprocess->stack;
-		newprocess->registers.ebp = newprocess->stack;
-		newprocess->registers.useresp = newprocess->stack;
-		newprocess->registers.eip = newprocess->main;
-
+		newprocess->registers.esp = (uint32_t)newprocess->stack;
+		newprocess->registers.ebp = (uint32_t)newprocess->stack;
+		newprocess->registers.useresp = (uint32_t)newprocess->stack;
+		newprocess->registers.eip = (uint32_t)newprocess->main;
+		
 		newprocess->registers.eflags = 0x202;
 	}
 
@@ -292,7 +292,7 @@ void scheduler_update(registers_t* regs, bool fromTimer) {
 
 	process_t* running_process = NULL;
 	can_update = false;
-	int count = 0;
+	uint32_t count = 0;
 
 	// we only want to update times if the update comes from the timer
 	if (fromTimer) {
@@ -317,7 +317,7 @@ void scheduler_update(registers_t* regs, bool fromTimer) {
 					pull_event(process->events, &process->current_event);
 					// the event is moved to eax since the project was suspended during a call to pull_event
 					// and it will expect a return value for the pull_event when resuming
-					process->registers.eax = &process->current_event;
+					process->registers.eax = (uint32_t)&process->current_event;
 					process->status = PROCESS_NORMAL;
 				}
 			}
