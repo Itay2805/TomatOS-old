@@ -33,12 +33,12 @@ void gdt_init() {
 	// also, it can only run in the procee, heap, and stack area of the process
 	// so it can not access any of the rest
 
-	uintptr_t kernel_end = &tomatkernel_end + 1024 * 1024 * 50;
+	uintptr_t kernel_end = (uintptr_t)&tomatkernel_end + 1024 * 1024 * 50;
 
     entry.DPL = 3;
-    gdt_entry_set(GDT_SEGMENT_USER_CODE, kernel_end, 0xFFFFFFFF, entry);
+    gdt_entry_set(GDT_SEGMENT_USER_CODE, (uint32_t)kernel_end, 0xFFFFFFFF, entry);
     entry.code = 1;
-    gdt_entry_set(GDT_SEGMENT_USER_DATA, kernel_end, 0xFFFFFFFF, entry);
+    gdt_entry_set(GDT_SEGMENT_USER_DATA, (uint32_t)kernel_end, 0xFFFFFFFF, entry);
 	
     gdt_t* gdtptr = &gdt;
     // flush gdt
