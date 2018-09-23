@@ -2,7 +2,7 @@
 
 #include <stdbool.h>
 
-#include <core/term.h>
+#include <core/graphics/term.h>
 #include <core/memory/heap.h>
 #include <core/process/process.h>
 

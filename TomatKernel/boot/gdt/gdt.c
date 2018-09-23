@@ -1,14 +1,10 @@
 #include "gdt.h"
 
-#include <core/term.h>
-
 gdt_t gdt;
 static gdt_entry_t gdt_entries[GDT_ENTRIES];
 static void gdt_entry_set(uint32_t index, uint32_t base, uint32_t limit, gdt_entry_t access);
 
 void gdt_init() {
-	term_write("[gdt] Initializing\n");
-
     // set gdt
     gdt.entries = gdt_entries;
     gdt.size = sizeof(gdt_entries);

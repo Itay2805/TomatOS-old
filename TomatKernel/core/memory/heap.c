@@ -146,19 +146,17 @@ static void syscall_get_ptr_size(registers_t* regs) {
 	}
 }
 
-//////////////////////////////////////////////////////////////
-//// the implementation
-//////////////////////////////////////////////////////////////
-
-void heap_init(void) {
-	term_write("[heap] Initializing\n");
-
+void heap_register_syscalls(void) {
 	syscall_register(SYSCALL_HEAP_ALLOCATE, syscall_allocate);
 	syscall_register(SYSCALL_HEAP_REALLOCATE, syscall_reallocate);
 	syscall_register(SYSCALL_HEAP_FREE, syscall_free);
 	syscall_register(SYSCALL_HEAP_GET_PTR_SIZE, syscall_get_ptr_size);
 	syscall_register(SYSCALL_HEAP_GET_USED_SIZE, syscall_get_used_size);
 }
+
+//////////////////////////////////////////////////////////////
+//// the implementation
+//////////////////////////////////////////////////////////////
 
 void heap_create(heap_context_t* context, uintptr_t start_address) {
 	context->size = PAGE_SIZE;

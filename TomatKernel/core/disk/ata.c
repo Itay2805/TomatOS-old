@@ -4,7 +4,7 @@
 
 #include <string.h>
 
-#include <core/term.h>
+#include <core/graphics/term.h>
 #include <kernel.h>
 
 #define MASTER	0xE0 

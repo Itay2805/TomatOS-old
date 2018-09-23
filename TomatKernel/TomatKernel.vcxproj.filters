@@ -48,9 +48,6 @@
     <ClCompile Include="boot\interrupts\pic.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\term.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="klibc\string.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -96,6 +93,12 @@
     <ClCompile Include="core\timer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="core\term-old.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\graphics\term.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="boot\gdt\gdt.h">
@@ -108,9 +111,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="boot\interrupts\pic.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\term.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="kernel.h">
@@ -144,6 +144,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="core\timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\process\perm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\term-old.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\graphics\term.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

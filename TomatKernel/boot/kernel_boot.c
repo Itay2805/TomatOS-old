@@ -5,7 +5,7 @@
 
 #include <string.h>
 
-#include <core/term.h>
+#include <core/graphics/term.h>
 #include <core/memory/paging.h>
 #include <core/memory/heap.h>
 
@@ -15,41 +15,49 @@
 
 extern void kmain();
 
-// the kernel boot is for initializing core drivers
 void kernel_boot(const void* multiboot_structure, uint32_t multiboot_magic) {
 	UNUSED(multiboot_structure);
 	UNUSED(multiboot_magic);
+	
+	// the kernel boot will basically load the basics needed for the kernel
+	// to run like segments all the way to registering syscalls
 
-	// initialize terminal
 	term_init();
-
 	term_clear();
-	term_write("Booting into TomatKernel\n\n");
+	term_write("Booting into TomatKernel...\n\n");
 
-	// init the paging
+	term_write("[TomatoBoot] initializing paging\n");
 	paging_init();
 
-	// initialize gdt and idt
-    gdt_init();
-    idt_init();
+	term_write("[TomatoBoot] initializing gdt\n");
+	gdt_init();
+	term_write("[TomatoBoot] initializing idt\n");
+	idt_init();
+	term_write("[TomatoBoot] initializing syscalls\n");
 	syscall_init();
 
-	// initialize syscalls for term
-	term_init_syscalls();
+	term_write("[TomatoBoot] registering terminal and window syscalls\n");
+	term_register_syscalls();
+	window_register_syscalls();
 
-	// initialize kernel heap
-	heap_init();
+	term_write("[TomatoBoot] registering heap sysalls\n");
+	heap_register_syscalls();
+
+	term_write("[TomatoBoot] registering process syscalls and initializing alive\n");
 	process_init();
 
+	// from here we are technically done with boot and should
+	// only focus on loading libraries and such
 	term_clear();
-
-	term_write("Welcome to TomatKernel!");
+	term_set_cursor_pos(0, 0);
+	term_write("Welcome to TomatKernel!\n\n");
 	
-	// initialize a foreground process
+	term_write("[TomatoKernel] Loading core service\n");
 	process_t foreground;
 	process_create(&foreground, kmain, USER_ALIVE, true); // this will run as alive just because it must have the kernel segments
 	process_start(&foreground);
 
+	term_write("[TomatoKernel] Starting alive\n");
 	asm volatile
 		("int $0x80"
 			:

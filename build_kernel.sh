@@ -14,10 +14,10 @@ rm -rf build
 mkdir build
 
 echo "Compiling TomatKernel"
-for d in $(find TomatKernel -type d)
+for d in $(find TomatKernel -type d 2> /dev/null)
 do
 	mkdir "build/$d"
-	for f in $(find $d/*.c)
+	for f in $(find $d/*.c 2> /dev/null)
 	do
 		of="$f.o"
 		of="build/$of"
@@ -25,7 +25,7 @@ do
 		echo "  $f > $of"
 		gcc $CCFLAGS -c "./$f" -o "./$of" 
 	done
-	for f in $(find $d/*.cpp)
+	for f in $(find $d/*.cpp 2> /dev/null)
 	do
 		of="$f.o"
 		of="build/$of"
@@ -33,7 +33,7 @@ do
 		echo "  $f > $of"
 		g++ $GCCPARAMS -c "./$f" -o "./$of" 
 	done
-	for f in $(find $d/*.asm)
+	for f in $(find $d/*.asm 2> /dev/null)
 	do
 		of="$f.o"
 		of="build/$of"

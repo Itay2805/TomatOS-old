@@ -4,13 +4,12 @@
 #include <stdint.h>
 
 #include <tomato/syscalls.h>
+#include <tomato/windows.h>
 
 #if __cplusplus
 extern "C" {
 #endif
-
-	// TODO: How to implement terminal override accross processes
-
+	
 	static inline void tomato_term_write(const char* data) {
 		asm("int $0x80" : : "a"(SYSCALL_TERM_WRITE), "b"(data));
 	}
@@ -39,40 +38,56 @@ extern "C" {
 		return ret;
 	}
 
-	static inline void tomato_term_set_cursor_pos(uint8_t x, uint8_t y) {
+	static inline void tomato_term_set_cursor_pos(uint16_t x, uint16_t y) {
 		asm("int $0x80" : : "a"(SYSCALL_TERM_SET_CURSOR_POS), "b"(x), "c"(y));
 	}
 
-	static inline uint8_t tomato_term_get_cursor_x() {
-		uint8_t ret = 0;
+	static inline uint16_t tomato_term_get_cursor_x() {
+		uint16_t ret = 0;
 		asm("int $0x80" : "=a"(ret) : "a"(SYSCALL_TERM_GET_CURSOR_X));
 		return ret;
 	}
 
-	static inline uint8_t tomato_term_get_cursor_y() {
-		uint8_t ret = 0;
+	static inline uint16_t tomato_term_get_cursor_y() {
+		uint16_t ret = 0;
 		asm("int $0x80" : "=a"(ret) : "a"(SYSCALL_TERM_GET_CURSOR_Y));
 		return ret;
 	}
 
-	static inline void tomato_term_scroll(uint8_t n) {
+	static inline void tomato_term_scroll(uint16_t n) {
 		asm("int $0x80" : : "a"(SYSCALL_TERM_SCROLL), "b"(n));
 	}
 
-	static inline uint8_t tomato_term_width() {
-		uint8_t ret = 0;
+	static inline uint16_t tomato_term_width() {
+		uint16_t ret = 0;
 		asm("int $0x80" : "=a"(ret) : "a"(SYSCALL_TERM_WIDTH));
 		return ret;
 	}
 
-	static inline uint8_t tomato_term_height() {
-		uint8_t ret = 0;
+	static inline uint16_t tomato_term_height() {
+		uint16_t ret = 0;
 		asm("int $0x80" : "=a"(ret) : "a"(SYSCALL_TERM_HEIGHT));
 		return ret;
 	}
 
-	static inline void tomato_term_clear_line(uint8_t n) {
+	static inline void tomato_term_clear_line(uint16_t n) {
 		asm("int $0x80" : : "a"(SYSCALL_TERM_CLEAR_LINE), "b"(n));
+	}
+
+	static inline tomato_window_t tomato_term_native() {
+		tomato_window_t ret = 0;
+		asm("int $0x80" : "=a"(ret) : "a"(SYSCALL_TERM_NATIVE));
+		return ret;
+	}
+
+	static inline tomato_window_t tomato_term_current() {
+		tomato_window_t ret = 0;
+		asm("int $0x80" : "=a"(ret) : "a"(SYSCALL_TERM_CURRENT));
+		return ret;
+	}
+
+	static inline void tomato_term_redirect(tomato_window_t window) {
+		asm("int $0x80" : : "a"(SYSCALL_TERM_REDIRECT), "b"(window));
 	}
 
 #if __cplusplus

@@ -18,18 +18,12 @@ static int updates;
 static bool enabled = false;
 
 void alive_wait_for_events(void) {
-	asm volatile
-		("int $0x80"
-			:
-			: "a"(SYSCALL_TERM_WRITE)
-			, "b"("alive_wait_for_events")
-			);
-
 	// reset the status of the alive process, just in case
 	processes[ALIVE].status = PROCESS_SUSPENDED;
 	processes[ALIVE].started = true;
 	while (true) {
 		asm("nop"); // do nothing
+		asm("hlt"); // do nothing
 	}
 }
 

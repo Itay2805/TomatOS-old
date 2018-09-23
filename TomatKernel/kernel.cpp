@@ -1,5 +1,3 @@
-#include <core/term.h>
-
 #include <core/cpp.hpp>
 #include <core/icxxabi.hpp>
 
@@ -25,5 +23,6 @@ extern "C" void kmain() {
 	while (true) {
 		// do not exit
 		asm("nop");
+		asm("hlt");
 	}
 }

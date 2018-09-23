@@ -7,28 +7,13 @@
 
 #include <tomato/term.h>
 
+#include <tomato/Window.hpp>
+#include <tomato/Color.hpp>
+
 namespace Tomato {
 
-	enum class Color : uint8_t {
-		BLACK,
-		BLUE,
-		GREEN,
-		CYAN,
-		RED,
-		MAGENTA,
-		BROWN,
-		GRAY,
-		DARK_GRAY,
-		LIGHT_BLUE,
-		LIGHT_GREEN,
-		LIGHT_CYAN,
-		LIGHT_RED,
-		LIGHT_MAGENTA,
-		YELLOW,
-		WHITE
-	};
-
 	class Term {
+	friend class Window;
 	public:
 
 		inline static void Write(const char* text) {
@@ -55,34 +40,46 @@ namespace Tomato {
 			return (Color)tomato_term_get_background_color();
 		}
 
-		inline static void SetCursorPos(uint8_t x, uint8_t y) {
+		inline static void SetCursorPos(uint16_t x, uint16_t y) {
 			tomato_term_set_cursor_pos(x, y);
 		}
 
-		inline static uint8_t GetCursorX() {
+		inline static uint16_t GetCursorX() {
 			return tomato_term_get_cursor_x();
 		}
 
-		inline static uint8_t GetCursorY() {
+		inline static uint16_t GetCursorY() {
 			return tomato_term_get_cursor_y();
 		}
 
-		inline static void Scroll(uint8_t n = 1) {
+		inline static void Scroll(uint16_t n = 1) {
 			tomato_term_scroll(n);
 		}
 
-		inline static uint8_t Height() {
+		inline static uint16_t Height() {
 			return tomato_term_height();
 		}
 
-		inline static uint8_t Width() {
+		inline static uint16_t Width() {
 			return tomato_term_width();
 		}
 
-		inline static void ClearLine(uint8_t n) {
+		inline static void ClearLine(uint16_t n) {
 			tomato_term_clear_line(n);
 		}
 
+		inline static void Redirect(Window window) {
+			tomato_term_redirect(window.GetHandler());
+		}
+
+		inline static Window Current() {
+			return Window(tomato_term_current());
+		}
+
+		inline static Window Native() {
+			return Window(tomato_term_native());
+		}
+		
 	};
 
 }

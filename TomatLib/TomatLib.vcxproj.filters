@@ -33,6 +33,15 @@
     <ClInclude Include="icxxabi.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="tomato\os.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tomato\OS.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tomato\windows.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="icxxabi.cpp">

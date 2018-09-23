@@ -3,15 +3,14 @@
 #include <string.h>
 #include <stddef.h>
 
-#include <core/term.h>
+#include <core/graphics/term.h>
+#include <core/process/process.h>
 
 #include "pic.h"
 
 static irq_handler_t handlers[256];
 
 void isr_init(void) {
-	term_write("[isr] Initializing\n");
-
     memset(handlers, 0, sizeof(handlers));
 }
 
@@ -86,6 +85,32 @@ void kernel_exception_handler(registers_t regs) {
 	term_write("\n");
 
 	term_set_background_color(COLOR_BLACK);
+	process_t* process = process_get_running();
+
+	term_write("Process: ");
+
+	term_write("\tUID: ");
+	if (process == 0) {
+		term_write("NO RUNNING PROCESS");
+	}
+	else {
+		uitoa(process->uid, numBuf, 16);
+		term_write(numBuf);
+	}
+	term_write("\n");
+
+	term_write("\tUser: ");
+	if (process == 0) {
+		term_write("NO RUNNING PROCESS");
+	}
+	else {
+		uitoa(process->user, numBuf, 16);
+		term_write(numBuf);
+	}
+	term_write("\n");
+
+	term_write("\n");
+
 	term_write("Registers: \n");
 
 	uitoa(regs.eip, numBuf, 16);
@@ -95,6 +120,7 @@ void kernel_exception_handler(registers_t regs) {
 
 	// TODO: in the future this will need to just terminate the process
 	// and maybe save this information on to the disk or idk
+	// process_kill(&regs, process->uid);
 
 	// stop execution...
 	while (1) {

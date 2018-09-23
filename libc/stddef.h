@@ -4,17 +4,14 @@
 #define NULL (0)
 #define UNUSED(x) (void)(x)
 
-#define offsetof(type, element) ((unsigned long)&(((type *)0)->element))
+#define MIN(x, y) ((x) <= (y) ? (x) : (y))
+#define MAX(x, y) ((x) >= (y) ? (x) : (y))
 
-#define alloca(p, N) \
-    do { \
-        __asm__ __volatile__( \
-        "sub %1, %%esp \n" \
-        "mov %%esp, %0  \n" \
-         : "=m"(p) \
-         : "i"(N) \
-         : "esp"); \
-    } while(0)
+#if _MBCS
+	#define offsetof(st, m) (size_t)(unsigned long)&(((st *)0)->m)
+#else
+	#define offsetof(st, m) __builtin_offsetof(st, m)
+#endif
 
 #if __cplusplus
 extern "C" {

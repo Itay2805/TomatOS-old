@@ -3,8 +3,6 @@
 #include <string.h>
 #include <math.h>
 
-#include <core/term.h>
-
 #include <kernel.h>
 
 #define PAGE_COUNT 1024 * 1024
@@ -92,8 +90,6 @@ void paging_free_page(uintptr_t physAddr) {
 //////////////////////////////////////////////////////////////////////////////////////
 
 void paging_init(void) {
-	term_write("[paging] Initializing\n");
-
 	// all the pages from 0 to the end of the kernel size are always identity pages
 	int identityPageCount = ceil((size_t)(&tomatkernel_size) / 4096.0);
 

@@ -2,8 +2,6 @@
 
 #include <string.h>
 
-#include <core/term.h>
-
 #include "pic.h"
 #include "isr.h"
 #include "../gdt/gdt.h"
@@ -12,8 +10,6 @@ idt_t idt;
 static idt_gate_t gates[256];
 
 void idt_init(void) {
-	term_write("[idt] Initializing\n");
-
     memset(gates, 0, sizeof(gates));
     idt.size = sizeof(gates) - 1;
     idt.gates = gates;

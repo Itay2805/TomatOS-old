@@ -35,13 +35,14 @@
     <ClCompile Include="boot\kernel_boot.c" />
     <ClCompile Include="core\cpp.cpp" />
     <ClCompile Include="core\disk\ata.c" />
+    <ClCompile Include="core\graphics\term.c" />
     <ClCompile Include="core\icxxabi.cpp" />
     <ClCompile Include="core\memory\heap.c" />
     <ClCompile Include="core\memory\paging.c" />
     <ClCompile Include="core\process\process.c" />
     <ClCompile Include="core\process\syscall.c" />
     <ClCompile Include="core\sbuf.c" />
-    <ClCompile Include="core\term.c" />
+    <ClCompile Include="core\term-old.c" />
     <ClCompile Include="core\timer.c" />
     <ClCompile Include="kernel.c" />
     <ClCompile Include="kernel.cpp" />
@@ -56,14 +57,16 @@
     <ClInclude Include="boot\interrupts\pic.h" />
     <ClInclude Include="core\cpp.hpp" />
     <ClInclude Include="core\disk\ata.h" />
+    <ClInclude Include="core\graphics\term.h" />
     <ClInclude Include="core\icxxabi.hpp" />
     <ClInclude Include="core\memory\heap.h" />
     <ClInclude Include="core\memory\paging.h" />
+    <ClInclude Include="core\process\perm.h" />
     <ClInclude Include="core\process\process.h" />
     <ClInclude Include="core\process\syscall.h" />
     <ClInclude Include="core\process\thread.h" />
     <ClInclude Include="core\sbuf.h" />
-    <ClInclude Include="core\term.h" />
+    <ClInclude Include="core\term-old.h" />
     <ClInclude Include="core\timer.h" />
     <ClInclude Include="kernel.h" />
   </ItemGroup>

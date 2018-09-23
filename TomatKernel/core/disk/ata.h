@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 
+// TODO: needs to do an overall to the disk driver
+// make it more flexible like allowing multiple disks 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
