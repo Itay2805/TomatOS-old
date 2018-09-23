@@ -43,7 +43,7 @@ char* strrchr(const char *s, int c) {
 			ret = s;
 		}
 	} while (*s++);
-	return ret;
+	return (char*)ret;
 }
 
 char* strrev(char* str) {
