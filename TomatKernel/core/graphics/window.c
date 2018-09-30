@@ -248,16 +248,26 @@ void window_write(window_t* window, const char* text) {
 				window->cursor_x = 0;
 			} break;
 			case '\t': {
+				// tab is two spaces
 				cell_t* cell = &window->screen_buffer[window->cursor_x + window->cursor_y * window->width];
 				cell->chr = c;
 				cell->bg = window->bg_col;
 				cell->fg = window->fg_col;
+
+				cell = &window->screen_buffer[1 + window->cursor_x + window->cursor_y * window->width];
+				cell->chr = c;
+				cell->bg = window->bg_col;
+				cell->fg = window->fg_col;
+
+				window->cursor_x += 2;
 			} break;
 			default: {
 				cell_t* cell = &window->screen_buffer[window->cursor_x + window->cursor_y * window->width];
 				cell->chr = c;
 				cell->bg = window->bg_col;
 				cell->fg = window->fg_col;
+
+				window->cursor_x++;
 			} break;
 		}
 		text++;
@@ -274,6 +284,10 @@ void window_write(window_t* window, const char* text) {
 			window->cursor_x = 0;
 			window_scroll(window, 1);
 		}
+	}
+
+	if(window->cursor_x > 0) {
+		window->cursor_x--;
 	}
 
 	if (window->visible) {

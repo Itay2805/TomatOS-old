@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE"
+            ],
+            "compilerPath": "C:\\TDM-GCC-64\\bin\\gcc.exe",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}

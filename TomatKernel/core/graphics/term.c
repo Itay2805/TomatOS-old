@@ -2,6 +2,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <kernel.h>
 
 #include <core/process/syscall.h>
 
@@ -27,6 +28,8 @@ static void syscall_write(registers_t* regs) {
 }
 
 static void syscall_clear(registers_t* regs) {
+	UNUSED(regs);
+
 	term_clear();
 }
 
@@ -89,15 +92,15 @@ static void syscall_redirect(registers_t* regs) {
 	// TODO: validate parent
 	window_t* window = (window_t*)regs->ebx;
 
-	regs->eax = term_redirect(window);
+	regs->eax = (uint32_t)term_redirect(window);
 }
 
 static void syscall_native(registers_t* regs) {
-	regs->eax = term_native();
+	regs->eax = (uint32_t)term_native();
 }
 
 static void syscall_current(registers_t* regs) {
-	regs->eax = term_current();
+	regs->eax = (uint32_t)term_current();
 }
 
 void term_register_syscalls() {
@@ -139,6 +142,8 @@ void term_init() {
 	native.cursor_y = 0;
 	native.bg_col = 0x0;
 	native.fg_col = 0xf;
+
+	current = &native;
 }
 
 void term_write(const char* text) {
