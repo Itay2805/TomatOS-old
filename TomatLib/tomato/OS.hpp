@@ -14,6 +14,7 @@ namespace Tomato {
 
 		public:
 			enum EventKind {
+				ANY = TOMATO_EVENT_ANY,
 				TERMINATE = TOMATO_EVENT_TERMINATE,
 				TIMER = TOMATO_EVENT_TIMER
 			};
@@ -44,11 +45,36 @@ namespace Tomato {
 			Timer ID() const {
 				return event.data[0];
 			}
+
+			bool operator==(Timer& timer) {
+				return ID() == timer;
+			}
+
+			bool operator!=(Timer& timer) {
+				return ID() != timer;
+			}
 		};
 
+		static Timer StartTimer(float millis) {
+			// TODO:
+		}
+
+		static void CancelTimer(Timer timer) {
+			// TODO:
+		}
+
+		static void Sleep(float millis) {
+			Timer timer = StartTimer(millis);
+			TimerEvent event;
+			do {
+				event = PullEvent<TimerEvent>(Event::TIMER);
+			} while (event != timer); 
+			// technically a bad idea since it will destroy any other timer events
+		}
+
 		template<class E = Event>
-		static E PullEvent() {
-			E event = PullEventRaw();
+		static E PullEvent(Event::EventKind kind = Event::ANY) {
+			E event = PullEventRaw(kind);
 			if (event.Kind() == Event::TERMINATE) {
 				// terminate process
 				tomato_os_kill(0);
@@ -57,9 +83,13 @@ namespace Tomato {
 		}
 
 		template<class E = Event>
-		static E PullEventRaw() {
+		static E PullEventRaw(Event::EventKind kind = Event::ANY) {
+			tomato_event_t event;
+			do {
+				tomato_os_pull_event(&event);
+			} while (event.kind != (uint32_t)kind);
 			E e;
-			tomato_os_pull_event(e.Raw());
+			*e.Raw() = event;
 			return e;
 		}
 

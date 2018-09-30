@@ -72,9 +72,6 @@ extern "C" {
 
 	process_t* process_get_running(void);
 
-	// runs when a process wants to get an event
-	void process_pull_event(registers_t* regs, event_t* event);
-	
 	// runs every 10ms
 	void scheduler_update(registers_t* regs, bool fromTimer);
 		

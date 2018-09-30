@@ -8,6 +8,10 @@
 
 #include <boot/gdt/gdt.h>
 
+//////////////////////////////////////////////////////////////
+//// Static Variables
+//////////////////////////////////////////////////////////////
+
 #define PROCESS_MAX_STACK_SIZE (1024 * 1024 * 20)
 #define ALIVE 0
 
@@ -17,7 +21,11 @@ static process_t* processes = NULL;
 static int updates;
 static bool enabled = false;
 
-void alive_wait_for_events(void) {
+//////////////////////////////////////////////////////////////
+//// Alive process
+//////////////////////////////////////////////////////////////
+
+static void alive_wait_for_events(void) {
 	// reset the status of the alive process, just in case
 	processes[ALIVE].status = PROCESS_SUSPENDED;
 	processes[ALIVE].started = true;
@@ -27,6 +35,54 @@ void alive_wait_for_events(void) {
 	}
 }
 
+static void initialize_alive(process_t* alive_process) {
+	// the paging is only used when alive is waiting for events
+	page_directory_t pd = (page_directory_t)paging_allocate_new_page();
+	paging_init_directory(pd);
+
+	// init the heap to use the kernel heap
+	uintptr_t kernelHeapStart = (uintptr_t)((((size_t)&tomatkernel_end + 1024 * 1024) >> 12) << 12);
+	heap_create(&alive_process->heap, kernelHeapStart);
+
+	// only after we inited the heap we want to init the pd on the alive process
+	alive_process->pd = pd;
+
+	// this will be set to suspended since it is waiting for events technically
+	alive_process->status = PROCESS_SUSPENDED;
+
+	// the main method in this case is only used for when all processes
+	// are waiting for events, and we must exit the interrupt and wait for
+	// other events, the main of alive will just do nothing
+	alive_process->main = alive_wait_for_events;
+
+	// registers won't be really used
+	// alive doesn't need events so no current event
+
+	// set the stack to be the kernel stack
+	// we will never really used it tbh
+	alive_process->stack = (uintptr_t)(&tomatokernel_stack);
+
+	// alive doesn't need events
+	alive_process->events = NULL;
+
+	// alive always runs as root
+	alive_process->user = USER_ALIVE;
+
+	// alive always has uid 0
+	alive_process->uid = ALIVE;
+
+	// doesn't really matter since it will never be activated
+	alive_process->priority = 0;
+
+	// background process
+	alive_process->foreground = false;
+
+	alive_process->started = true;
+}
+
+//////////////////////////////////////////////////////////////
+//// syscalls
+//////////////////////////////////////////////////////////////
 
 static void syscall_start_alive(registers_t* regs) {
 	if (enabled) return; // only runs once after everything is ready to run
@@ -39,53 +95,76 @@ static void syscall_start_alive(registers_t* regs) {
 	scheduler_update(regs, false);
 }
 
+static void syscall_pull_event(registers_t* regs) {
+	event_t* event = (event_t*)regs->ebx;
+	// verify pointer
+
+	process_t* process = process_get_running();
+	if (process == NULL) {
+		kpanic("[os] tried to call pull_event without a running process");
+	}
+
+	if (buf_len(process->events) > 0) {
+		// we have an event, give it to the current process
+		pull_event(process->events, &process->current_event);
+		regs->eax = (uint32_t)&process->current_event;
+	}
+	else {
+		// no events, syspend and switch to another process
+		process->status = PROCESS_SUSPENDED;
+		scheduler_update(regs, false);
+	}
+}
+
+static void syscall_queue_event(registers_t* regs) {
+	event_t* event = (event_t*)regs->ebx;
+	// verify pointer
+
+	process_t* process;
+	process_t* targetProcess;
+
+	process = process_get_running();
+	if (process == NULL) {
+		kpanic("[os] called queue_event without a running process.");
+	}
+
+	uint32_t uid = regs->ecx;
+	if (uid == 0) {
+		// the target process is the current process
+		targetProcess = process;
+	}
+	else {
+		// get the target process
+		targetProcess = process_get(uid);
+	}
+
+	if (targetProcess == NULL) {
+		// error, target process must be running
+		return;
+	}
+	
+	// make sure we have permission over that process
+	if (process != targetProcess && !has_permission(targetProcess->user, process->user)) {
+		// error! to queue event on another process you must have root permission
+		return;
+	}
+
+	// push the event
+	buf_push(targetProcess->events, *event);
+}
+
+//////////////////////////////////////////////////////////////
+//// Implementation
+//////////////////////////////////////////////////////////////
+
 void process_init(void) {
 	syscall_register(SYSCALL_START_ALIVE, syscall_start_alive);
 
+	syscall_register(SYSCALL_OS_PULL_EVENT, syscall_pull_event);
+	syscall_register(SYSCALL_OS_QUEUE_EVENT, syscall_queue_event);
+
 	process_t alive_process;
-
-	// the paging is only used when alive is waiting for events
-	page_directory_t pd  = (page_directory_t)paging_allocate_new_page();
-	paging_init_directory(pd);
-
-	// init the heap to use the kernel heap
-	uintptr_t kernelHeapStart = (uintptr_t)((((size_t)&tomatkernel_end + 1024 * 1024) >> 12) << 12);
-	heap_create(&alive_process.heap, kernelHeapStart);
-	
-	// only after we inited the heap we want to init the pd on the alive process
-	alive_process.pd = pd;
-
-	// this will be set to suspended since it is waiting for events technically
-	alive_process.status = PROCESS_SUSPENDED;
-
-	// the main method in this case is only used for when all processes
-	// are waiting for events, and we must exit the interrupt and wait for
-	// other events, the main of alive will just do nothing
-	alive_process.main = alive_wait_for_events;
-
-	// registers won't be really used
-	// alive doesn't need events so no current event
-
-	// set the stack to be the kernel stack
-	// we will never really used it tbh
-	alive_process.stack = (uintptr_t)(&tomatokernel_stack);
-
-	// alive doesn't need events
-	alive_process.events = NULL;
-
-	// alive always runs as root
-	alive_process.user = USER_ALIVE;
-
-	// alive always has uid 0
-	alive_process.uid = ALIVE;
-
-	// doesn't really matter since it will never be activated
-	alive_process.priority = 0;
-
-	// background process
-	alive_process.foreground = false;
-
-	alive_process.started = true;
+	initialize_alive(&alive_process);
 
 	// allocate the sbuf manually (because currently there is still no alive process so the malloc will have no heap)
 	size_t newCap = 16;
@@ -99,6 +178,7 @@ void process_init(void) {
 
 process_t* process_get(uint32_t uid) {
 	for (process_t* process = processes; process < buf_end(processes); process++) {
+		if (process->status == PROCESS_DEAD) continue;
 		if (process->uid == uid) return process;
 	}
 	return NULL;
@@ -111,43 +191,6 @@ process_t* process_get_running(void) {
 	}
 	return NULL;
 }
-
-//////////////////////////////////////////////////////////////////////////////////////
-// Process Memory Mapping
-//////////////////////////////////////////////////////////////////////////////////////
-// Virtual Addressing
-//
-// Page 0:
-//		Always set to taken, this is just because otherwise it might cause a fault
-//		if the page is allocated
-//
-// Page 1-255:
-//		Unused (so the GDT will be simpler)
-// 
-// Page 256-kernel_end:
-//		Kernel Pages, the user is not allowed to write or excute code in them
-//
-// 11520 Pages:
-//		Kernel heap, the user is not allowed to write or excute code in it
-//
-// 1280 Pages: 
-//		Unused, to use as buffer between kernel heap and program
-//
-// program_size Pages:
-//		Where the program will be loaded to
-//
-// 256 Pages: 
-//		Unused, to use as buffer between program and stack
-//
-// 5120 Pages:
-//		Process stack (20MB)
-//
-// 256 Pages: 
-//		Unused, to use as buffer between stack and heap
-//
-// Rest of the pages will be used as the heap of the process
-//
-//////////////////////////////////////////////////////////////////////////////////////
 
 void process_create(process_t* process, process_main_t main, int user,  bool foreground)
 {
@@ -267,19 +310,6 @@ static void process_switch(registers_t* currentregs, process_t* current, process
 	*currentregs = newprocess->registers;
 	newprocess->status = PROCESS_RUNNING;
 	paging_set(newprocess->pd);
-}
-
-void process_pull_event(registers_t* regs, event_t* event) {
-	// wants to get an event
-	process_t* process = process_get_running();
-	if (buf_len(process->events) > 0) {
-		pull_event(process->events, event);
-	}
-	else {
-		// no events, will switch to another process while waiting for events
-		process->status = PROCESS_SUSPENDED;
-		scheduler_update(regs, false);
-	}
 }
 
 void scheduler_update(registers_t* regs, bool fromTimer) {
