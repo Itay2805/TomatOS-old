@@ -3,6 +3,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <core/process/syscall.h>
+
 #define NATIVE_TERM_VIDEO_ADDRESS 0xb8000
 
 #define NATIVE_TERM_WIDTH 80
@@ -15,8 +17,107 @@ static window_t* current;
 //// syscalls
 //////////////////////////////////////////////////////////////
 
+// TODO: Should only be accessible to foreground processes!
+
+static void syscall_write(registers_t* regs) {
+	// TODO: validate string pointer
+	char* text = (char*)regs->ebx;
+
+	term_write(text);
+}
+
+static void syscall_clear(registers_t* regs) {
+	term_clear();
+}
+
+static void syscall_set_text_color(registers_t* regs) {
+	uint8_t color = regs->ebx;
+
+	term_set_text_color(color);
+}
+
+static void syscall_set_background_color(registers_t* regs) {
+	uint8_t color = regs->ebx;
+
+	term_set_background_color(color);
+}
+
+static void syscall_get_text_color(registers_t* regs) {
+	regs->eax = term_get_text_color();
+}
+
+static void syscall_get_background_color(registers_t* regs) {
+	regs->eax = term_get_background_color();
+}
+
+static void syscall_get_cursor_x(registers_t* regs) {
+	regs->eax = term_get_cursor_x();
+}
+
+static void syscall_get_cursor_y(registers_t* regs) {
+	regs->eax = term_get_cursor_y();
+}
+
+static void syscall_set_cursor_pos(registers_t* regs) {
+	uint16_t x = regs->ebx;
+	uint16_t y = regs->ecx;
+
+	term_set_cursor_pos(x, y);
+}
+
+static void syscall_scroll(registers_t* regs) {
+	uint16_t n = regs->ebx;
+
+	term_scroll(n);
+}
+
+static void syscall_width(registers_t* regs) {
+	regs->eax = term_get_width();
+}
+
+static void syscall_height(registers_t* regs) {
+	regs->eax = term_get_height();
+}
+
+static void syscall_clear_line(registers_t* regs) {
+	uint16_t n = regs->ebx;
+
+	term_clear_line(n);
+}
+
+static void syscall_redirect(registers_t* regs) {
+	// TODO: validate parent
+	window_t* window = (window_t*)regs->ebx;
+
+	regs->eax = term_redirect(window);
+}
+
+static void syscall_native(registers_t* regs) {
+	regs->eax = term_native();
+}
+
+static void syscall_current(registers_t* regs) {
+	regs->eax = term_current();
+}
+
 void term_register_syscalls() {
-	// TODO: register syscalls...
+	syscall_register(SYSCALL_TERM_WRITE, syscall_write);
+	syscall_register(SYSCALL_TERM_CLEAR, syscall_clear);
+	syscall_register(SYSCALL_TERM_SET_TEXT_COLOR, syscall_set_text_color);
+	syscall_register(SYSCALL_TERM_SET_BACKGROUND_COLOR, syscall_set_background_color);
+	syscall_register(SYSCALL_TERM_GET_TEXT_COLOR, syscall_get_text_color);
+	syscall_register(SYSCALL_TERM_GET_BACKGROUND_COLOR, syscall_get_background_color);
+	syscall_register(SYSCALL_TERM_GET_CURSOR_X, syscall_get_cursor_x);
+	syscall_register(SYSCALL_TERM_GET_CURSOR_Y, syscall_get_cursor_y);
+	syscall_register(SYSCALL_TERM_SET_CURSOR_POS, syscall_set_cursor_pos);
+	syscall_register(SYSCALL_TERM_SCROLL, syscall_scroll);
+	syscall_register(SYSCALL_TERM_WIDTH, syscall_width);
+	syscall_register(SYSCALL_TERM_HEIGHT, syscall_height);
+	syscall_register(SYSCALL_TERM_CLEAR_LINE, syscall_clear_line);
+
+	syscall_register(SYSCALL_TERM_REDIRECT, syscall_redirect);
+	syscall_register(SYSCALL_TERM_NATIVE, syscall_native);
+	syscall_register(SYSCALL_TERM_CURRENT, syscall_current);
 }
 
 //////////////////////////////////////////////////////////////
