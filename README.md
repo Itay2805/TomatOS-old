@@ -10,9 +10,9 @@ Already got working:
 * kernel terminal library
 * some stuff that are needed for C++ to work
 * ATA driver
+* Processes - Still needs more testing to check if scheduling actually works :shrug:
 
 Working on currently:
-* Processes - most of the code is finished, just needs testing
 * FileSystem - I have some plan on how it will be but still needs implementing
 
-The current goals are to get the proesses fully working and get some basic shell process working, Then I would like to start working on some exe format and allow to start binary files as processes, and then have a compiler that will generate and link an assembly that will be able to run, and once that is finished maybe get the OS to self host (long long future)
+The current goals to get some basic shell process working, Then I would like to start working on some exe format and allow to start binary files as processes, and then have a compiler that will generate and link an assembly that will be able to run, and once that is finished maybe get the OS to self host (long long future)
