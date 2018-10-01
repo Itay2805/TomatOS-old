@@ -11,6 +11,7 @@
             "executable": "./kernel.debug.elf",
             "target": ":1234",
             "remote": true,
+            "preLaunchTask": "Launch QEMU",
             "cwd": "${workspaceRoot}"
         }
     ]
