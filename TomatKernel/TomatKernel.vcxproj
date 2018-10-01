@@ -22,6 +22,7 @@
     <None Include="boot\bootloader.asm" />
     <None Include="boot\gdt\gdt.asm" />
     <None Include="boot\interrupts\isr.asm" />
+    <None Include="core\memory\README.md" />
     <None Include="kernel.asm" />
     <None Include="core\memory\paging.asm" />
     <None Include="klibc\setjmp.asm" />
