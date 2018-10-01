@@ -10,6 +10,7 @@ Already got working:
 * kernel terminal library
 * some stuff that are needed for C++ to work
 * ATA driver
+* [Syscalls](syscalls.md)
 * Processes - Still needs more testing to check if scheduling actually works :shrug:
 
 Working on currently:
