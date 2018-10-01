@@ -1,6 +1,6 @@
 #!/bin/bash
-GCCPARAMS="-g -fdiagnostics-color=always -Wall -std=c++11 -fno-use-cxa-atexit -Ilibc -ITomatKernel -Wextra -m32 -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Wno-write-strings"
-CCFLAGS="-g -fdiagnostics-color=always -Wall -Wextra -Ilibc -ITomatKernel -std=gnu99 -nostdinc -fno-builtin -fno-stack-protector -march=i386 -m32"
+GCCPARAMS="-g -fdiagnostics-color=always -Wall -std=c++11 -fno-use-cxa-atexit -ITomatLib -Ilibc -ITomatKernel -Wextra -m32 -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Wno-write-strings"
+CCFLAGS="-g -fdiagnostics-color=always -Wall -Wextra -ITomatLib -Ilibc -ITomatKernel -std=gnu99 -nostdinc -fno-builtin -fno-stack-protector -march=i386 -m32"
 NASMPARAMS="-g -f elf"
 LDPARAMS="-melf_i386"
 
@@ -86,6 +86,8 @@ do
 		fi
 	done
 done
+
+# Compile 
 
 # Linking
 if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then

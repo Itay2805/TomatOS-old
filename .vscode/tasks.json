@@ -6,7 +6,9 @@
         {
             "label": "Build Kernel",
             "type": "shell",
-            "command": "./build_kernel.sh"
+            "group": "build",
+            "command": "./build_kernel.sh",
+            "problemMatcher": "$gcc"
         },
         {
             "label": "Launch QEMU",
