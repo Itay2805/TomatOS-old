@@ -5,67 +5,113 @@ NASMPARAMS="-g -f elf"
 LDPARAMS="-melf_i386"
 
 echo "Preparing kernel compilation"
+should_link_kernel="false"
+mkdir "build" 2> /dev/null
 
-echo "  Removing old binaries"
-rm kernel.elf 2> /dev/null
-rm kernel.debug.elf 2> /dev/null
-
-echo "  Removing old build folder"
-rm -rf build
-mkdir build
-
+# Compiling Kernel
 echo "Compiling TomatKernel"
 for d in $(find TomatKernel -type d 2> /dev/null)
 do
-	mkdir "build/$d"
+	mkdir "build/$d" 2> /dev/null
+
+	# Build C files
 	for f in $(find $d/*.c 2> /dev/null)
 	do
 		of="$f.o"
 		of="build/$of"
 		objects="$objects $of"
-		echo "  $f > $of"
-		gcc $CCFLAGS -c "./$f" -o "./$of" 
+		
+		if [ -e "build/$f.modtime" ]; then
+			if [ "$(stat -c %y $f)" == "$(cat build/$f.modtime)" ]; then
+				echo "	$f > not changed, skipping"
+			else
+				echo "  $f > $of"
+				gcc $CCFLAGS -c "./$f" -o "./$of" 
+				echo "$(stat -c %y $f)" >> "build/$f.modtime"
+				should_link_kernel="true"
+			fi
+		else
+			echo "  $f > $of"
+			gcc $CCFLAGS -c "./$f" -o "./$of"
+			echo "$(stat -c %y $f)" >> "build/$f.modtime"
+			should_link_kernel="true"
+		fi
 	done
+
+	# Build cpp files
 	for f in $(find $d/*.cpp 2> /dev/null)
 	do
 		of="$f.o"
 		of="build/$of"
 		objects="$objects $of"
-		echo "  $f > $of"
-		g++ $GCCPARAMS -c "./$f" -o "./$of" 
+
+		if [ -e "build/$f.modtime" ]; then
+			if [ "$(stat -c %y $f)" == "$(cat build/$f.modtime)" ]; then
+				echo "	$f > not changed, skipping"
+			else
+				echo "  $f > $of"
+				g++ $GCCPARAMS -c "./$f" -o "./$of" 
+				echo "$(stat -c %y $f)" >> "build/$f.modtime"
+				should_link_kernel="true"
+			fi
+		else
+			echo "  $f > $of"
+			g++ $GCCPARAMS -c "./$f" -o "./$of" 
+			echo "$(stat -c %y $f)" >> "build/$f.modtime"
+			should_link_kernel="true"
+		fi
 	done
+
+	# Build asm files
 	for f in $(find $d/*.asm 2> /dev/null)
 	do
 		of="$f.o"
 		of="build/$of"
 		objects="$objects $of"
-		echo "  $f > $of"
-		nasm $NASMPARAMS "./$f" -o "./$of"
+
+		if [ -e "build/$f.modtime" ]; then
+			if [ "$(stat -c %y $f)" == "$(cat build/$f.modtime)" ]; then
+				echo "	$f > not changed, skipping"
+			else
+				echo "  $f > $of"
+				nasm $NASMPARAMS "./$f" -o "./$of"
+				echo "$(stat -c %y $f)" >> "build/$f.modtime"
+				should_link_kernel="true"
+			fi
+		else
+			echo "  $f > $of"
+			nasm $NASMPARAMS "./$f" -o "./$of"
+			echo "$(stat -c %y $f)" >> "build/$f.modtime"
+			should_link_kernel="true"
+		fi
 	done
 done
 
+# Linking
 if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-	echo "Linking Kernel"
-	ld $LDPARAMS -T TomatKernel/linker.ld -o kernel.debug.elf $objects
-	
-	echo "Removing debug symbols (for non debug version)"
-	objcopy --strip-debug kernel.debug.elf kernel.elf
-	
-	# for now we don't care about iso
-	#echo "Building ISO"
-	#mkdir iso
-	#mkdir iso/boot
-	#mkdir iso/boot/grub
-	#cp kernel.elf iso/boot/kernel.elf
-	##echo 'set timeout=0'						>> iso/boot/grub/grub.cfg
-	#echo 'set default=0'						>> iso/boot/grub/grub.cfg
-	#echo ''									 >> iso/boot/grub/grub.cfg
-	##echo 'menuentry "TomatOS" {'				>> iso/boot/grub/grub.cfg
-	#echo '  multiboot /boot/kernel.elf'		 >> iso/boot/grub/grub.cfg
-	#echo '  boot'							   >> iso/boot/grub/grub.cfg
-	#echo '}'									>> iso/boot/grub/grub.cfg
-	#grub-mkrescue --output=kernel.iso iso
-	#rm -rf iso
+
+	echo $should_link_kernel
+
+	if [ "$should_link_kernel" == "true" ]; then
+		echo "Linking Kernel"
+		ld $LDPARAMS -T TomatKernel/linker.ld -o kernel.debug.elf $objects
+		echo "Removing debug symbols (for non debug version)"
+		objcopy --strip-debug kernel.debug.elf kernel.elf
+	else
+		if [ -e "kernel.debug.elf" ]; then
+			echo "Nothing changed, skipping kernel-link"
+		else
+			echo "No kernel.debug.elf file found, linking kernel"
+			ld $LDPARAMS -T TomatKernel/linker.ld -o kernel.debug.elf $objects
+		fi
+
+		if [ -e "kernel.elf" ]; then
+			echo "Non-Debug version already exists"
+		else
+			echo "Removing debug symbols (for non debug version)"
+			objcopy --strip-debug kernel.debug.elf kernel.elf
+		fi
+	fi
 
 elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
 	echo "Skipping link (can't link on windows)"

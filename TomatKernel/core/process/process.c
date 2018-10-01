@@ -21,6 +21,8 @@ static process_t* processes = NULL;
 static int updates;
 static bool enabled = false;
 
+static void pull_event(event_t* events, event_t* to);
+
 //////////////////////////////////////////////////////////////
 //// Alive process
 //////////////////////////////////////////////////////////////
@@ -96,9 +98,6 @@ static void syscall_start_alive(registers_t* regs) {
 }
 
 static void syscall_pull_event(registers_t* regs) {
-	event_t* event = (event_t*)regs->ebx;
-	// verify pointer
-
 	process_t* process = process_get_running();
 	if (process == NULL) {
 		kpanic("[os] tried to call pull_event without a running process");
