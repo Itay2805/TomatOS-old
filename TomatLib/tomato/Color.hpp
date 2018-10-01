@@ -1,6 +1,10 @@
 #ifndef TOMATO_COLOR_HPP
 #define TOMATO_COLOR_HPP
 
+#if !defined(__cplusplus)
+	#error("Tomato::Color is a C++ library and can only be included inside a C++ file")
+#endif
+
 #include <stdint.h>
 
 namespace Tomato {

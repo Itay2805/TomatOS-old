@@ -2,27 +2,19 @@
 #include <core/icxxabi.hpp>
 
 #include <string.h>
-#include <setjmp.h>
 
-#include <core/process/syscall.h>
+#include <tomato/Term.hpp>
+#include <tomato/OS.hpp>
 
 extern "C" void kmain() {
-	asm volatile
-		("int $0x80"
-			:
-			: "a"(SYSCALL_TERM_CLEAR)
-			);
+	using namespace Tomato;
 
-	asm volatile
-		("int $0x80"
-			:
-			: "a"(SYSCALL_TERM_WRITE)
-			, "b"("We are now in the main process!\n")
-		);
+	Term::Clear();
+	Term::SetCursorPos(0, 0);
+	Term::Write("Inside process!\n");
 
 	while (true) {
-		// do not exit
-		asm("nop");
-		asm("hlt");
+		Event event = OS::PullEvent();
+		Term::Write("Got Event!\n");
 	}
 }

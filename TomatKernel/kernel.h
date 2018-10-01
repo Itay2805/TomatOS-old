@@ -4,11 +4,7 @@
 #include <stdint.h>
 
 // just so VisualStudio will continue to have nice syntax highlighting 
-#ifndef _MBCS
 #define PACKED __attribute__((packed))
-#else
-#define PACKED
-#endif
 
 typedef struct registers {
 	uint32_t ds;

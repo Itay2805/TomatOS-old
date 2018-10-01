@@ -14,6 +14,9 @@ namespace Tomato {
 
 	class Term {
 	friend class Window;
+	private:
+		Term() {}
+		
 	public:
 
 		inline static void Write(const char* text) {

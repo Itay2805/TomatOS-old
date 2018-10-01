@@ -1,40 +1,46 @@
 #ifndef TOMATO_OS_HPP
 #define TOMATO_OS_HPP
 
+#if !defined(__cplusplus)
+	#error("Tomato::OS is a C++ library and can only be included inside a C++ file")
+#endif
+
 #include <tomato/os.h>
 
 namespace Tomato {
-	namespace OS {
 
-		
+	class Event {
+	protected:
+		tomato_event event;
 
-		class Event {
-		protected:
-			tomato_event event;
-
-		public:
-			enum EventKind {
-				ANY = TOMATO_EVENT_ANY,
-				TERMINATE = TOMATO_EVENT_TERMINATE,
-				TIMER = TOMATO_EVENT_TIMER
-			};
-
-			Event() 
-			{
-
-			}
-
-			tomato_event_t* Raw() {
-				return &event;
-			}
-
-			EventKind Kind() const {
-				return (EventKind)event.kind;
-			}
+	public:
+		enum EventKind {
+			ANY = TOMATO_EVENT_ANY,
+			TERMINATE = TOMATO_EVENT_TERMINATE,
+			TIMER = TOMATO_EVENT_TIMER
 		};
 
-		typedef uint32_t Timer;
+		Event() 
+		{
 
+		}
+
+		tomato_event_t* Raw() {
+			return &event;
+		}
+
+		EventKind Kind() const {
+			return (EventKind)event.kind;
+		}
+	};
+
+	typedef uint32_t Timer;
+
+	class OS {
+	private:
+		OS() {}
+
+	public:
 		class TimerEvent : Event {
 		public:
 			TimerEvent()
@@ -74,12 +80,13 @@ namespace Tomato {
 
 		template<class E = Event>
 		static E PullEvent(Event::EventKind kind = Event::ANY) {
-			E event = PullEventRaw(kind);
+			Event event = PullEventRaw(kind);
+			E* ep = (E*)&event;
 			if (event.Kind() == Event::TERMINATE) {
 				// terminate process
 				tomato_os_kill(0);
 			}
-			return event;
+			return *ep;
 		}
 
 		template<class E = Event>
@@ -97,7 +104,7 @@ namespace Tomato {
 			tomato_os_queue_event(event.Raw(), uid);
 		}
 
-	}
+	};
 }
 
 #endif

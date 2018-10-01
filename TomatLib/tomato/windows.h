@@ -26,7 +26,7 @@ extern "C" {
 	}
 
 	inline static void tomato_window_clear(tomato_window_t window) {
-		asm("int $0x80" : : "a"(SYSCALL_WINDOW_DELETE), "b"(window), "c"(data));
+		asm("int $0x80" : : "a"(SYSCALL_WINDOW_DELETE), "b"(window));
 	}
 
 	inline static void tomato_window_set_text_color(tomato_window_t window, uint8_t color) {
@@ -66,7 +66,7 @@ extern "C" {
 	}
 
 	inline static void tomato_window_scroll(tomato_window_t window, uint16_t n) {
-		asm("int $0x80" : "=a"(ret) : "a"(SYSCALL_WINDOW_SCROLL), "b"(window), "c"(n));
+		asm("int $0x80" : : "a"(SYSCALL_WINDOW_SCROLL), "b"(window), "c"(n));
 	}
 
 	inline static uint16_t tomato_window_width(tomato_window_t window) {
@@ -82,15 +82,15 @@ extern "C" {
 	}
 
 	inline static void tomato_window_clear_line(tomato_window_t window, uint16_t n) {
-		asm("int $0x80" : "=a"(ret) : "a"(SYSCALL_WINDOW_CLEAR_LINE), "b"(window), "c"(n));
+		asm("int $0x80" : : "a"(SYSCALL_WINDOW_CLEAR_LINE), "b"(window), "c"(n));
 	}
 	
 	inline static void tomato_window_set_visible(tomato_window_t window, bool vis) {
-		asm("int $0x80" : "=a"(ret) : "a"(SYSCALL_WINDOW_SET_VISIBLE), "b"(window), "c"(vis));
+		asm("int $0x80" : : "a"(SYSCALL_WINDOW_SET_VISIBLE), "b"(window), "c"(vis));
 	}
 
 	inline static void tomato_window_redraw(tomato_window_t window) {
-		asm("int $0x80" : "=a"(ret) : "a"(SYSCALL_WINDOW_REDRAW), "b"(window));
+		asm("int $0x80" : : "a"(SYSCALL_WINDOW_REDRAW), "b"(window));
 	}
 
 	inline static uint16_t tomato_window_get_x(tomato_window_t window) {
@@ -106,11 +106,11 @@ extern "C" {
 	}
 
 	inline static void tomato_window_restore_cursor(tomato_window_t window) {
-		asm("int $0x80" : "=a"(ret) : "a"(SYSCALL_WINDOW_RESTORE_CURSOR), "b"(window));
+		asm("int $0x80" : : "a"(SYSCALL_WINDOW_RESTORE_CURSOR), "b"(window));
 	}
 
 	inline static void tomato_window_reposition(tomato_window_t window, uint16_t x, uint16_t y, uint16_t width, uint16_t height) {
-		asm("int $0x80" : "=a"(ret) : "a"(SYSCALL_WINDOW_REPOSITION), "b"(window), "c"(x), "d"(y), "S"(width), "D"(height));
+		asm("int $0x80" : : "a"(SYSCALL_WINDOW_REPOSITION), "b"(window), "c"(x), "d"(y), "S"(width), "D"(height));
 	}
 	
 #ifdef __cplusplus

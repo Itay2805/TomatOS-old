@@ -2,7 +2,7 @@
 #define TOMATO_WINDOW_HPP
 
 #if !defined(__cplusplus)
-#error("Tomato::Term is a C++ library and can only be included inside a C++ file")
+#error("Tomato::Window is a C++ library and can only be included inside a C++ file")
 #endif
 
 #include <tomato/windows.h>
