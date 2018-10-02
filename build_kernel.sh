@@ -5,6 +5,9 @@ NASMPARAMS="-g -f elf"
 LDPARAMS="-melf_i386"
 
 echo "Preparing kernel compilation"
+rm kernel.debug.elf 2> /dev/null
+rm kernel.elf 2> /dev/null
+
 should_link_kernel="false"
 mkdir "build" 2> /dev/null
 
