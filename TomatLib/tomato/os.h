@@ -31,7 +31,9 @@ extern "C" {
 		asm("int $0x80" : : "a"(SYSCALL_OS_CANCEL_TIMER), "b"(tid));
 	}
 
-	static inline void tomato_os_kill(uint32_t id) {
+	static inline void tomato_os_kill(uint32_t uid) {
+		UNUSED(uid);
+
 		// not implemented
 	}
 
@@ -49,7 +51,7 @@ extern "C" {
 		asm("int $0x80" : : "a"(SYSCALL_OS_QUEUE_EVENT), "b"(event), "c"(uid));
 	}
 
-	static inline void tomato_os_run(bool handle_events) {
+	static inline void tomato_os_run() {
 		// TODO
 	}
 

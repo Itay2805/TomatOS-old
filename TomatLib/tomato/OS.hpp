@@ -36,12 +36,7 @@ namespace Tomato {
 
 	typedef uint32_t Timer;
 
-	class OS {
-	private:
-		OS() {}
-
-	public:
-		class TimerEvent : Event {
+	class TimerEvent : Event {
 		public:
 			TimerEvent()
 			{
@@ -59,14 +54,20 @@ namespace Tomato {
 			bool operator!=(Timer& timer) {
 				return ID() != timer;
 			}
-		};
+	};
 
-		static Timer StartTimer(float millis) {
-			// TODO:
+	class OS {
+	private:
+		OS() {}
+
+	public:
+
+		static Timer StartTimer(float seconds) {
+			return (Timer)tomato_os_start_timer((uint32_t)(seconds * 1000));
 		}
 
 		static void CancelTimer(Timer timer) {
-			// TODO:
+			tomato_os_cancel_timer((uint32_t)timer);
 		}
 
 		static void Sleep(float millis) {
@@ -98,6 +99,11 @@ namespace Tomato {
 			E e;
 			*e.Raw() = event;
 			return e;
+		}
+
+		template<class E = Event>
+		static inline E CastEvent(Event e) {
+			return *((E*)&e);
 		}
 
 		static inline void QueueEvent(Event event, uint32_t uid = 0) {

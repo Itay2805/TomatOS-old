@@ -1,5 +1,5 @@
-#include <core/cpp.hpp>
-#include <core/icxxabi.hpp>
+#include <tomato/Heap.hpp>
+#include <icxxabi.hpp>
 
 #include <string.h>
 
@@ -13,8 +13,16 @@ extern "C" void kmain() {
 	Term::SetCursorPos(0, 0);
 	Term::Write("Inside process!\n");
 
+	Timer timer = OS::StartTimer(1.0);
+
 	while (true) {
 		Event event = OS::PullEvent();
 		Term::Write("Got Event!\n");
+		if(event.Kind() == Event::TIMER) {
+			TimerEvent t = OS::CastEvent<TimerEvent>(event);
+			if(t == timer) {
+				Term::Write("Timer Finished!\n");
+			}
+		}
 	}
 }
