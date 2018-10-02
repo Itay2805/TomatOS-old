@@ -87,7 +87,7 @@ void kernel_exception_handler(registers_t regs) {
 	term_set_background_color(COLOR_BLACK);
 	process_t* process = process_get_running();
 
-	term_write("Process: ");
+	term_write("Process:\n");
 
 	term_write("\tUID: ");
 	if (process == 0) {
