@@ -4,6 +4,17 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Clean Build",
+            "type": "shell",
+            "group": "build",
+            "command": "rm",
+            "args": [
+                "-r",
+                "./build"
+            ],
+            "problemMatcher": []
+        },
+        {
             "label": "Build Kernel",
             "type": "shell",
             "group": "build",
