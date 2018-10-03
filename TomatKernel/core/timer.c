@@ -28,13 +28,28 @@ static timer_t* timers = 0;
 
 static void handle_timer_irq(registers_t* regs) {
 	for (timer_t* timer = timers; timer < buf_end(timers); timer++) {
-		timer->millis_left -= 10;
-		if (timer->millis_left <= 0) {
+		if(timer->finished) continue;
+		if (timer->millis_left - 10 == 0 || timer->millis_left - 10 > timer->millis_left) {
+			timer->finished = true;
+
 			// timer finished, add the event
 			event_t event;
 			event.type = EVENT_TIMER;
 			event.data[0] = timer->id;
-			buf_push(process_get(timer->uid)->events, event);
+			event.data[1] = 0;
+			event.data[2] = 0;
+			event.data[3] = 0;
+
+			process_t* process = process_get(timer->uid);
+			if(process == NULL) {
+				kpanic("[TomatKernel/handle_timer_irq] invalid process uid for timer");
+			}
+
+			buf_push(process->events, event);
+
+			asm("nop");
+		}else {
+			timer->millis_left -= 10;
 		}
 	}
 
@@ -50,7 +65,7 @@ static void syscall_timer_start(registers_t* regs) {
 		return;
 	}
 
-	timer_start(process->uid, millis);
+	regs->eax = timer_start(process->uid, millis);
 }
 
 static void syscall_timer_cancel(registers_t* regs) {
@@ -83,7 +98,7 @@ void timer_init(void) {
 uint32_t timer_start(uint32_t uid, uint32_t millis) {
 	timer_t newTimer;
 	newTimer.uid = uid;
-	newTimer.id = ids++;
+	newTimer.id = ++ids;
 	newTimer.millis_left = millis;
 	newTimer.finished = false;
 

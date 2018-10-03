@@ -109,8 +109,9 @@ static void syscall_pull_event(registers_t* regs) {
 		regs->eax = (uint32_t)&process->current_event;
 	}
 	else {
-		// no events, syspend and switch to another process
+		// no events, save state, suspend and run the scheduler to find another process to run
 		process->status = PROCESS_SUSPENDED;
+		process->registers = *regs;
 		scheduler_update(regs, false);
 	}
 }

@@ -20,6 +20,7 @@ typedef enum process_status {
 
 typedef enum event_type {
 	EVENT_ALL,
+	EVENT_TERMINATE,
 	EVENT_TIMER,
 } event_type_t;
 

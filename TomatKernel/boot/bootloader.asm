@@ -11,7 +11,6 @@ CHECKSUM equ -(MAGIC + FLAGS)
 
 [section .text]
     [extern kernel_boot]
-	[extern __cxa_finalize]
 
     [global bootloader]
 	[global tomatokernel_stack]
@@ -21,16 +20,6 @@ CHECKSUM equ -(MAGIC + FLAGS)
         push eax
         push ebx
         call kernel_boot
-
-		sub esp, 4
-		mov [esp], dword 0x0
-		call __cxa_finalize
-		add esp, 4
-
-    bootloader_exit:
-        cli
-        hlt
-        jmp bootloader_exit
 
 [section .bss]
     resb 2 * 1024 * 1024

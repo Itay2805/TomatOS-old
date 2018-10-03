@@ -250,12 +250,12 @@ void window_write(window_t* window, const char* text) {
 			case '\t': {
 				// tab is two spaces
 				cell_t* cell = &window->screen_buffer[window->cursor_x + window->cursor_y * window->width];
-				cell->chr = c;
+				cell->chr = ' ';
 				cell->bg = window->bg_col;
 				cell->fg = window->fg_col;
 
 				cell = &window->screen_buffer[1 + window->cursor_x + window->cursor_y * window->width];
-				cell->chr = c;
+				cell->chr = ' ';
 				cell->bg = window->bg_col;
 				cell->fg = window->fg_col;
 

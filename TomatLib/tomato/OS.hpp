@@ -93,9 +93,15 @@ namespace Tomato {
 		template<class E = Event>
 		static E PullEventRaw(Event::EventKind kind = Event::ANY) {
 			tomato_event_t event;
-			do {
+			if(kind == Event::ANY) {
+				// any event is good
 				tomato_os_pull_event(&event);
-			} while (event.kind != (uint32_t)kind);
+			}else {
+				// we only want events of the specified type
+				do {
+					tomato_os_pull_event(&event);
+				} while (event.kind != (uint32_t)kind);
+			}
 			E e;
 			*e.Raw() = event;
 			return e;
