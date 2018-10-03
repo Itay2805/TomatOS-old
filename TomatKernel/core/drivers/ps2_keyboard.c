@@ -62,8 +62,9 @@ static void key_press(uint16_t keycode) {
 
     key_states[keycode] = true;
 
-    // because any printable character has shift-mapping this way we can create CHAR events 
-    if(shift_mapping[keycode] != 0) {
+    // check if this is a pritable character
+    // will be more advanced if we support UTF8...
+    if(keycode >= ' ' && keycode <= '~') {
         // transform if shift is pressed
         if(is_shift_pressed()) {
             keycode = shift_mapping[keycode];
@@ -135,6 +136,19 @@ void ps2_keyboard_init(void) {
     scs_mapping[0x09] = '8';
     scs_mapping[0x0a] = '9';
 
+    scs_mapping[0x29] = '`';
+    scs_mapping[0xC] = '-';
+    scs_mapping[0xD] = '=';
+    scs_mapping[0x1A] = '[';
+    scs_mapping[0x1B] = ']';
+    scs_mapping[0x27] = ';';
+    scs_mapping[0x28] = '\'';
+    scs_mapping[0x2B] = '\\';
+    scs_mapping[0x2B] = '\\';
+    scs_mapping[0x33] = ',';
+    scs_mapping[0x34] = '.';
+    scs_mapping[0x35] = '/';
+
     scs_mapping[0x1e] = 'a';
     scs_mapping[0x30] = 'b';
     scs_mapping[0x2e] = 'c';
@@ -162,6 +176,8 @@ void ps2_keyboard_init(void) {
     scs_mapping[0x15] = 'y';
     scs_mapping[0x2c] = 'z';
 
+    scs_mapping[0x39] = ' ';
+
     scs_mapping[0x2A] = KEYS_LEFT_SHIFT;
     scs_mapping[0x36] = KEYS_RIGHT_SHIFT;
 
@@ -177,6 +193,18 @@ void ps2_keyboard_init(void) {
     shift_mapping['7'] = '&';
     shift_mapping['8'] = '*';
     shift_mapping['9'] = '(';
+
+    shift_mapping['`'] = '~';
+    shift_mapping['-'] = '_';
+    shift_mapping['='] = '+';
+    shift_mapping['['] = '{';
+    shift_mapping[']'] = '}';
+    shift_mapping[';'] = ':';
+    shift_mapping['\''] = '"';
+    shift_mapping['\\'] = '|';
+    shift_mapping[','] = '<';
+    shift_mapping['.'] = '>';
+    shift_mapping['/'] = '?';
 
     shift_mapping['a'] = 'A';
     shift_mapping['b'] = 'B';
