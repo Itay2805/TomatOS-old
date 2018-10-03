@@ -12,9 +12,9 @@
 
 typedef struct ps2_status {
     // Output buffer status (0 = empty, 1 = full)
-    uint8_t output_ready : 1;
+    uint8_t output_buffer_status : 1;
     // Input buffer status (0 = empty, 1 = full)
-    uint8_t input_ready : 1;
+    uint8_t input_buffer_status : 1;
     // Meant to be cleared on reset and set by firmware (via. PS/2 Controller Configuration Byte) if the system passes self tests (POST)
     uint8_t system_flag : 1;
     // Command/data (0 = data written to input buffer is data for PS/2 device, 1 = data written to input buffer is data for PS/2 controller command)
