@@ -67,10 +67,8 @@ void idt_init(void) {
 
     idt_set_entry(IRQ_SYSCALL, handle_syscall, 3);
 
-#ifndef _MBCS
 	asm volatile("lidtl (%0)" : : "r"(&idt));
 	asm("sti");
-#endif
 
 	isr_init();
 }
