@@ -65,7 +65,7 @@ void kernel_boot(const void* multiboot_structure, uint32_t multiboot_magic) {
 	process_start(&foreground);
 
 	term_write("[TomatoKernel] Starting alive\n");
-	__asm("int $0x80" : : "a"(SYSCALL_START_ALIVE));
+	__asm("int $0x80" : : "a"(SYSCALL_START));
 	
 	// Once alive has started it means that the control is given to the core program
 	// or to the alive program. It should never return to here (Maybe make so it will 
