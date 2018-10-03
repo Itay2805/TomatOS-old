@@ -12,19 +12,25 @@ extern "C" void kmain() {
 	Term::Clear();
 	Term::SetCursorPos(0, 0);
 	Term::Write("Inside process!\n");
-
+	
 	Timer timer = OS::StartTimer(1.0);
 
 	while (true) {
-		Term::Write("Waiting for events... ");
 		Event event = OS::PullEvent();
-		Term::Write("Got Event!\n");
-		if(event.Kind() == Event::TIMER) {
-			TimerEvent t = OS::CastEvent<TimerEvent>(event);
-			if(t == timer) {
-				Term::Write("Timer Finished! Closing program...\n");
-				OS::Kill();
-			}
+		switch(event.Kind()) {
+			case Event::TIMER: {
+				TimerEvent t = OS::CastEvent<TimerEvent>(event);
+				if(t == timer) {
+					Term::Write("One second passed!\n");
+				}
+			} break;
+			case Event::CHAR: {
+				CharEvent ch = OS::CastEvent<CharEvent>(event);
+				char buf[2];
+				buf[0] = ch.Char();
+				buf[1] = 0;
+				Term::Write(buf);
+			} break;
 		}
 	}
 }

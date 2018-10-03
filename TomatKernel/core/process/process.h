@@ -18,10 +18,18 @@ typedef enum process_status {
 	PROCESS_DEAD
 } process_status_t;
 
+// TODO: Move this to the TomatLib side so it will be consistant 
 typedef enum event_type {
 	EVENT_ALL,
-	EVENT_TERMINATE,
+	EVENT_CHAR,
+	EVENT_KEY,
+	EVENT_KEY_UP,
 	EVENT_TIMER,
+	EVENT_TERMINATE,
+	EVENT_MOUSE_CLICK,
+	EVENT_MOUSE_UP,
+	EVENT_MOUSE_SCROLL,
+	EVENT_MOUSE_DRAG,
 } event_type_t;
 
 typedef struct event {
@@ -53,6 +61,7 @@ typedef struct process {
 	uint32_t suspended_time;
 	uint32_t running_time;
 	uint8_t priority;
+	bool core;
 	bool foreground;
 	bool started;
 } process_t;
@@ -68,6 +77,8 @@ extern "C" {
 	void process_start(process_t* process);
 		
 	void process_kill(registers_t* regs, process_t* process);
+
+	process_t* process_get_core_process(void);
 
 	process_t* process_get(uint32_t uid);
 

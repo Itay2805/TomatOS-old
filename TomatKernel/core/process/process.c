@@ -83,6 +83,9 @@ static void initialize_alive(process_t* alive_process) {
 	// background process
 	alive_process->foreground = false;
 
+	// ALIVE is not a core process.
+	alive_process->core = false;
+
 	alive_process->started = true;
 }
 
@@ -203,6 +206,14 @@ void process_init(void) {
 	processes[0] = alive_process;
 }
 
+process_t* process_get_core_process(void) {
+	for (process_t* process = processes; process < buf_end(processes); process++) {
+		if (process->status == PROCESS_DEAD) continue;
+		if (process->core) return process;
+	}
+	return NULL;
+}
+
 process_t* process_get(uint32_t uid) {
 	for (process_t* process = processes; process < buf_end(processes); process++) {
 		if (process->status == PROCESS_DEAD) continue;
@@ -255,6 +266,7 @@ void process_create(process_t* process, process_main_t main, int user,  bool for
 
 	process->main = main;
 	process->foreground = foreground;
+	process->core = false;
 }
 
 void process_start(process_t* newprocess) {

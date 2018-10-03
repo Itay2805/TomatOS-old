@@ -13,6 +13,8 @@
 #include <core/process/process.h>
 #include <core/process/perm.h>
 
+#include <core/drivers/ps2_keyboard.h>
+
 #include <core/timer.h>
 
 extern void kmain();
@@ -51,6 +53,9 @@ void kernel_boot(const void* multiboot_structure, uint32_t multiboot_magic) {
 	term_write("[TomatoBoot] registering and initializing timer\n");
 	timer_init();
 
+	term_write("[TomatoBoot] registering and initializing PS2 keyboard driver\n");
+	ps2_keyboard_init();
+
 	// from here we are technically done with boot and should
 	// only focus on loading libraries and such
 	term_clear();
@@ -62,6 +67,7 @@ void kernel_boot(const void* multiboot_structure, uint32_t multiboot_magic) {
 	
 	process_t foreground;
 	process_create(&foreground, kmain, USER_ALIVE, true); // this will run as alive just because it must have the kernel segments
+	foreground.core = true;
 	process_start(&foreground);
 
 	term_write("[TomatoKernel] Starting alive\n");

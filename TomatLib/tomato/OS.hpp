@@ -16,8 +16,15 @@ namespace Tomato {
 	public:
 		enum EventKind {
 			ANY = TOMATO_EVENT_ANY,
+			CHAR = TOMATO_EVENT_CHAR,
+			KEY = TOMATO_EVENT_KEY,
+			KEY_UP = TOMATO_EVENT_KEY_UP,
+			TIMER = TOMATO_EVENT_TIMER,
 			TERMINATE = TOMATO_EVENT_TERMINATE,
-			TIMER = TOMATO_EVENT_TIMER
+			MOUSE_CLICK = TOMATO_EVENT_MOUSE_CLICK,
+			MOUSE_UP = TOMATO_EVENT_MOUSE_UP,
+			MOUSE_SCROLL = TOMATO_EVENT_MOUSE_SCROLL,
+			MOUSE_DRAG = TOMATO_EVENT_MOUSE_DRAG,
 		};
 
 		Event() 
@@ -31,6 +38,10 @@ namespace Tomato {
 
 		EventKind Kind() const {
 			return (EventKind)event.kind;
+		}
+
+		bool operator[](uint32_t index) {
+			return event.data[index];
 		}
 	};
 
@@ -53,6 +64,118 @@ namespace Tomato {
 
 			bool operator!=(Timer& timer) {
 				return ID() != timer;
+			}
+	};
+
+	class KeyEvent : Event {
+		public:
+			KeyEvent()
+			{
+
+			}
+
+			uint32_t KeyCode() const {
+				return event.data[0];
+			}
+
+			bool Repeat() const {
+				return event.data[1];
+			}
+
+			bool operator==(uint32_t value) {
+				return KeyCode() == value;
+			}
+
+			bool operator!=(uint32_t value) {
+				return KeyCode() != value;
+			}
+
+			bool operator>(uint32_t value) {
+				return KeyCode() > value;
+			}
+
+			bool operator>=(uint32_t value) {
+				return KeyCode() >= value;
+			}
+
+			bool operator<(uint32_t value) {
+				return KeyCode() < value;
+			}
+
+			bool operator<=(uint32_t value) {
+				return KeyCode() <= value;
+			}
+	};
+
+	class KeyUpEvent : Event {
+		public:
+			KeyUpEvent()
+			{
+
+			}
+
+			uint32_t KeyCode() const {
+				return event.data[0];
+			}
+
+			bool operator==(uint32_t value) {
+				return KeyCode() == value;
+			}
+
+			bool operator!=(uint32_t value) {
+				return KeyCode() != value;
+			}
+
+			bool operator>(uint32_t value) {
+				return KeyCode() > value;
+			}
+
+			bool operator>=(uint32_t value) {
+				return KeyCode() >= value;
+			}
+
+			bool operator<(uint32_t value) {
+				return KeyCode() < value;
+			}
+
+			bool operator<=(uint32_t value) {
+				return KeyCode() <= value;
+			}
+	};
+
+	class CharEvent : Event {
+		public:
+			CharEvent()
+			{
+
+			}
+
+			char Char() const {
+				return event.data[0];
+			}
+
+			bool operator==(char timer) {
+				return Char() == timer;
+			}
+
+			bool operator!=(char timer) {
+				return Char() != timer;
+			}
+
+			bool operator>(char timer) {
+				return Char() > timer;
+			}
+
+			bool operator>=(char timer) {
+				return Char() >= timer;
+			}
+
+			bool operator<(char timer) {
+				return Char() < timer;
+			}
+
+			bool operator<=(char timer) {
+				return Char() <= timer;
 			}
 	};
 
