@@ -6,6 +6,7 @@
 #include <kernel.h>
 
 #define PS2_DATA    ((uint8_t)0x60)
+#define PS2_STATUS  ((uint8_t)0x64)
 #define PS2_COMMAND ((uint8_t)0x64)
 
 #define PS2_ACK     ((uint8_t)0xFA)
