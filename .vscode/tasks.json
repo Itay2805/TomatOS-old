@@ -22,7 +22,7 @@
             "problemMatcher": "$gcc"
         },
         {
-            "label": "Build Kernel",
+            "label": "Rebuild Kernel",
             "dependsOn":[
                 "Clean Build"
             ],
