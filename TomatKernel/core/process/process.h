@@ -67,7 +67,7 @@ extern "C" {
 
 	void process_start(process_t* process);
 		
-	void process_kill(registers_t* regs, uint32_t uid);
+	void process_kill(registers_t* regs, process_t* process);
 
 	process_t* process_get(uint32_t uid);
 

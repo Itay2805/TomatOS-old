@@ -16,12 +16,14 @@ extern "C" void kmain() {
 	Timer timer = OS::StartTimer(1.0);
 
 	while (true) {
+		Term::Write("Waiting for events... ");
 		Event event = OS::PullEvent();
 		Term::Write("Got Event!\n");
 		if(event.Kind() == Event::TIMER) {
 			TimerEvent t = OS::CastEvent<TimerEvent>(event);
 			if(t == timer) {
-				Term::Write("Timer Finished!\n");
+				Term::Write("Timer Finished! Closing program...\n");
+				OS::Kill();
 			}
 		}
 	}

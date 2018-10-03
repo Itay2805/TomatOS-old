@@ -32,9 +32,7 @@ extern "C" {
 	}
 
 	static inline void tomato_os_kill(uint32_t uid) {
-		UNUSED(uid);
-
-		// not implemented
+		asm("int $0x80" : : "a"(SYSCALL_OS_PROCESS_KILL), "b"(uid));
 	}
 
 	static inline void tomato_os_pull_event(tomato_event_t* event) {
@@ -49,10 +47,6 @@ extern "C" {
 
 	static inline void tomato_os_queue_event(tomato_event_t* event, uint32_t uid) {
 		asm("int $0x80" : : "a"(SYSCALL_OS_QUEUE_EVENT), "b"(event), "c"(uid));
-	}
-
-	static inline void tomato_os_run() {
-		// TODO
 	}
 
 #if __cplusplus

@@ -70,6 +70,10 @@ namespace Tomato {
 			tomato_os_cancel_timer((uint32_t)timer);
 		}
 
+		static void Kill(uint32_t uid = 0) {
+			tomato_os_kill(uid);	
+		}
+
 		static void Sleep(float millis) {
 			Timer timer = StartTimer(millis);
 			TimerEvent event;

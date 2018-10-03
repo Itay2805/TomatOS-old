@@ -157,15 +157,38 @@ static void syscall_queue_event(registers_t* regs) {
 	buf_push(targetProcess->events, *event);
 }
 
+static void syscall_process_kill(registers_t* regs) {
+	uint32_t uid = regs->ebx;
+	
+	process_t* process;
+	process_t* current_process = process_get_running();
+	
+	// if uid is 0 then close the current process
+	if(uid == 0) {
+		process = current_process;
+	}else {
+		process = process_get(uid);
+		// make sure we have permission to close the process
+		if(has_permission(process->user, current_process->user)) {
+			// TODO: Error (?)
+			return;
+		}
+	}
+
+	// SYSCALL_OS_KILL
+	process_kill(regs, process);
+}
+
 //////////////////////////////////////////////////////////////
 //// Implementation
 //////////////////////////////////////////////////////////////
 
 void process_init(void) {
-	syscall_register(SYSCALL_START_ALIVE, syscall_start_alive);
+	syscall_register(SYSCALL_START, syscall_start_alive);
 
 	syscall_register(SYSCALL_OS_PULL_EVENT, syscall_pull_event);
 	syscall_register(SYSCALL_OS_QUEUE_EVENT, syscall_queue_event);
+	syscall_register(SYSCALL_OS_PROCESS_KILL, syscall_process_kill);
 
 	process_t alive_process;
 	initialize_alive(&alive_process);
@@ -213,7 +236,7 @@ void process_create(process_t* process, process_main_t main, int user,  bool for
 	// the stack will take a total of 20MB at max (to maybe allow the stack to grow in the future)
 	uintptr_t process_stack = process_end + 1024 * 1024;
 	uintptr_t process_stack_top = process_stack + PROCESS_MAX_STACK_SIZE;
-	paging_map_range(process->pd, process_stack_top - PROCESS_STACK_SIZE, PROCESS_STACK_SIZE);
+	paging_map_range(process->pd, process_stack, PROCESS_STACK_SIZE);
 	
 	// the heap will be 1MB after the stack
 	uintptr_t process_heap_start = process_stack_top + 1024 * 1024;
@@ -251,18 +274,19 @@ void process_start(process_t* newprocess) {
 	can_update = true;
 }
 
-void process_kill(registers_t* regs, uint32_t uid) {
+void process_kill(registers_t* regs, process_t* process) {
 	can_update = false;
 
-	process_t* process = process_get(uid);
-
-	// change process status	
+	// change process status
 	bool wasRunning = false;
 	if (process->status == PROCESS_RUNNING) {
+		// we can not use this page directory anymore since it is going to 
+		// get removed, we will use the ALIVE pd until we get are switching
+		paging_set(processes[ALIVE].pd);
 		wasRunning = true;
 	}
 	process->status = PROCESS_DEAD;
-	
+
 	// free all pages allocated for the process
 	paging_free_directory(process->pd);
 
