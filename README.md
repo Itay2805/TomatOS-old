@@ -8,10 +8,10 @@ Already got working:
 * Heap
 * libc
 * kernel terminal library
-* some stuff that are needed for C++ to work
 * ATA driver
 * [Syscalls](syscalls.md)
 * Processes
+* Userspace library both for C and C++
 
 Working on currently:
 * FileSystem - I have some plan on how it will be but still needs implementing
