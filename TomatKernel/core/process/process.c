@@ -6,6 +6,8 @@
 #include <core/process/syscall.h>
 #include <core/process/perm.h>
 
+#include <core/graphics/term.h>
+
 #include <core/timer.h>
 
 #include <boot/gdt/gdt.h>
@@ -269,6 +271,9 @@ void process_kill(registers_t* regs, uint32_t uid) {
 
 	// free all the process timers
 	timer_cancel(process->uid, 0);
+
+	// delete processes related to window
+	window_delete_for_process(process->uid);
 
 	can_update = true;
 	if (wasRunning) {
