@@ -11,18 +11,25 @@ rm kernel.elf 2> /dev/null
 should_link_kernel="false"
 mkdir "build" 2> /dev/null
 
+# Currently there is a problem with the way this works... because if you edit a header file it will not affect the compilcation
+# So anything which requires inlining will not re-compile...
+
 process_file_c() {
 	f=$1
 
 	of="$f.o"
 	of="build/$of"
+
+	mkdir -p "$(dirname "$of")"
 	
 	if [ -e "build/$f.modtime" ]; then
 		if [ "$(stat -c %y $f)" == "$(cat build/$f.modtime)" ]; then
 			echo "	$f > not changed, skipping"
 		else
 			echo "  $f > $of"
-			gcc $CCFLAGS -c "./$f" -o "./$of" 
+			gcc $CCFLAGS -c "./$f" -o "./$of"
+
+			rm "build/$f.modtime"
 			echo "$(stat -c %y $f)" >> "build/$f.modtime"
 		fi
 	else
@@ -38,12 +45,16 @@ process_file_cpp() {
 	of="$f.o"
 	of="build/$of"
 
+	mkdir -p "$(dirname "$of")"
+
 	if [ -e "build/$f.modtime" ]; then
 		if [ "$(stat -c %y $f)" == "$(cat build/$f.modtime)" ]; then
 			echo "	$f > not changed, skipping"
 		else
 			echo "  $f > $of"
 			g++ $GCCPARAMS -c "./$f" -o "./$of" 
+			
+			rm "build/$f.modtime"
 			echo "$(stat -c %y $f)" >> "build/$f.modtime"
 		fi
 	else
@@ -59,12 +70,16 @@ process_file_asm() {
 	of="$f.o"
 	of="build/$of"
 
+	mkdir -p "$(dirname "$of")"
+
 	if [ -e "build/$f.modtime" ]; then
 		if [ "$(stat -c %y $f)" == "$(cat build/$f.modtime)" ]; then
 			echo "	$f > not changed, skipping"
 		else
 			echo "  $f > $of"
 			nasm $NASMPARAMS "./$f" -o "./$of"
+
+			rm "build/$f.modtime"
 			echo "$(stat -c %y $f)" >> "build/$f.modtime"
 		fi
 	else
