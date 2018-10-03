@@ -396,10 +396,6 @@ void window_write(window_t* window, const char* text) {
 		}
 	}
 
-	if(window->cursor_x > 0) {
-		window->cursor_x--;
-	}
-
 	if (window->visible) {
 		window_redraw(window);
 	}
