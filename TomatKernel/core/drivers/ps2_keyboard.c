@@ -232,4 +232,7 @@ void ps2_keyboard_init(void) {
     shift_mapping['x'] = 'X';
     shift_mapping['y'] = 'Y';
     shift_mapping['z'] = 'Z';
+
+    // even if shift is pressed we want to continue being able to use space
+    shift_mapping[' '] = ' ';
 }

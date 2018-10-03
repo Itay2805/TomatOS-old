@@ -301,7 +301,19 @@ void window_register_syscalls() {
 //// implementation
 //////////////////////////////////////////////////////////////
 
-// TODO: check for native terminal on some of these functions
+static void update_native_cursor() {
+	window_t* window = term_native();
+
+	// if this is a native terminal set the native cursor position
+	int offset = window->cursor_x + window->cursor_y * window->width;
+
+	// 0x3d4 - vga command register
+	// 0x3d5 - vga data register
+	outb(0x3d4, 14);
+	outb(0x3d5, (uint8_t)(offset >> 8));
+	outb(0x3d4, 15);
+	outb(0x3d5, (uint8_t)(offset & 0xff));
+}
 
 window_t* window_create(window_t* parent, uint16_t x, uint16_t y, uint16_t width, uint16_t height, bool visible) {
 	// if the parent is invalid set the parent to the native window
@@ -396,6 +408,9 @@ void window_write(window_t* window, const char* text) {
 		}
 	}
 
+	// simple hack to update the cursor positions in the parents 
+	window_set_cursor_pos(window, window->cursor_x, window->cursor_y);
+
 	if (window->visible) {
 		window_redraw(window);
 	}
@@ -446,11 +461,17 @@ uint8_t window_get_background_color(window_t* window) {
 }
 
 void window_set_cursor_pos(window_t* window, uint16_t x, uint16_t y) {
-		// make sure this is a valid window
+	// make sure this is a valid window
 	if(!IS_WINDOW(window)) return;
 
 	window->cursor_x = x;
 	window->cursor_y = y;
+
+	if(window->parent != NULL) {
+		window_set_cursor_pos(window->parent, window->cursor_x + window->x, window->cursor_y + window->y);
+	}else {
+		update_native_cursor(window);
+	}
 }
 
 uint16_t window_get_cursor_x(window_t* window) {
