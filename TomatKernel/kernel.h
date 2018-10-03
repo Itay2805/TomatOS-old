@@ -6,6 +6,9 @@
 // just so VisualStudio will continue to have nice syntax highlighting 
 #define PACKED __attribute__((packed))
 
+#define IS_KERNEL_POINTER(ptr) ((size_t)ptr <= (size_t)((uintptr_t)&tomatkernel_end + 52428800) && (size_t)ptr >= (size_t)&tomatkernel_start)
+#define IS_USER_POINTER(ptr) ((size_t)ptr >= (size_t)((uintptr_t)&tomatkernel_end + 52428800))
+
 typedef struct registers {
 	uint32_t ds;
 	uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;

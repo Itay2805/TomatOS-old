@@ -6,6 +6,8 @@
 #include <core/process/syscall.h>
 #include <core/process/perm.h>
 
+#include <core/timer.h>
+
 #include <boot/gdt/gdt.h>
 
 //////////////////////////////////////////////////////////////
@@ -249,18 +251,28 @@ void process_start(process_t* newprocess) {
 
 void process_kill(registers_t* regs, uint32_t uid) {
 	can_update = false;
+
 	process_t* process = process_get(uid);
+
+	// change process status	
 	bool wasRunning = false;
 	if (process->status == PROCESS_RUNNING) {
 		wasRunning = true;
 	}
 	process->status = PROCESS_DEAD;
-
+	
 	// free all pages allocated for the process
 	paging_free_directory(process->pd);
 
+	// free the events queue
+	buf_free(process->events);
+
+	// free all the process timers
+	timer_cancel(process->uid, 0);
+
 	can_update = true;
 	if (wasRunning) {
+		// if this was the running process switch to another process
 		scheduler_update(regs, false);
 	}
 }

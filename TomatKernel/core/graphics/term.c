@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <kernel.h>
 
+#include <core/process/process.h>
 #include <core/process/syscall.h>
 
 #define NATIVE_TERM_VIDEO_ADDRESS 0xb8000
@@ -18,11 +19,12 @@ static window_t* current;
 //// syscalls
 //////////////////////////////////////////////////////////////
 
-// TODO: Should only be accessible to foreground processes!
-
 static void syscall_write(registers_t* regs) {
-	// TODO: validate string pointer
 	char* text = (char*)regs->ebx;
+
+	process_t* process = process_get_running();
+	// TODO: Error (?)
+	if(!process->foreground) return;
 
 	term_write(text);
 }
@@ -30,11 +32,19 @@ static void syscall_write(registers_t* regs) {
 static void syscall_clear(registers_t* regs) {
 	UNUSED(regs);
 
+	process_t* process = process_get_running();
+	// TODO: Error (?)
+	if(!process->foreground) return;
+
 	term_clear();
 }
 
 static void syscall_set_text_color(registers_t* regs) {
 	uint8_t color = regs->ebx;
+
+	process_t* process = process_get_running();
+	// TODO: Error (?)
+	if(!process->foreground) return;
 
 	term_set_text_color(color);
 }
@@ -42,22 +52,54 @@ static void syscall_set_text_color(registers_t* regs) {
 static void syscall_set_background_color(registers_t* regs) {
 	uint8_t color = regs->ebx;
 
+	process_t* process = process_get_running();
+	// TODO: Error (?)
+	if(!process->foreground) return;
+
 	term_set_background_color(color);
 }
 
 static void syscall_get_text_color(registers_t* regs) {
+	process_t* process = process_get_running();
+	// TODO: Error (?)
+	if(!process->foreground) {
+		regs->eax = 0;
+		return;
+	}
+
 	regs->eax = term_get_text_color();
 }
 
 static void syscall_get_background_color(registers_t* regs) {
+	process_t* process = process_get_running();
+	// TODO: Error (?)
+	if(!process->foreground) {
+		regs->eax = 0;
+		return;
+	}
+
 	regs->eax = term_get_background_color();
 }
 
 static void syscall_get_cursor_x(registers_t* regs) {
+	process_t* process = process_get_running();
+	// TODO: Error (?)
+	if(!process->foreground) {
+		regs->eax = 0;
+		return;
+	}
+
 	regs->eax = term_get_cursor_x();
 }
 
 static void syscall_get_cursor_y(registers_t* regs) {
+	process_t* process = process_get_running();
+	// TODO: Error (?)
+	if(!process->foreground) {
+		regs->eax = 0;
+		return;
+	}
+
 	regs->eax = term_get_cursor_y();
 }
 
@@ -65,25 +107,51 @@ static void syscall_set_cursor_pos(registers_t* regs) {
 	uint16_t x = regs->ebx;
 	uint16_t y = regs->ecx;
 
+	process_t* process = process_get_running();
+	// TODO: Error (?)
+	if(!process->foreground) return;
+
 	term_set_cursor_pos(x, y);
 }
 
 static void syscall_scroll(registers_t* regs) {
 	uint16_t n = regs->ebx;
 
+	process_t* process = process_get_running();
+	// TODO: Error (?)
+	if(!process->foreground) return;
+
 	term_scroll(n);
 }
 
 static void syscall_width(registers_t* regs) {
+	process_t* process = process_get_running();
+	// TODO: Error (?)
+	if(!process->foreground) {
+		regs->eax = 0;
+		return;
+	}
+
 	regs->eax = term_get_width();
 }
 
 static void syscall_height(registers_t* regs) {
+	process_t* process = process_get_running();
+	// TODO: Error (?)
+	if(!process->foreground) {
+		regs->eax = 0;
+		return;
+	}
+
 	regs->eax = term_get_height();
 }
 
 static void syscall_clear_line(registers_t* regs) {
 	uint16_t n = regs->ebx;
+
+	process_t* process = process_get_running();
+	// TODO: Error (?)
+	if(!process->foreground) return;
 
 	term_clear_line(n);
 }
@@ -92,14 +160,35 @@ static void syscall_redirect(registers_t* regs) {
 	// TODO: validate parent
 	window_t* window = (window_t*)regs->ebx;
 
+	process_t* process = process_get_running();
+	// TODO: Error (?)
+	if(!process->foreground) {
+		regs->eax = 0;
+		return;
+	}
+
 	regs->eax = (uint32_t)term_redirect(window);
 }
 
 static void syscall_native(registers_t* regs) {
+	process_t* process = process_get_running();
+	// TODO: Error (?)
+	if(!process->foreground) {
+		regs->eax = 0;
+		return;
+	}
+
 	regs->eax = (uint32_t)term_native();
 }
 
 static void syscall_current(registers_t* regs) {
+	process_t* process = process_get_running();
+	// TODO: Error (?)
+	if(!process->foreground) {
+		regs->eax = 0;
+		return;
+	}
+
 	regs->eax = (uint32_t)term_current();
 }
 
@@ -128,12 +217,11 @@ void term_register_syscalls() {
 //////////////////////////////////////////////////////////////
 
 void term_init() {
+	native.magic = WINDOW_MAGIC;
+	native.uid = 0;
 	native.width = NATIVE_TERM_WIDTH;
 	native.height = NATIVE_TERM_HEIGHT;
-
-	// we will set this to false just because no redraw is needed technically 
-	native.visible = false;
-
+	native.visible = true;
 	native.parent = 0;
 	native.x = 0;
 	native.y = 0;
@@ -199,6 +287,10 @@ void term_clear_line(uint16_t n) {
 }
 
 window_t* term_redirect(window_t* window) {
+	if(IS_WINDOW(window)) {
+		return current;
+	}
+
 	window_t* temp = current;
 	current = window;
 	return temp;

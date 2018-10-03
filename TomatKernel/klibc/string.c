@@ -95,6 +95,7 @@ void* memmove(void *dest, const void *src, size_t n) {
 	unsigned char tmp[n];
 	memcpy(tmp, src, n);
 	memcpy(dest, tmp, n);
+	return dest;
 }
 
 void* memset(void *s, int c, size_t n) {

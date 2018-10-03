@@ -115,7 +115,7 @@ uint32_t timer_start(uint32_t uid, uint32_t millis) {
 
 void timer_cancel(uint32_t uid, uint32_t id) {
 	for (timer_t* timer = timers; timer < buf_end(timers); timer++) {
-		if (timer->id == id && timer->uid == uid) {
+		if ((timer->id == id || id == 0) && timer->uid == uid) {
 			timer->finished = true;
 		}
 	}

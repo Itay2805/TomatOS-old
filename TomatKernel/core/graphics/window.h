@@ -6,6 +6,9 @@
 
 #include <kernel.h>
 
+#define WINDOW_MAGIC ((uint32_t)(0xDEADBEEF))
+#define IS_WINDOW(window) (IS_KERNEL_POINTER(window) && window->magic == WINDOW_MAGIC) 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -17,7 +20,11 @@ extern "C" {
 	} PACKED cell_t;
 
 	typedef struct window {
+		uint32_t magic;
+
 		struct window* parent;
+
+		uint32_t uid;
 
 		uint16_t x, y;
 		uint16_t width, height;
@@ -31,6 +38,7 @@ extern "C" {
 
 	window_t* window_create(window_t* parent, uint16_t x, uint16_t y, uint16_t width, uint16_t height, bool visible);
 	void window_delete(window_t* window);
+	void window_delete_for_process(uint32_t uid);
 	
 	void window_write(window_t* window, const char* text);
 	void window_clear(window_t* window);
