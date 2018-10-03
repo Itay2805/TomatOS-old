@@ -117,6 +117,12 @@ void paging_init(void) {
 }
 
 void paging_init_directory(page_directory_t pageDirectory) {
+	// this is not a long term solution since it will not work in long mode..
+	// but we must do this in order to have direct memory access without having some
+	// full identity mapping of physical memory
+	bool paging_was_enabled = paging_is_enabled(); 
+	if(paging_was_enabled) paging_disable(); 
+
 	memset(pageDirectory, 0, 4096);
 
 	// identity map the kernel
@@ -134,6 +140,9 @@ void paging_init_directory(page_directory_t pageDirectory) {
 
 	// identity map the VGA video address
 	paging_map_identity(pageDirectory, (uintptr_t)0xb8000, true, false);
+
+	// re-enable if it was enabled
+	if(paging_was_enabled) paging_enable();
 }
 
 void paging_map_identity(page_directory_t pageDirectory, uintptr_t addr, bool user, bool read_write) {
@@ -209,6 +218,9 @@ void paging_map(page_directory_t directory, uintptr_t virtAddr) {
 }
 
 void paging_free_directory(page_directory_t directory) {
+	bool paging_was_enabled = paging_is_enabled(); 
+	if(paging_was_enabled) paging_disable();
+
 	// go over all the directory entries
 	for (int i = 0; i < 1024; i++) {
 		// if the entry exists
@@ -228,6 +240,8 @@ void paging_free_directory(page_directory_t directory) {
 	}
 	// free the directory page
 	paging_free_page((uintptr_t)directory);
+
+	if(paging_was_enabled) paging_enable();
 }
 
 uintptr_t paging_get_physical_address(page_directory_t pageDirectory, uintptr_t address) {

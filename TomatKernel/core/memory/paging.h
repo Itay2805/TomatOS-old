@@ -105,6 +105,12 @@ uintptr_t paging_get_physical_address(page_directory_t pageDirectory, uintptr_t 
 // enable paging
 extern void paging_enable(void);
 
+// disable paging
+extern void paging_disable(void);
+
+// disable paging
+extern bool paging_is_enabled(void);
+
 #ifdef __cplusplus
 }
 #endif
