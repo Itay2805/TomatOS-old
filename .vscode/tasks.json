@@ -22,6 +22,19 @@
             "problemMatcher": "$gcc"
         },
         {
+            "label": "Build Kernel",
+            "dependsOn":[
+                "Clean Build"
+            ],
+            "type": "shell",
+            "group": {
+                "isDefault": true,
+                "kind": "build"
+            },
+            "command": "./build_kernel.sh",
+            "problemMatcher": "$gcc"
+        },
+        {
             "label": "Launch QEMU",
             "dependsOn":[
                 "Build Kernel",
