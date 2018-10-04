@@ -13,6 +13,8 @@
 #include <core/process/process.h>
 #include <core/process/perm.h>
 
+#include <core/drivers/ata.h>
+
 #include <core/drivers/ps2_keyboard.h>
 
 #include <core/timer.h>
@@ -55,6 +57,42 @@ void kernel_boot(const void* multiboot_structure, uint32_t multiboot_magic) {
 
 	term_write("[TomatoBoot] registering and initializing PS2 keyboard driver\n");
 	ps2_keyboard_init();
+
+	term_write("ATA Test: \n");
+	char* names[4] = { "PRIMARY/MASTER", "PRIMARY/SLAVE", "SECONDARY/MASTER", "SECONDARY/SLAVE" };
+	for (int bus = 0; bus < 2; bus++) {
+		for (int drive = 0; drive < 2; drive++) {
+			term_write(names[drive + bus * 2]);
+			term_write(": ");
+
+			ata_bus(bus ? ATA_BUS_PRIMARY : ATA_BUS_SECONDARY);
+			ata_drive(drive ? ATA_DRIVE_MASTER : ATA_DRIVE_SLAVE);
+			
+			if(ata_connected()) {
+				ata_identify_t identify;
+				ata_identify(&identify);
+				char buf[41];
+				buf[40] = 0;
+				memcpy(buf, identify.model_number, 40);
+				term_write(buf);
+				term_write("\n");
+
+				buf[20] = 0;
+				memcpy(buf, identify.serial_number, 20);
+				term_write("Serial Number: ");
+				term_write(buf);
+				term_write("\n");
+
+				buf[8] = 0;
+				memcpy(buf, identify.firmware_revision, 8);
+				term_write("Firmware Revision: ");
+				term_write(buf);
+				term_write("\n");		
+			}else {
+				term_write("No HDD\n");
+			}
+		}
+	}
 
 	// from here we are technically done with boot and should
 	// only focus on loading libraries and such

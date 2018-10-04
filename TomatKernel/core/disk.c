@@ -1,4 +1,4 @@
-#include "device.h"
+#include "disk.h"
 
 #include <string.h>
 

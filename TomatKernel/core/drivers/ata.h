@@ -103,13 +103,13 @@
 #define ATA_COMMAND_SET_MAX_ADDRESS (0xF8)
 
 typedef enum ata_bus_kind {
-    PRIMARY,
-    SECONDARY
+    ATA_BUS_PRIMARY = 0xA0,
+    ATA_BUS_SECONDARY = 0xB0
 } ata_bus_kind_t;
 
 typedef enum ata_drive_kind {
-    MASTER,
-    SLAVE
+    ATA_DRIVE_MASTER = 0xE0,
+    ATA_DRIVE_SLAVE = 0xF0
 } ata_drive_kind_t;
 
 typedef struct ata_error {
@@ -249,10 +249,15 @@ typedef struct ata_identify {
 extern "C" {
 #endif
 
-    void ata_comand(uint8_t command);
+    void ata_comand(uint8_t command, uint8_t sectorCount, uint32_t sector);
     ata_error_t ata_error();
     ata_status_t ata_status();
     bool ata_wait();
+
+    void ata_bus(ata_bus_kind_t kind);
+    void ata_drive(ata_drive_kind_t kind);
+    bool ata_connected();
+
     void ata_identify(ata_identify_t* identify);
 
 #ifdef __cplusplus
