@@ -13,7 +13,7 @@
 #include <core/process/process.h>
 #include <core/process/perm.h>
 
-#include <core/drivers/ata.h>
+#include "multiboot.h"
 
 #include <core/drivers/ps2_keyboard.h>
 
@@ -21,15 +21,23 @@
 
 extern void kmain();
 
-void kernel_boot(const void* multiboot_structure, uint32_t multiboot_magic) {
-	UNUSED(multiboot_structure);
-	UNUSED(multiboot_magic);
-	
+void kernel_boot(const multiboot_t* multiboot_structure, uint32_t multiboot_magic) {
 	// the kernel boot will basically load the basics needed for the kernel
 	// to run like segments all the way to registering syscalls
 
 	term_init();
 	term_clear();
+
+	// make sure this is a proper bootloader
+	if(multiboot_magic != 0x2BADB002) {
+		kpanic("Not loaded by a proper Bootloader\n");
+	}
+
+	multiboot_mem_t* mem = multiboot_get_mem(multiboot_structure);
+	multiboot_framebuffer_t* framebuffer = multiboot_get_framebuffer(multiboot_structure);
+	// if the framebuffer is not available
+	// we will need to use the VGA drivers to enable graphcis mode...
+
 	term_write("Booting into TomatKernel...\n\n");
 
 	term_write("[TomatoBoot] initializing paging\n");
@@ -57,42 +65,6 @@ void kernel_boot(const void* multiboot_structure, uint32_t multiboot_magic) {
 
 	term_write("[TomatoBoot] registering and initializing PS2 keyboard driver\n");
 	ps2_keyboard_init();
-
-	term_write("ATA Test: \n");
-	char* names[4] = { "PRIMARY/MASTER", "PRIMARY/SLAVE", "SECONDARY/MASTER", "SECONDARY/SLAVE" };
-	for (int bus = 0; bus < 2; bus++) {
-		for (int drive = 0; drive < 2; drive++) {
-			term_write(names[drive + bus * 2]);
-			term_write(": ");
-
-			ata_bus(bus ? ATA_BUS_PRIMARY : ATA_BUS_SECONDARY);
-			ata_drive(drive ? ATA_DRIVE_MASTER : ATA_DRIVE_SLAVE);
-			
-			if(ata_connected()) {
-				ata_identify_t identify;
-				ata_identify(&identify);
-				char buf[41];
-				buf[40] = 0;
-				memcpy(buf, identify.model_number, 40);
-				term_write(buf);
-				term_write("\n");
-
-				buf[20] = 0;
-				memcpy(buf, identify.serial_number, 20);
-				term_write("Serial Number: ");
-				term_write(buf);
-				term_write("\n");
-
-				buf[8] = 0;
-				memcpy(buf, identify.firmware_revision, 8);
-				term_write("Firmware Revision: ");
-				term_write(buf);
-				term_write("\n");		
-			}else {
-				term_write("No HDD\n");
-			}
-		}
-	}
 
 	// from here we are technically done with boot and should
 	// only focus on loading libraries and such
