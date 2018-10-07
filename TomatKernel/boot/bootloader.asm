@@ -23,7 +23,7 @@ CHECKSUM equ -(MAGIC + FLAGS)
     dd 0 ; linear graphics mode
     dd 1280
     dd 720
-    dd 24
+    dd 32
 
 [section .text]
     [extern kernel_boot]

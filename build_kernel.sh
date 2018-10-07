@@ -138,8 +138,8 @@ objects="$(find ./build -type f -name \*.o)"
 if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
 	echo "Linking Kernel"
 	ld $LDPARAMS -T TomatKernel/linker.ld -o kernel.debug.elf $objects
-	echo "Removing debug symbols (for non debug version)"
-	objcopy --strip-debug kernel.debug.elf kernel.elf
+
+	./build_iso.sh
 elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
 	echo "Skipping link (can't link on windows)"
 elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then

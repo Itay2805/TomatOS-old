@@ -112,8 +112,9 @@ void paging_init(void) {
 		paging_allocate_page((uintptr_t)(kernelHeapStart) + i * 4096);
 	}
 
-	// make sure the VGA text buffer is already set as used
-	paging_allocate_page((uintptr_t)0xb8000);
+	// make sure the VGA text/graphics buffer is already set as used
+	paging_allocate_page((uintptr_t)0xB8000);
+	paging_allocate_page((uintptr_t)0xA0000);
 }
 
 void paging_init_directory(page_directory_t pageDirectory) {
@@ -138,8 +139,9 @@ void paging_init_directory(page_directory_t pageDirectory) {
 		paging_map_identity(pageDirectory, (uintptr_t)(kernelHeapStart) + i * 4096, true, false);
 	}
 
-	// identity map the VGA video address
+	// identity map the VGA text/graphics buffer is already set as used
 	paging_map_identity(pageDirectory, (uintptr_t)0xb8000, true, false);
+	paging_map_identity(pageDirectory, (uintptr_t)0xA0000, true, false);
 
 	// re-enable if it was enabled
 	if(paging_was_enabled) paging_enable();

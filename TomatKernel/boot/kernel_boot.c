@@ -17,26 +17,39 @@
 
 #include <core/drivers/ps2_keyboard.h>
 
+#include <core/drivers/video/vbe.h>
+
 #include <core/timer.h>
 
 extern void kmain();
 
-void kernel_boot(const multiboot_t* multiboot_structure, uint32_t multiboot_magic) {
+void kernel_boot(multiboot_t* multiboot_structure, uint32_t multiboot_magic) {
 	// the kernel boot will basically load the basics needed for the kernel
 	// to run like segments all the way to registering syscalls
 
-	term_init();
-	term_clear();
-
 	// make sure this is a proper bootloader
 	if(multiboot_magic != 0x2BADB002) {
-		kpanic("Not loaded by a proper Bootloader\n");
+		while(true) asm("hlt");
 	}
 
 	multiboot_mem_t* mem = multiboot_get_mem(multiboot_structure);
+	if(mem == 0) {
+		while(true) asm("hlt");
+	}
+
 	multiboot_framebuffer_t* framebuffer = multiboot_get_framebuffer(multiboot_structure);
-	// if the framebuffer is not available
-	// we will need to use the VGA drivers to enable graphcis mode...
+	if(framebuffer == 0) {
+		while(true) asm("hlt");
+	}
+
+
+	while(true) {
+		asm("hlt");
+	}
+/*
+
+	term_init();
+	term_clear();
 
 	term_write("Booting into TomatKernel...\n\n");
 
@@ -87,4 +100,6 @@ void kernel_boot(const multiboot_t* multiboot_structure, uint32_t multiboot_magi
 	// or to the alive program. It should never return to here (Maybe make so it will 
 	// only return if we want to close the program?)
 	kpanic("SHOULD NOT HAVE REACHED HERE!!!");
+
+*/
 }
