@@ -4,6 +4,8 @@ This is the kernel of the OS, it will handle the initialization and boot of the 
 # To do
 - [ ] Initialize a full GDT (Kernel, Driver and User segments)
 - [ ] Initialize IDT (remap IRQs and prepare the syscall interrupt)
+- [ ] Initialize paging (identity map the parts we need)
+- [ ] Enter long mode
 - [ ] A full storage device library
     - [ ] ATA PIO mode
     - [ ] ATA DMA mode
