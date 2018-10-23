@@ -72,8 +72,8 @@ void* memchr(const void* ptr, int value, size_t num) {
 
 // optimized for 32bit
 void* memset(void* ptr, int value, size_t num) {
-    uint32_t val32 = (uint32_t)((value << 24) | (value << 16) | (value << 8) | (value));   
-    uint16_t val16 = (uint16_t)((value << 8) | (value));   
+    uint32_t val32 = (uint32_t)(((uint8_t)value << 24) | ((uint8_t)value << 16) | ((uint8_t)value << 8) | ((uint8_t)value));   
+    uint16_t val16 = (uint16_t)(((uint8_t)value << 8) | ((uint8_t)value));
     uint8_t val8 = (uint8_t)(value);   
 
     uint8_t* buf = ptr;

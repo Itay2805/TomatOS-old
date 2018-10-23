@@ -23,8 +23,41 @@ void* bsearch(const void* key, const void* baseptr, size_t num, size_t size, int
     return NULL;
 }
 
+static size_t partition(void* base, size_t num, size_t size, int (*compar)(const void*,const void*), size_t lo, size_t hi) {
+    uint8_t buffer[size];
+
+    void* pivot = (base + (hi * size));
+    size_t i = lo;
+    for(size_t j = lo; j < hi; j++) {
+        if(compar(base + (j * size), pivot) < 0) {
+            if(i != j) {
+                // swap base[i] with base[j]
+                memcpy(buffer, base + (i * size), size);
+                memcpy(base + (i * size), base + (j * size), size);
+                memcpy(base + (j * size), buffer, size);
+            }
+            i++;
+        }
+    }
+
+    // swap base[i] with base[hi]
+    memcpy(buffer, base + (i * size), size);
+    memcpy(base + (i * size), base + (hi * size), size);
+    memcpy(base + (hi * size), buffer, size);
+    
+    return i;
+}
+
+static void quicksort(void* base, size_t num, size_t size, int (*compar)(const void*,const void*), size_t lo, size_t hi) {
+    if(lo < hi) {
+        size_t p = partition(base, num, size, compar, lo, hi);
+        quicksort(base, num, size, compar, lo, p - 1);
+        quicksort(base, num, size, compar, p + 1, hi);
+    }
+}
+
 void qsort (void* base, size_t num, size_t size, int (*compar)(const void*,const void*)) {
-    // TODO: I don't really remember how to implement this
+    quicksort(base, num, size, compar, 0, num);
 }
 
 int atoi(const char* str) {

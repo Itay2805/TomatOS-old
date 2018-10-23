@@ -16,7 +16,7 @@ extern "C" {
     static inline int isprint(int c) { ' ' <= c && c <= '~'; }
     static inline int isxdigit(int c) { return isdigit(c) || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F'); }  
     static inline int ispunct(int c) { ('!' <= c && c <= '/') || (':' <= c && c <= '@') || ('[' <= c && c <= '`') || ('{' <= c && c <= '~'); };
-
+    
     static inline int tolower(int c) { 
         if(isupper(c)) {
             return c - 0x20;
