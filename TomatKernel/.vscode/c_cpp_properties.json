@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/../TomatLibc",
+                "${workspaceFolder}"
+            ],
+            "defines": [
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": false,
+                "path": [
+                    "${workspaceFolder}/../TomatLibc",
+                    "${workspaceFolder}"
+                ]
+            },
+            "compilerPath": "/usr/bin/gcc -fdiagnostics-color=always -Wall -Wextra -ffreestanding -std=gnu99 -nostdinc -fno-builtin -fno-stack-protector -march=i386 -m32",
+            "intelliSenseMode": "gcc-x64"
+        }
+    ],
+    "version": 4
+}
