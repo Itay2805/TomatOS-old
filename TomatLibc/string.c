@@ -1,6 +1,7 @@
 #include "string.h"
 #include "stdint.h"
 #include "stdlib.h"
+#include "stdbool.h"
 
 // optimized for 32bit
 void* memcpy(void* destptr, const void* srcptr, size_t num) {
@@ -132,7 +133,7 @@ char* strncat(char* dest, const char* src, size_t num) {
 }
 
 char* strcmp(char* str1, const char* str2) {
-    while(*str1++ == *str2++);
+    while(*str1++ == *str2++ && *str1 != NULL);
     return *str1 - *str2;
 }
 
@@ -140,7 +141,7 @@ char* strncmp(char* str1, const char* str2, size_t num) {
     return memcmp(str1, str2, num);
 }
 
-char* strchr (const char* str, int character) {
+char* strchr(const char* str, int character) {
     while(*str) {
         if(*str == character) {
             return str;
@@ -164,6 +165,34 @@ size_t strcspn(const char* str1, const char* str2) {
         span++;
     }
     return span;
+}
+
+size_t strspn(const char* str1, const char* str2) {
+    size_t count = 0;
+    while(*str1) {
+        bool found = false;
+        while(*str2) {
+            if(*str1 == *str2) {
+                found = true;
+                count++;
+                str1++;
+                break;
+            }
+            str2++;
+        }
+        if(!found) return count;
+    }
+    return count;
+}
+
+char* strstr(const char* str1, const char* str2) {
+    while(*str1) {
+        if(strcmp(str1, str2)) {
+            return str1;
+        }
+        str1++;
+    }
+    return NULL;
 }
 
 size_t strlen(const char* str) {
