@@ -25,7 +25,7 @@ extern void* kernel_start;
 extern void* kernel_end;
 extern void* kernel_size;
 
-// all the different port optimizations
+// all the different port in/outs
 
 void outb(uint16_t port, uint8_t data);
 uint8_t inb(uint16_t port);
