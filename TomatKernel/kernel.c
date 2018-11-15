@@ -29,3 +29,8 @@ uint32_t inl(uint16_t port) {
 	asm("inl %1, %0" : "=a" (result) : "Nd" (port));
 	return result;
 }
+
+// this is the entry point of the kernel
+void kmain() {
+
+}
