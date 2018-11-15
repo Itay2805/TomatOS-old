@@ -79,4 +79,4 @@ static gdt_entry_t entries[] = {
     }
 };
 
-gdt_t gdt = { sizeof(gdt_entry_t) *  GDT_ENTRIES, &entries };
+gdt_t gdt = { sizeof(gdt_entry_t) *  GDT_ENTRIES, entries };
