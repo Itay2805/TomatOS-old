@@ -30,6 +30,22 @@ uint32_t inl(uint16_t port) {
 	return result;
 }
 
+void wrmsr(uint32_t msr, uint64_t value) {
+	asm volatile( "wrmsr" : : "c" (msr), "A" (value) );
+}
+
+uint64_t rdmsr(uint32_t msr) {
+	uint64_t result = 0;
+	asm volatile ( "rdmsr" : "=A" (result) : "c" (msr) );
+	return result;
+}
+
+uint64_t rdtsc() {
+	uint64_t result = 0;
+    asm volatile ( "rdtsc" : "=A"(result) );
+	return result;
+}
+
 // this is the entry point of the kernel
 void kmain() {
 

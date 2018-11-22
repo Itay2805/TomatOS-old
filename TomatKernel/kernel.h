@@ -36,4 +36,12 @@ uint16_t inw(uint16_t port);
 void outl(uint16_t port, uint32_t data);
 uint32_t inl(uint16_t port);
 
+// read/write Model Specific Register
+
+void wrmsr(uint32_t msr, uint64_t value);
+uint64_t rdmsr(uint32_t msr);
+
+// time-stamp counter
+uint64_t rdtsc();
+
 #endif

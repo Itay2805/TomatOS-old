@@ -1,5 +1,5 @@
-#ifndef BOOT_GDT_H
-#define BOOT_GDT_H
+#ifndef GDT_H
+#define GDT_H
 
 #include <stdint.h>
 #include <kernel.h>
@@ -38,8 +38,5 @@ typedef struct gdt_t {
 } PACKED gdt_t;
 
 extern gdt_t gdt;
-
-// this will setup the GDT itself 
-void gdt_init(void);
 
 #endif
