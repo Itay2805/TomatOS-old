@@ -12,6 +12,14 @@
 #define GDT_SEGMENT_USER_CODE 24
 #define GDT_SEGMENT_USER_DATA 32
 
+/*
+
+The GDT is not really used for anything other than the fact we must have it
+
+so it just covers the whole 4GB range for both Kernel and User modes
+
+*/
+
 typedef struct gdt_entry {
     uint64_t limit_low : 16;
 	uint64_t base_low : 24;

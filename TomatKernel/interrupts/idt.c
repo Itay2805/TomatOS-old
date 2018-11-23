@@ -57,7 +57,7 @@ extern void handle_irq_coprpcessor();
 extern void handle_irq_primary_ata();
 extern void handle_irq_secondary_ata();
 
-extern void handle_irq_syscall();
+extern void handle_syscall();
 
 //////////////////////////////////
 // IDT
@@ -87,10 +87,13 @@ static void set_entry(int index, idt_gate_handler_t base, uint8_t ring) {
 //////////////////////////////////
 
 void kernel_exception_handler(registers_t* regs) {
-
+    // if a process crashes leave a log file and show an error
+    // Maybe also attempt to get debug details if available for process
 }
 
 void kernel_irq_handler(registers_t* regs) {
+
+    pic_eoi();
 }
 
 //////////////////////////////////
@@ -99,7 +102,7 @@ void kernel_irq_handler(registers_t* regs) {
 
 void idt_init() {
 
-    set_entry(0x00);
+    //set_entry(0x00);
 
     // actuall load the idt
 	asm volatile("lidtl (%0)" : : "r"(&idt));

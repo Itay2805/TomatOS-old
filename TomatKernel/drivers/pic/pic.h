@@ -1,6 +1,8 @@
 #ifndef DRIVERS_PIC_H
 #define DRIVERS_PIC_H
 
+#include <stdint.h>
+
 // Programmable-Interrupt-Controller
 
 #define PIC_MASTER          0x20
