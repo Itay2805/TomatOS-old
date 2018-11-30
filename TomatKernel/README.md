@@ -2,8 +2,8 @@
 This is the kernel of the OS, it will handle the initialization and boot of the operating system as well manage the drivers and more...
 
 # To do
-- [ ] Initialize a full GDT (Kernel, Driver and User segments)
-- [ ] Initialize IDT (remap IRQs and prepare the syscall interrupt)
+- [X] Initialize a full GDT (Kernel and User segments)
+- [X] Initialize IDT (remap IRQs and prepare the syscall interrupt)
 - [ ] Initialize paging (identity map the parts we need)
 - [ ] Enter long mode
 - [ ] A full storage device library
