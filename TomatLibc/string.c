@@ -6,7 +6,7 @@
 // optimized for 32bit
 void* memcpy(void* destptr, const void* srcptr, size_t num) {
     uint8_t* dest = destptr;
-    uint8_t* src = srcptr;
+    const uint8_t* src = srcptr;
 
     while(num >= 4) {
         *((uint32_t*)dest) = *((uint32_t*)src);
@@ -32,8 +32,8 @@ void* memcpy(void* destptr, const void* srcptr, size_t num) {
 // optimized for pointer overlap
 void* memmove(void* destptr, const void* srcptr, size_t num) {
     uint8_t* dest = destptr;
-    uint8_t* src = srcptr;
-    if(abs((int)(src - dest)) < num) {
+    const uint8_t* src = srcptr;
+    if((size_t)abs((int)(src - dest)) < num) {
         // pointers overlap, will need to copy to a temp buffer before moving
         uint8_t tmp[num];
         memcpy(tmp, src, num);
@@ -47,9 +47,9 @@ void* memmove(void* destptr, const void* srcptr, size_t num) {
 
 int memcmp(const void* ptr1, const void* ptr2, size_t num) {
     // could be optimized...
-
-    uint8_t* buf1 = ptr1;
-    uint8_t* buf2 = ptr2;
+    
+    const uint8_t* buf1 = ptr1;
+    const uint8_t* buf2 = ptr2;
     while(num) {
         if(*buf1 != *buf2) {
             return *buf1 - *buf2; 
@@ -58,13 +58,15 @@ int memcmp(const void* ptr1, const void* ptr2, size_t num) {
         buf2++;
         num--;
     }
+
+    return 0;
 }
 
 void* memchr(const void* ptr, int value, size_t num) {
-    uint8_t* buf = ptr;
+    const uint8_t* buf = ptr;
     while(num) {
         if(*buf == (uint8_t)value) {
-            return buf;
+            return (void*)buf;
         }
         buf++;
     }
@@ -132,21 +134,21 @@ char* strncat(char* dest, const char* src, size_t num) {
     return ret;
 }
 
-char* strcmp(char* str1, const char* str2) {
-    while(*str1++ == *str2++ && *str1 != NULL);
+int strcmp(const char* str1, const char* str2) {
+    while(*str1++ == *str2++ && *str1 != 0);
     return *str1 - *str2;
 }
 
-char* strncmp(char* str1, const char* str2, size_t num) {
+int strncmp(const char* str1, const char* str2, size_t num) {
     return memcmp(str1, str2, num);
 }
 
 char* strchr(const char* str, int character) {
     while(*str) {
         if(*str == character) {
-            return str;
+            return (char*)str;
         }
-        *str;
+        str++;
     }   
     return NULL;
 }
@@ -188,7 +190,7 @@ size_t strspn(const char* str1, const char* str2) {
 char* strstr(const char* str1, const char* str2) {
     while(*str1) {
         if(strcmp(str1, str2)) {
-            return str1;
+            return (char*)str1;
         }
         str1++;
     }
@@ -196,7 +198,7 @@ char* strstr(const char* str1, const char* str2) {
 }
 
 size_t strlen(const char* str) {
-    char* start = str;
+    const char* start = str;
     while(*str++);
     return start - str;
 }

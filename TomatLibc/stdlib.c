@@ -1,16 +1,20 @@
-#include "stdlib.h"
+#include <stdlib.h>
 
-#include "ctype.h"
-#include "stdint.h"
-#include "stdbool.h"
-#include "string.h"
+#include <ctype.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <string.h>
 
 void* bsearch(const void* key, const void* baseptr, size_t num, size_t size, int (*compar)(const void*,const void*)) {
-    uint8_t* base = baseptr;
+    const uint8_t* base = baseptr;
     size_t l = 0;
     size_t r = num - 1;
     while(l <= r) {
         size_t m = (l + r) / 2;
+        if(m == 0) {
+            // step size is too small
+            return NULL;
+        }
         int cmp = compar(base + (m * size), key);
         if(cmp < 0) {
             l = m + 1;
