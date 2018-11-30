@@ -46,10 +46,20 @@ uint64_t rdtsc() {
 	return result;
 }
 
+#include <stdbool.h>
+
 #include <gdt/gdt.h>
 #include <interrupts/idt.h>
+#include <multiboot.h>
 
 // this is the entry point of the kernel
-void kmain() {
+void kmain(multiboot_t* multiboot_structure, uint32_t multiboot_magic) {
+	// Make sure we booted properly
+	if(multiboot_magic != 0x2BADB002) {
+		// Print error
+		while(true) asm("hlt");
+	}
 	idt_init();
+
+	// TODO: use multiboot memory information to setup stuff
 }
