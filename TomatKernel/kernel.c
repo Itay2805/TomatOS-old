@@ -46,7 +46,10 @@ uint64_t rdtsc() {
 	return result;
 }
 
+#include <gdt/gdt.h>
+#include <interrupts/idt.h>
+
 // this is the entry point of the kernel
 void kmain() {
-
+	idt_init();
 }
