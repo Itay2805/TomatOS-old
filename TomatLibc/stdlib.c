@@ -21,7 +21,7 @@ void* bsearch(const void* key, const void* baseptr, size_t num, size_t size, int
         }else if(cmp > 0) {
             r = m - 1;
         }else {
-            return base + (m * size);
+            return (void*)(base + (m * size));
         }
     }
     return NULL;

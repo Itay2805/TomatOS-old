@@ -11,6 +11,7 @@ typedef unsigned long size_t;
 	#define offsetof(st, m) (size_t)(unsigned long)&(((st *)0)->m)
 #endif
 
-#define NULL ((void*)0)
+#define NULL (0)
+#define nullptr ((void*)NULL)
 
 #endif
