@@ -25,6 +25,7 @@ void pic_remap(uint8_t master_offset, uint8_t slave_offset) {
     outb(PIC_SLAVE_DATA, slave_mask);
 }
 
-void pic_send_eoi() {
-
+void pic_send_eoi(uint8_t irq) {
+    outb(PIC_MASTER, PIC_COMMAND_END_OF_INTERRUPT);
+    if(irq >= 40) outb(PIC_SLAVE, PIC_COMMAND_END_OF_INTERRUPT);
 }
