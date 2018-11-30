@@ -1,3 +1,5 @@
+#! /usr/bin/python
+
 import os
 import subprocess
 import json
@@ -10,7 +12,7 @@ except ImportError:
 
 # Some params
 GCC_FLAGS="-g -fdiagnostics-color=always -Wall -Wextra -I. -I../TomatLibc -std=gnu99 -nostdinc -fno-builtin -fno-stack-protector -march=i386 -m32"
-NASM_FLAGS=""
+NASM_FLAGS="-g -f elf"
 LD_FLAGS="-melf_i386"
 
 OUTPUT_DIRECTORY="./build/"
@@ -60,43 +62,57 @@ Path("./build").mkdir(exist_ok=True)
 
 build_errors = False
 
-# Iterate all files
-for root, dirs, files in os.walk("./"):
-    for file in files:
-        file = os.path.join(root, file)
-        output = "{}.o".format(file)
-        if file.endswith(".c"):
-            changed, error = header_changed(file)
-            if error:
-                print "Failed to check headers in file {}".format(file)
-            elif not os.path.isfile(output) or changed or file_changed(file, False):
-                # Rebuild under the following conditions
-                # * Output file not found
-                # * Input file changed
-                # * Included header have changed
-                print "{} -> {}".format(file, output)
-                Path(os.path.dirname(os.path.join(OUTPUT_DIRECTORY, output))).mkdir(parents=True, exist_ok=True)
-                command = "gcc {} -c {} -o {}".format(GCC_FLAGS, file, os.path.join(OUTPUT_DIRECTORY, output))
-                try:
-                    subprocess.check_output(["bash", "-c", command])
-                except subprocess.CalledProcessError:
-                    build_errors = True
+def build_all_files_in_dir(dir):
+    # Iterate all files
+    for root, dirs, files in os.walk(dir):
+        for file in files:
+            file = os.path.join(root, file)
+            output = os.path.join(OUTPUT_DIRECTORY, "{}.o".format(file))
+            if file.endswith(".c"):
+                changed, error = header_changed(file)
+                if error:
+                    print "Failed to check headers in file {}".format(file)
+                elif not os.path.isfile(output) or changed or file_changed(file, False):
+                    # Rebuild under the following conditions
+                    # * Output file not found
+                    # * Input file changed
+                    # * Included header have changed
+                    print "{} -> {}".format(file, output)
+                    Path(os.path.dirname(output)).mkdir(parents=True, exist_ok=True)
+                    command = "gcc {} -c {} -o {}".format(GCC_FLAGS, file, output)
+                    try:
+                        subprocess.check_output(["bash", "-c", command])
+                    except subprocess.CalledProcessError:
+                        build_errors = True
+                    else:
+                        file_changes_to_add[file] = os.path.getmtime(file)
                 else:
-                    file_changes_to_add[file] = os.path.getmtime(file)
-            else:
-                print "{} -> skipped"
-        elif file.endswith(".asm"):
-            if not os.path.isfile(output) or file_changed(file, False):
-                # Rebuild under the following conditions
-                # * Output file not found
-                # * Input file changed
-                print "{} -> {}".format(file, output)
-            else:
-                print "{} -> skipped"
+                    print "{} -> skipped".format(file)
+            elif file.endswith(".asm"):
+                if not os.path.isfile(output) or file_changed(file, False):
+                    # Rebuild under the following conditions
+                    # * Output file not found
+                    # * Input file changed
+                    print "{} -> {}".format(file, output)
+                    Path(os.path.dirname(output)).mkdir(parents=True, exist_ok=True)
+                    command = "nasm {} {} -o {}".format(NASM_FLAGS, file, output)
+                    try:
+                        subprocess.check_output(["bash", "-c", command])
+                    except subprocess.CalledProcessError:
+                        build_errors = True
+                    else:
+                        file_changes_to_add[file] = os.path.getmtime(file)
+                else:
+                    print "{} -> skipped".format(file)
+
+build_all_files_in_dir("./")
+OUTPUT_DIRECTORY = "./build/TomatLibc"
+build_all_files_in_dir("../TomatLibc")
 
 if build_errors:
     print "Got build errors! Not linking..."
 else:
+    print "Linking..."
     # Link!
     object_files = []
     for root, dirs, files in os.walk("./"):
