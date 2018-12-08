@@ -28,14 +28,14 @@ CHECKSUM equ -(MAGIC + FLAGS)
     [extern kmain]
 
     [global bootloader]
-	[global tomatokernel_stack]
+	[global kernel_stack]
 
     bootloader:
-        mov esp, tomatokernel_stack
+        mov esp, kernel_stack
         push eax
         push ebx
-        call kernel_boot
+        call kmain
 
 [section .bss]
     resb 2 * 1024 * 1024
-    tomatokernel_stack:
+    kernel_stack:
