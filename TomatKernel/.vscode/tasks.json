@@ -1,0 +1,29 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Debug",
+            "group": "build",
+            "type": "shell",
+            "command": "./build.py"
+        },
+        {
+            "label": "Run With Debugger",
+            "dependsOn": [
+                "Build Debug"
+            ],
+            "type": "shell",
+            "isBackground": true,
+            "command": ". run_debugger.sh"
+        },
+        {
+            "label": "Run",
+            "dependsOn": [
+                "Build Debug"
+            ],
+            "type": "shell",
+            "isBackground": true,
+            "command": ". run.sh"
+        }
+    ]
+}
