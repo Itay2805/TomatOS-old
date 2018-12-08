@@ -11,6 +11,10 @@
 	#error Must use GCC (GNUC) for for the PACKED macro to work
 #endif
 
+#define KB(x) ((x) * 1024)
+#define MB(x) (KB(x) * 1024)
+#define GB(x) (MB(x) * 1024)
+
 // this is going to be used alot mainly in the interrupts and processes
 typedef struct registers {
 	uint32_t ds;
