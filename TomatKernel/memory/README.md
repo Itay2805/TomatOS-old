@@ -4,8 +4,6 @@ TODO
 
 ## Virtual Memory
 Kernel is located at 1MB
-The kernel HEAP is located at 500MB and is until 1GB
-The Current process HEAP is located at 3GB, growing down to 1GB
-The Current process code is located at 2GB
-
-So the application executeable and all of it's drivers can take up to 1GB
+The kernel HEAP is located at 5MB and is until 10MB
+The application heap is located at 10MB, growing up to 4GB
+Note that when the heap is loaded, it will also be used to allocate the space for the stack and for the executeable
