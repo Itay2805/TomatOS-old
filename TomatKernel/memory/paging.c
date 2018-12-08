@@ -69,6 +69,9 @@ void paging_init(void) {
 
     // set areas which are important (ex. memory mapped IO) as used
 
+	// don't allow the first page to be allocated
+	paging_allocate_page(0);
+
     // set the kernel area as used
 	int kernelPageCount = (((size_t)&kernel_size - 1) / 4096) + 1;
 	for (int i = 0; i < kernelPageCount; i++) {
