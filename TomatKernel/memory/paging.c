@@ -62,13 +62,12 @@ void paging_free_page(uintptr_t physAddr) {
 
 void paging_init(void) {
 	// all the pages from 0 to the end of the kernel size are always identity pages
-	
+
 	// prepare page bitmap 
 	first_free = 0;
 	memset(page_bitmap, 0, BITMAP_SIZE_BYTES);
 
     // set areas which are important (ex. memory mapped IO) as used
-
 
     // set the kernel area as used
 	int kernelPageCount = (((size_t)&kernel_size - 1) / 4096) + 1;
@@ -77,9 +76,9 @@ void paging_init(void) {
 	}
 
 	// set the kernel heap area as used
-	int kernelHeapPageCount = (((size_t)&kernel_size - 1) / 4096) + 1;
+	int kernelHeapPageCount = ((MB(5) - 1) / 4096) + 1;
 	for (int i = 0; i < kernelHeapPageCount; i++) {
-		paging_allocate_page((uintptr_t)&kernel_start + i * 4096);
+		paging_allocate_page(MB(5) + i * 4096);
 	}
 
 	// set the VGA text buffer as used 
