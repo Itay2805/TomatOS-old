@@ -25,6 +25,7 @@ CHECKSUM equ -(MAGIC + FLAGS)
         push eax
         push ebx
         call kmain
+        add esp, 4
 
 [section .bss]
     resb 2 * 1024 * 1024
