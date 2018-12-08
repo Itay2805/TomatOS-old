@@ -31,18 +31,17 @@ extern void* kernel_size;
 
 // all the different port in/outs
 
-void outb(uint16_t port, uint8_t data);
+#define outb(port, data) asm("outb %0, %1" : : "a"((uint8_t)data), "Nd"((uint16_t)port))
+#define outw(port, data) asm("outw %0, %1" : : "a"((uint16_t)data), "Nd"((uint16_t)port))
+#define outl(port, data) asm("outl %0, %1" : : "a"((uint32_t)data), "Nd"((uint16_t)port))
+
 uint8_t inb(uint16_t port);
-
-void outw(uint16_t port, uint16_t data);
 uint16_t inw(uint16_t port);
-
-void outl(uint16_t port, uint32_t data);
 uint32_t inl(uint16_t port);
 
 // read/write Model Specific Register
 
-void wrmsr(uint32_t msr, uint64_t value);
+#define wrmsr(msr, value) asm volatile( "wrmsr" : : "c"((uint32_t)msr), "A"((uint64_t)value)
 uint64_t rdmsr(uint32_t msr);
 
 // time-stamp counter
