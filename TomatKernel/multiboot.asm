@@ -14,16 +14,6 @@ CHECKSUM equ -(MAGIC + FLAGS)
     dd FLAGS
     dd CHECKSUM
 
-    ; graphics information:
-    ;   mode_type
-    ;   width
-    ;   height
-    ;   bits-per-pixel
-    dd 0 ; linear graphics mode
-    dd 1280
-    dd 720
-    dd 32
-
 [section .text]
     [extern kmain]
 
